@@ -25,6 +25,8 @@ def upload():
         process(df)
         return redirect(url_for('upload_file'))  # redirect to main page
 
+def asd():
+    pass
 
 def process(df):
     print(df.head())
