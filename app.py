@@ -3,34 +3,27 @@ import pandas as pd
 
 
 app = Flask(__name__)
-
+app.static_folder = 'static'
 
 @app.route('/')
-def upload_file():
-    return render_template('upload.html')
+def main():
+    return render_template('front-end page/UserSystem/MainPage.html')
 
+@app.route('/DocumentPage')
+def document_page():
+    return render_template('front-end page/UserSystem/DocumentPage.html')
 
-@app.route('/upload', methods=['POST'])
-def upload():
-    if 'file' not in request.files:
-        return "No file part"
+@app.route('/ViewerPage')
+def viewerPage():
+    return render_template('front-end page/UserSystem/ViewerPage.html')
 
-    file = request.files['file']
+@app.route('/SearchPage')
+def searchPage():
+    return render_template('front-end page/UserSystem/SearchPage.html')
 
-    if file.filename == '':
-        return "No selected file"
-
-    if file:
-        df = pd.read_csv(file)
-        process(df)
-        return redirect(url_for('upload_file'))  # redirect to main page
-
-def asd():
-    pass
-
-def process(df):
-    print(df.head())
-
+@app.route('/admin')
+def adminLoginPage():
+    return render_template('front-end page/adminSystem/adminLoginPage.html.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0',port=80,debug=True)
