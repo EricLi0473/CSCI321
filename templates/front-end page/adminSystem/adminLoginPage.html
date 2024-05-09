@@ -4,30 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>adminLoginPage</title>
-    <link rel="stylesheet" href="../../../static/adminSystem/adminStyle.css" >
+    <link rel="stylesheet" href="../../../static/adminSystem/adminLogin.css" >
 </head>
 
 
 
 <body>
-    <h href="#" class="titleText" style="font-size: 50px;">Admin Login</h>
-    
-    <div class="login-box">
- 
-        <form>
-          <div class="user-box">
-            <input type="text" name="" required="">
-            <label>Username</label>
-          </div>
-          <div class="user-box">
-            <input type="password" name="" required="">
-            <label>Password</label>
-          </div><center>
-          <a href="adminPage.html">
-                 SEND
-             <span></span>
-          </a></center>
-        </form>
-      </div>
+  <form class="form"><br>
+    <p class="form-title">Admin/Data Manager Login</p>
+    <p class="signup-link">
+      Do not own an account?
+       <a href="">Sign up</a>
+     </p>
+     <div class="input-container">
+      <label >
+        User Name
+      </label>
+       <input type="account">
+       <span>
+       </span>
+   </div>
+   <div class="input-container">
+    <label style="position: absolute; top: 0px;">
+      Password
+    </label>
+       <input type="password" style="position: relative; top: 20px;">
+     </div>
+     <label class="checkbox-container">
+      <input type="radio" name="gender" value="male">
+      <span class="checkmark"></span> Remember me?
+    </label>
+      <button type="submit" class="submit">
+     Sign in
+   </button>
+
+   
+</form>
+
 </body>
 </html>
