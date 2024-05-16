@@ -7,7 +7,7 @@ header {
     color: #fff; 
     padding: 20px 0; 
     position: fixed;
-    width: 80%; 
+    width: 85%; 
     top: 20px; 
     left: 200px;
     z-index: 999; 
@@ -111,6 +111,41 @@ header {
   }
   
 
-.part1{
-    
+.setPicCity{
+  width: 100%;
+  height: 100vh;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.setPicCity2{
+  background-color: red;
+  position: relative;
+  top: 200px;
+  width: 45%;
+  height: 50vh;
+  left: 52%;
+}
+
+.setPicCity3{
+  position: relative;
+  top: 10px;
+  width: 100%;
+  height: 100vh;
+}
+
+.p2text{
+  position: relative;
+  width: 40%;
+  height: 50vh;
+  left: 9%;
+  bottom: 280px;
+}
+
+.vertical-line {
+  position: absolute;
+  top: 0;
+  border-left: 2px solid white;
+  height: 10vh;
 }
