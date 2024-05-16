@@ -3,6 +3,14 @@ body{
   background-color: rgb(83, 83, 83);
 }
 
+.p1{
+  position: absolute;
+  left: 37%;
+  top: 50px;
+  color: white;
+  font-size: 40px;
+}
+
 .form {
   position: relative;
   left: 37%;
