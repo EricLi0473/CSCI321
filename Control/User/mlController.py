@@ -54,7 +54,6 @@ class MlController:
             RequestRecord().storeRequestRecord(hashlib.md5(inputApikey.encode()).hexdigest(), tickerSymbol, timeFrame, modelName, layersNum, neuronsPerLayer, forecastResult)
             ApiKey().apiKeyUsageCountPlusOne(hashlib.md5(inputApikey.encode()).hexdigest())
             return forecastResult
-            # return inputApikey+tickerSymbol+modelName+timeFrame+layersNum+neuronsPerLayer
         except Exception as e:
             raise e
 
@@ -65,12 +64,12 @@ class MlController:
             neuronsPerLayer=int(neuronsPerLayer)
             if ApiKey().verifyAnApiKey(hashlib.md5(inputApikey.encode()).hexdigest()) is False:
                 raise Exception("Invalid API Key")
-            df["Date"] = pd.to_datetime(self.df["Date"])
+            df["Date"] = pd.to_datetime(df["Date"])
             df.set_index("Date", inplace=True)
             if modelName.lower() == 'lr':
-                forecastResult =  LinearRegression_Model(df,timeFrame,layersNum,neuronsPerLayer).predict_stock_price()
+                forecastResult =  LinearRegression_Model(tickerSymbol,df,timeFrame,layersNum,neuronsPerLayer).predict_stock_price()
             elif modelName.lower() == 'lstm':
-                forecastResult = LSTM_Model(df,timeFrame,layersNum,neuronsPerLayer).predict()
+                forecastResult = LSTM_Model(tickerSymbol,df,timeFrame,layersNum,neuronsPerLayer).predict()
             RequestRecord().storeRequestRecord(hashlib.md5(inputApikey.encode()).hexdigest(), tickerSymbol, timeFrame, modelName, layersNum, neuronsPerLayer, forecastResult)
             ApiKey().apiKeyUsageCountPlusOne(hashlib.md5(inputApikey.encode()).hexdigest())
             return forecastResult

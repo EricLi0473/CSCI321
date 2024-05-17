@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search</title>
     <link rel="stylesheet" href="../../../static/UserSystem/SearchPage.css"  >
-    <script src="../../../static/UserSystem/SearchPage.js"></script>
+<!--    <script src="../../../static/UserSystem/SearchPage.js"></script>-->
 </head>
 
 <body>
@@ -19,7 +19,7 @@
         </ul>
     </nav>
 </header>
-<form action="/getPredictionResult" method="post" >
+<form action="/getPredictionResult" method="post" enctype="multipart/form-data">
       <div class="web-description1">
       <img class="img" id="lsmImage" src="../../../static/resource/Linear.png" style="display: block;">
       <img class="img" id="linearImage" src="https://editor.analyticsvidhya.com/uploads/71819Screenshot%202021-01-19%20at%2011.41.29%20PM.png" style="display: none;">
@@ -40,14 +40,13 @@
   </label>
 </div>
 
-      <p class="p-set">Pleaase Select Prediction Period:</p>
+      <p class="p-set">Please Select Prediction Period:</p>
       <div class="line" id="line">
       <div class="handle" id="handle"></div>
       <div class="number" id="number">1</div>
       <span class="days">Days</span>
           <input type="hidden" id="timeFrame" name="timeFrame" value="1">
   </div>
-    <script src="../../../static/UserSystem/script.js"></script>
           <div class="layer">
               <p>Please Select Layer and Neuron</p>
               <label for="Layer" class="layerType">Number of Layer:</label>
@@ -80,15 +79,15 @@
 <img class="img2" src="../../../static/resource/Logo.svg"><br><br><br>
 <input class="ApiKeyInput" placeholder="API key here..." name="apikey"><br><br><br>
 <div class="search">
-  <input placeholder="Search stock..." type="text" name="tickerSymbol">
+  <input placeholder="Type your ticker..." type="text" name="tickerSymbol" id="tickerSymbol">
   <button type="submit">Get Predict</button><br><br><br><br>
-  <input type="file" id="fileInput" name="file" class="button1">
+  <input type="file" name="file" class="button1" accept=".csv" id="fileInput">
 </div>
 </div>
 </form>
 
 
-
+<script src="../../../static/UserSystem/SearchPage.js"></script>
 
 </body>
 

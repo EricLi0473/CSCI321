@@ -89,20 +89,17 @@ def getPredictionResult():
     timeFrame = request.form.get('timeFrame')
     layers = request.form.get('layers')
     neurons = request.form.get('neurons')
-    file = request.files.get('file')
-    df = pd.read_csv(file)
-    print(df.head())
-    # if file:
-    #     try:
-    #
-    #         valid, message = UploadFileController().checkUploadDataFormat(df)
-    #         if not valid:
-    #             return jsonify(success=False, error=message)
-    #     except Exception as e:
-    #         return jsonify(success=False, error=str(e))
+    file = request.files['file']
     try:
-    # result = MlController().getMLResultByParameters(apikey,tickerSymbol,modelName,timeFrame,layers,neurons)
-        result = MlController().getMLResultByParameters(apikey, tickerSymbol, modelName, timeFrame, layers, neurons)
+        if file:
+            df = pd.read_csv(file)
+            is_valid, message = UploadFileController().checkUploadDataFormat(df)
+            if is_valid:
+                result = MlController().getMLResultByUploadData(df,apikey,file.filename[:-4],modelName,timeFrame,layers,neurons)
+            else:
+                return jsonify(success=False, error=str(message))
+        else:
+            result = MlController().getMLResultByParameters(apikey, tickerSymbol, modelName, timeFrame, layers, neurons)
         resultDict = json.loads(result)
         return jsonify(success=True, result=resultDict)
     except Exception as e:
