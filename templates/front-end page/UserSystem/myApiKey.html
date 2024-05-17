@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>myeApiKey</title>
+</head>
+<style>
+    body{
+   background-color:rgb(83, 83, 83);
+}
+
+header {
+   color: #fff;
+   padding: 50px 0;
+   position: fixed;
+   width: 100%;
+   top: 0;
+   z-index: 999;
+   caret-color: transparent;
+}
+
+nav ul {
+   list-style-type: none;
+   margin: 0;
+   padding: 0;
+}
+
+nav ul li {
+   display: inline;
+   margin-right: 50px;
+}
+
+nav ul li a {
+   color: #fff;
+   text-decoration: none;
+   font-size: 28px;
+}
+
+.info{
+    position: relative;
+    top: 300px;
+    text-align: center;
+    height: 500px;
+    color: white;
+}
+.copy-icon {
+    margin-left: 10px;
+    cursor: pointer;
+}
+.copy-icon img {
+    position: relative;
+    left: 190px;
+    bottom: 30px;
+    width: 24px;
+    height: 24px;
+}
+.button1 {
+    position: relative;
+    top: 20px;
+  font-size: 17px;
+  padding: 0.5em 2em;
+  border: transparent;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.4);
+  background: dodgerblue;
+  color: white;
+  border-radius: 4px;
+
+ }
+ .button1:hover {
+  background: rgb(2,0,36);
+  background: linear-gradient(90deg, rgba(30,144,255,1) 0%, rgba(0,212,255,1) 100%);
+ }
+
+ .button1:active {
+  transform: translate(0em, 0.2em);
+ }
+</style>
+<body>
+<header>
+        <nav>
+            <ul>
+                <li><a href="/" style="margin-left: 10%;">Stock APP</a></li>
+                <li><a href="DocumentPage" style="margin-left:40%;">API Documentation</a></li>
+                <li><a href="ViewerPage">API viewer</a></li>
+                <li><a href="SearchPage">Predition</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="info">
+        <h1>
+        Here is your new API Key:
+        </h1>
+        <br>
+        <div class="apikey-container">
+            <h1 style="font-size: 30px; margin: 0;"><i><u id="apikey">{{ apikey }}</u></i></h1>
+            <span class="copy-icon">
+                <img src="/static/resource/copyApiKey.svg" alt="Copy API Key" onclick="copyApiKey()">
+            </span>
+        </div>
+        <button class="button1" ><a href="SearchPage" style="text-decoration: none;">Got it!</a></button>
+    </div>
+    <script>
+        function copyApiKey() {
+            const apiKeyElement = document.getElementById('apikey');
+            const apiKey = apiKeyElement.textContent;
+            const textArea = document.createElement('textarea');
+            textArea.value = apiKey;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('API key copied to clipboard!');
+            } catch (err) {
+                console.error('Failed to copy API key: ', err);
+            }
+            document.body.removeChild(textArea);
+        }
+        </script>
+</body>
+</html>

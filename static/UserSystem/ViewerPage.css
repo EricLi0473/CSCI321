@@ -170,4 +170,10 @@
   .shape {
    fill: #0E1822;
   }
+
+  form{
+      position: relative;
+      left: 115px;
+      top: 50px;
+  }
   

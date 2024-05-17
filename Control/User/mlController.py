@@ -29,7 +29,7 @@ class MlController:
     def get_stock_data(symbol) -> pd.DataFrame or Exception:
         try:
             end_date = datetime.today().date()
-            start_date = (end_date - timedelta(days=365 * 5))
+            start_date = (end_date - timedelta(days=365 * 1))
             df = yf.download(symbol, start=start_date, end=end_date)
             all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
             df = df.reindex(all_dates)
@@ -48,12 +48,13 @@ class MlController:
             MlController.verifyTickerSymbol(tickerSymbol)
             df = MlController.get_stock_data(tickerSymbol)
             if modelName.lower() == 'lr':
-                forecastResult =  LinearRegression_Model(df,timeFrame,layersNum,neuronsPerLayer).predict_stock_price()
+                forecastResult =  LinearRegression_Model(tickerSymbol,df,timeFrame,layersNum,neuronsPerLayer).predict_stock_price()
             elif modelName.lower() == 'lstm':
-                forecastResult = LSTM_Model(df,timeFrame,layersNum,neuronsPerLayer).predict()
+                forecastResult = LSTM_Model(tickerSymbol,df,timeFrame,layersNum,neuronsPerLayer).predict()
             RequestRecord().storeRequestRecord(hashlib.md5(inputApikey.encode()).hexdigest(), tickerSymbol, timeFrame, modelName, layersNum, neuronsPerLayer, forecastResult)
             ApiKey().apiKeyUsageCountPlusOne(hashlib.md5(inputApikey.encode()).hexdigest())
             return forecastResult
+            # return inputApikey+tickerSymbol+modelName+timeFrame+layersNum+neuronsPerLayer
         except Exception as e:
             raise e
 

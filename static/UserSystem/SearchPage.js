@@ -8,16 +8,39 @@ function showImage(algorithm) {
     svmImage.style.display = 'none';
 
     switch (algorithm) {
-      case 'LSM':
+      case 'LR':
         lsmImage.style.display = 'block';
         break;
-      case 'Linear':
+      case 'LSTM':
         linearImage.style.display = 'block';
         break;
-      case 'SVM':
+      case 'GRU':
         svmImage.style.display = 'block';
         break;
       default:
         break;
     }
   }
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(form);
+
+        fetch('/getPredictionResult', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // 处理成功的情况，例如显示结果
+                console.log('Prediction result:', data.result);
+            } else {
+                // 显示错误信息
+                alert(data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
