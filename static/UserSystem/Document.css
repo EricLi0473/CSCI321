@@ -3,29 +3,29 @@ body{
  }
 
  header {
-    color: #fff; 
-    padding: 50px 0; 
-    position: fixed;
-    width: 100%; 
-    top: 0; 
-    z-index: 999; 
+    color: #fff;
+    padding: 50px 0;
+    position: absolute;
+    width: 95%;
+    top: 0;
+    z-index: 999;
     caret-color: transparent;
  }
- 
+
  nav ul {
-    list-style-type: none; 
-    margin: 0; 
-    padding: 0; 
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
  }
- 
+
  nav ul li {
-    display: inline; 
-    margin-right: 50px; 
+    display: inline;
+    margin-right: 50px;
  }
- 
+
  nav ul li a {
-    color: #fff; 
-    text-decoration: none; 
+    color: #fff;
+    text-decoration: none;
     font-size: 28px;
  }
  
@@ -40,8 +40,28 @@ body{
 
  .h-set{
     font-size: 40px;
+     border-bottom: 2px solid white;
+     height: 80px;
  }
 
  .p-set{
-    font-size: 23px;
+    font-size: 24px;
+     position: relative;
+            padding-left: 20px; /* Add padding to create space between border and text */
+            margin: 20px 0;
  }
+
+ .p-set::before{
+     content: '';
+     position: absolute;
+     left: 0;
+     top: 10px; /* Adjust this to set the starting point */
+     bottom: 10px; /* Adjust this to set the ending point */
+     width: 8px;
+     background-color: white;
+ }
+
+
+.p-set-text{
+    font-size: 18px;
+}

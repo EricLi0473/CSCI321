@@ -33,7 +33,11 @@ header {
     font-size: 28px;
  }
  
+.p1text{
+    position: relative;
+    background-color: red;
 
+}
 
 .input {
     position: fixed;
