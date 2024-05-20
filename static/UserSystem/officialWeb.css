@@ -1,5 +1,5 @@
 body{
-    background-color: #323232;
+    background-color: #1e1e1e;
 }
 
 header {
@@ -10,7 +10,7 @@ header {
     width: 85%; 
     top: 20px; 
     left: 200px;
-    z-index: 999; 
+    z-index: 1;
     caret-color: transparent;
     background-color: rgba(128, 124, 124, 0.411);
     border-radius: 20px;
@@ -35,8 +35,13 @@ header {
  
 .p1text{
     position: relative;
-    background-color: red;
-
+    bottom: 800px;
+    z-index: 2;
+    text-align: center;
+    width: 80%;
+    left: 200px;
+    font-size: 25px;
+    color: white;
 }
 
 .input {
@@ -128,7 +133,7 @@ header {
   position: relative;
   top: 200px;
   width: 45%;
-  height: 50vh;
+  height: 60vh;
   left: 52%;
 }
 
@@ -136,7 +141,7 @@ header {
   position: relative;
   top: 10px;
   width: 100%;
-  height: 100vh;
+  height: 120vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -144,16 +149,167 @@ header {
 }
 
 .p2text{
-  position: relative;
-  width: 40%;
-  height: 50vh;
-  left: 9%;
-  bottom: 280px;
+   position: relative;
+   left: 9%;
+   color: white;
+   bottom: 50px;
 }
 
 .vertical-line {
   position: absolute;
-  top: 0;
-  border-left: 2px solid white;
+  border-left: 4px solid white;
   height: 10vh;
+}
+
+.position3{
+    position: relative;
+    width: 80%;
+    height: 50vh;
+    bottom: 450px;
+    left: 200px;
+}
+
+.img-set{
+    width: 100px;
+}
+.img-set2{
+    position: relative;
+    width: 100px;
+    bottom: 60px;
+}
+.img-set3{
+    position: relative;
+    width: 100px;
+    bottom: 120px;
+}
+
+.p3text{
+    position: relative;
+    left: 120px;
+    bottom: 120px;
+    color: white;
+    font-size: 20px;
+}
+.p4text{
+    position: relative;
+    left: 120px;
+    bottom: 170px;
+    color: white;
+    font-size: 20px;
+}
+.p5text{
+    position: relative;
+    left: 120px;
+    bottom: 220px;
+    color: white;
+    font-size: 20px;
+}
+
+.area1{
+    text-align: center;
+    position: relative;
+    bottom: 1000px;
+}
+
+.area2{
+    position: relative;
+    padding-left: 140px;
+    bottom: 900px;
+}
+.img-set4{
+    width: 500px;
+}
+.area3{
+    background-color: rgba(0, 0, 0, 0.5);
+    position: relative;
+    width: 24.5%;
+    height: 320px;
+    left: 140px;
+    bottom: 920px;
+}
+.area4{
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 24.5%;
+    height: 320px;
+    left: 784px;
+    bottom: 920px;
+}
+.area5{
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 24.5%;
+    height: 320px;
+    left: 1430px;
+    bottom: 920px;
+}
+
+.text-set1{
+    text-align: center;
+    color: white;
+}
+
+.text-set1-1{
+    text-align: center;
+    color: white;
+    position: relative;
+    top: 20px;
+}
+
+.text-set2{
+    text-align: center;
+    color: white;
+}
+
+.text-set2::after {
+    content: "";
+    display: block;
+    width: 50%; /* 或者你想要的具体长度 */
+    border-bottom: 2px solid white;
+    margin: 0 auto; /* 居中对齐 */
+    position: absolute;
+    bottom: 215px; /* 根据需要调整位置 */
+    left: 0;
+    right: 0;
+}
+
+.text-set2-1{
+    text-align: center;
+    color: white;
+    position: relative;
+    top: 25px;
+}
+.text-set2-1::after {
+    content: "";
+    display: block;
+    width: 50%; /* 或者你想要的具体长度 */
+    border-bottom: 2px solid white;
+    margin: 0 auto; /* 居中对齐 */
+    bottom: 230px; /* 根据需要调整位置 */
+    left: 0;
+    right: 0;
+}
+
+.p6text{
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    position: relative;
+    top: 30px;
+}
+
+.p7text{
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    position: relative;
+    top: 10px;
+}
+
+.p8text{
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    position: relative;
+    top: 10px;
 }
