@@ -141,7 +141,7 @@ header {
   position: relative;
   top: 10px;
   width: 100%;
-  height: 120vh;
+  height: 90vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -208,7 +208,7 @@ header {
 .area1{
     text-align: center;
     position: relative;
-    bottom: 1000px;
+    bottom: 800px;
 }
 
 .area2{
@@ -220,55 +220,44 @@ header {
     width: 500px;
 }
 .area3{
-    background-color: rgba(0, 0, 0, 0.5);
-    position: relative;
-    width: 24.5%;
-    height: 320px;
-    left: 140px;
-    bottom: 920px;
+    background-color: rgb(255, 255, 255);
+    position: absolute;
+    width: 21.5%;
+    height: 400px;
+    left: 180px;
+    bottom: 300px;
 }
 .area4{
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgb(255, 255, 255);
     position: absolute;
-    width: 24.5%;
-    height: 320px;
-    left: 784px;
-    bottom: 920px;
+    width: 21.5%;
+    height: 400px;
+    left: 824px;
+    bottom: 300px;
 }
 .area5{
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgb(255, 255, 255);
     position: absolute;
-    width: 24.5%;
-    height: 320px;
-    left: 1430px;
-    bottom: 920px;
+    width: 21.5%;
+    height: 400px;
+    left: 1470px;
+    bottom: 300px;
 }
 
 .text-set1{
     text-align: center;
-    color: white;
+    color: #000000;
+    font-size: 32px;
+    font-family: "Arial Bold", "Arial Normal", "Arial", sans-serif;
 }
-
-.text-set1-1{
-    text-align: center;
-    color: white;
-    position: relative;
-    top: 20px;
-}
-
-.text-set2{
-    text-align: center;
-    color: white;
-}
-
-.text-set2::after {
+.text-set1::after {
     content: "";
     display: block;
-    width: 50%; /* 或者你想要的具体长度 */
-    border-bottom: 2px solid white;
+    width: 70%; /* 或者你想要的具体长度 */
+    border-bottom: 1px solid #000000;
     margin: 0 auto; /* 居中对齐 */
     position: absolute;
-    bottom: 215px; /* 根据需要调整位置 */
+    bottom: 330px; /* 根据需要调整位置 */
     left: 0;
     right: 0;
 }
@@ -291,25 +280,28 @@ header {
 }
 
 .p6text{
-    text-align: center;
-    color: white;
+    text-align: left;
+    color: #000000;
     font-size: 20px;
     position: relative;
-    top: 30px;
+    left: 50px;
 }
 
 .p7text{
-    text-align: center;
-    color: white;
+    font-family: "Arial Bold", "Arial Normal", "Arial", sans-serif;
     font-size: 20px;
-    position: relative;
-    top: 10px;
+    position: absolute;
+    top: 280px;
+    left: 70px;
 }
 
-.p8text{
-    text-align: center;
-    color: white;
-    font-size: 20px;
+.bottomInfo{
     position: relative;
-    top: 10px;
+    padding: 30px;
+    top: -120px;
+    left: 200px;
+    border-top: 2px solid white;
+    width: 80%;
+    font-size: 24px;
+    color: white;
 }
