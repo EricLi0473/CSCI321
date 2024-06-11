@@ -3,45 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>adminLoginPage</title>
+    <title>Stock App Login</title>
     <link rel="stylesheet" href="../../../static/adminSystem/adminLogin.css" >
+    <style>
+        body {
+            background-image: url('../../../static/resource/bck_city.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+    </style>
 </head>
-
-
-
 <body>
-  <p class="p1">Stock App</p>
-  <form class="form"><br>
-    <p class="form-title">Admin/Data Manager Login</p>
-    <p class="signup-link">
-     </p>
-      <form>
-     <div class="input-container">
-
-      <label >
-        User Name
-      </label>
-       <input type="account">
-       <span>
-       </span>
-   </div>
-   <div class="input-container">
-    <label style="position: absolute; top: 0px;">
-      Password
-    </label>
-       <input type="password" style="position: relative; top: 20px;">
-     </div>
-     <label class="checkbox-container">
-      <input type="radio" name="gender" value="male">
-      <span class="checkmark"></span> Remember me?
-    </label>
-    <a href="adminMainPage.html">
-      <button class="submit">Sign in</button>
-    </a>
-      </form>
-
-   
-</form>
-
+<nav>
+        <ul>
+            <li><img src="../../../static/resource/replace.png" style="position: relative; left: 20px;"></li>
+            <li><a href="" style="position: relative; top: -20px;">StockFrocast</a></li>
+            <li><a href="#planPosition" style="margin-left:40%; position: relative; top: -20px;">Plan</a></li>
+            <li><a href="" style="position: relative; top: -20px;">Contact US</a></li>
+            <li><a href="../../../templates/front-end%20page/adminSystem/adminLoginPage.html" style="position: relative; top: -20px;">Login/Sign up</a></li>
+        </ul>
+    </nav>
+    <div class="container">
+        <p class="p1">Sign in</p>
+        <form class="form">
+            <p class="form-title">If you have an account,  please log in here.</p>
+            <p class="form-title2">Don't have an account?  <a href="adminRegister.html">sign up</a></p>
+            <div class="input-container">
+                <label for="username">User Name</label>
+                <input type="text" id="username" name="username">
+            </div>
+            <div class="input-container">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <div class="checkbox-container">
+                <input type="checkbox" id="remember" name="remember">
+                <label for="remember">Remember me?</label>
+            </div>
+            <a href="adminMainPage.html">
+                <button type="button" class="submit">Sign in</button>
+            </a>
+        </form>
+    </div>
 </body>
 </html>
