@@ -37,14 +37,42 @@ nav ul li a {
    height: 600px;
    margin-left: 20%;
    color: #000000;
+    left: 200px;
 }
 
 .h-set{
    position: relative;
     left: 50px;
     top: -80px;
+    font-size: 28px;
 }
-
+.inputPosition{
+    position: relative;
+    left: 50px;
+    top: -80px;
+}
+.input-set{
+    width: 300px;
+    height: 70px;
+    border-radius: 10px;
+    font-size: 20px;
+}
+.input-set2{
+    width: 620px;
+    height: 300px;
+    border-radius: 10px;
+    font-size: 20px;
+}
+.static-text{
+    position: absolute;
+    left: 10px;
+    top: 5px;
+}
+.static-text2{
+    position: absolute;
+    left:330px;
+    top: 5px;
+}
 .p-set{
    position: relative; 
    top: 100px; 
