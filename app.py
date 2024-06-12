@@ -15,19 +15,19 @@ app.static_folder = 'static'
 
 @app.route('/')
 def main():
-    return render_template('front-end page/UserSystem/MainPage.html')
+    return render_template('front-end page/UserSystem/')
 
 @app.route('/DocumentPage')
 def document_page():
-    return render_template('front-end page/UserSystem/DocumentPage.html')
+    return render_template('front-end page/UserSystem/')
 
 @app.route('/ViewerPage')
 def viewerPage():
-    return render_template('front-end page/UserSystem/ViewerPage.html')
+    return render_template('front-end page/UserSystem/')
 
 @app.route('/SearchPage')
 def searchPage():
-    return render_template('front-end page/UserSystem/SearchPage.html')
+    return render_template('front-end page/UserSystem/')
 
 @app.route('/admin')
 def adminLoginPage():
@@ -35,11 +35,11 @@ def adminLoginPage():
 
 @app.route('/adminRegister')
 def adminRegisterPage():
-    return render_template('front-end page/adminSystem/adminRegister.html')
+    return render_template('front-end page/adminSystem/')
 
 @app.route('/adminMain')
 def adminMainPage():
-    return render_template('front-end page/adminSystem/adminMainPage.html')
+    return render_template('front-end page/adminSystem/')
 
 @app.errorhandler(400)
 def bad_request_error(error):
@@ -79,7 +79,7 @@ def get_api_key():
     user_name = request.form.get('userName')
 
     apikey = GenerateApiKeyController().generateApiKey(user_type, user_name)
-    return render_template('front-end page/UserSystem/myApiKey.html', apikey=apikey)
+    return render_template('front-end page/UserSystem/', apikey=apikey)
 
 @app.route('/getPredictionResult', methods=['POST'])
 def getPredictionResult():
