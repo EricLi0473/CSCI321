@@ -12,6 +12,9 @@ class Account:
         self.accountStatus = accountStatus
         self.accountCreateDate = accountCreateDate
         self.keyHashedValue = keyHashedValue
+
+
+
     def connectToDatabase(self):
         return mysql.connector.connect(
             host="154.64.252.69",
@@ -19,6 +22,24 @@ class Account:
             password="csci321fyp",
             database="csci321"
         )
+
+    def getTheProfile(self, userName):
+        mydb = self.connectToDatabase()
+        sql = "SELECT profile FROM individualaccount WHERE userName = %s "
+        val = (userName,)
+        cursor = mydb.cursor()
+        cursor.execute(sql, val)
+        if cursor.fetchone() is None:
+            sql = "SELECT profile FROM businessaccount WHERE userName = %s "
+            cursor.execute(sql, val)
+            result = cursor.fetchone()
+            cursor.close()
+            if cursor.fetchone() is None:
+                return None
+            else:
+                return 'business'
+        cursor.close()
+        return 'individual'
 
     def verifyAccount(self, accountName, accountHashPassword) -> bool and str:
         mydb = self.connectToDatabase()
@@ -116,5 +137,4 @@ class Account:
             return False, "Account creation failed, check your key value."
         else:
             return True, "Account created"
-# print(Account().verifyAccount("test","test"))
-# Account().updateAccount(1,'test','test','test','test','invalid')
+

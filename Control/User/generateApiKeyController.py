@@ -10,9 +10,9 @@ class GenerateApiKeyController:
     Store (hashed_api_key, keyOwnerName, keyOwnerOccupation):string into db
     '''''
     def generateApiKey(self,keyOwnerName,keyOwnerOccupation) -> str:
-        # api_key = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(16))
-        # hashed_api_key = hashlib.md5(api_key.encode()).hexdigest()
-        # ApiKey().storeAnApiKey(hashed_api_key, keyOwnerName, keyOwnerOccupation)
-        return "BYEEDmE66M7LV1xQ"
+        api_key = ''.join(secrets.choice(string.ascii_letters + string.digits) for i in range(16))
+        hashed_api_key = hashlib.md5(api_key.encode()).hexdigest()
+        ApiKey().storeAnApiKey(hashed_api_key, keyOwnerName, keyOwnerOccupation)
+        return
 
 # print(GenerateApiKeyController().generateApiKey('admin', 'admin'))

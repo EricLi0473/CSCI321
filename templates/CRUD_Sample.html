@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vue CRUD with Flask</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>Item List</h1>
+    <ul>
+      <li v-for="(item, index) in items" :key="index">
+        [[item.name]]
+        <button @click="deleteItem(index)">Delete</button>
+      </li>
+    </ul>
+    <input v-model="newItemName" placeholder="New item name">
+    <button @click="addItem">Add Item</button>
+  </div>
+
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+      data: {
+        items: [],
+        newItemName: ''
+      },
+      methods: {
+        fetchItems() {
+          axios.get('/items')
+            .then(response => {
+              this.items = response.data;
+            });
+        },
+        addItem() {
+          const newItem = { name: this.newItemName };
+          axios.post('/items', newItem)
+            .then(response => {
+              this.items.push(response.data);
+              this.newItemName = '';
+            });
+        },
+        deleteItem(index) {
+          axios.delete(`/items/${index}`)
+            .then(response => {
+              this.items.splice(index, 1);
+            });
+        }
+      },
+      created() {
+        this.fetchItems();
+      }
+    });
+  </script>
+</body>
+</html>

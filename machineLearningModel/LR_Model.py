@@ -81,8 +81,8 @@ class LinearRegression_Model:
         return predictions_df
     
 
-lr = LinearRegression_Model()
-result = lr.getStockPrediction(getStockByTickerSymbol("AAPL"),100)
-# print(result)
-### transfer to json string
-print(result.to_json(date_format='iso').replace('T00:00:00.000', ''))
+# lr = LinearRegression_Model()
+# result = lr.getStockPrediction(getStockByTickerSymbol("AAPL"),100)
+# # print(result)
+# ### transfer to json string
+# print(result.to_json(date_format='iso').replace('T00:00:00.000', ''))

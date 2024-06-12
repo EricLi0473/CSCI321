@@ -83,7 +83,7 @@
                 },
                 success: function(response) {
                     $("#loading").hide();  // 隐藏加载动画
-                    $("#result").show().html('<pre>' + JSON.stringify(response, null, 2) + '</pre>');  // 显示结果
+                    $("#result").show().html(JSON.stringify(response));  // 显示结果
                 },
                 error: function(xhr, status, error) {
                     $("#loading").hide();  // 隐藏加载动画

@@ -29,7 +29,7 @@ class MlController:
     def get_stock_data(symbol) -> pd.DataFrame or Exception:
         try:
             end_date = datetime.today().date()
-            start_date = (end_date - timedelta(days=365 * 1))
+            start_date = (end_date - timedelta(days=365 * 5))
             df = yf.download(symbol, start=start_date, end=end_date)
             all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
             df = df.reindex(all_dates)

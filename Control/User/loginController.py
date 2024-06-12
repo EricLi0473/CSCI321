@@ -1,20 +1,18 @@
 import hashlib
 from Entity.account import *
-
+from Entity.businessAccount import *
+from Entity.individualAccount import *
 
 class LoginController:
     def __init__(self):
         pass
-    '''''
-    return ('True',Account:Object)  or ('False',"reason":str)
-    '''''
-    def verifyAccount(self,accountName,accountPassword) -> bool and str:
-        return Account().verifyAccount(accountName,hashlib.md5(accountPassword.encode()).hexdigest())
 
-
-# verify =  LoginController().verifyAccount("li","123456")
-# if verify[0]:
-#     print("Login Successful")
-# elif verify[0] is False:
-#     print(verify[1])
-
+    def login(self,username,password) -> dict or Exception:
+        password = hashlib.md5(password.encode()).hexdigest()
+        profile = Account().getTheProfile(username)
+        if profile is None:
+            raise Exception("Account not found")
+        elif profile == 'individual':
+            return IndividualAccount().verifyAccount(username,password)
+        elif profile == 'business':
+            return BusinessAccount().verifyAccount(username,password)

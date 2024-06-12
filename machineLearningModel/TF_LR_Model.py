@@ -15,7 +15,7 @@ class LinearRegression_Model:
     def get_stock_data(symbol):
         try:
             end_date = datetime.today().date()
-            start_date = (end_date - timedelta(days=365 * 50))
+            start_date = (end_date - timedelta(days=365 * 5))
             df = yf.download(symbol, start=start_date, end=end_date)
             all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
             df = df.reindex(all_dates)
@@ -56,53 +56,56 @@ class LinearRegression_Model:
 
     # Forecasting stock prices
     def predict_stock_price(self):
-        try:
-            # Prepare data
-            df = self.df
+        # Prepare data
+        X, y = self.prepare_data()
 
-            if len(df) < 3650:
-                batch_size = 32
-            elif len(df) < 7300:
-                batch_size = 64
+        # Delineate training and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+        # Modelling
+        input_shape = (X_train.shape[1],)
+        model = self.build_model(input_shape)
+
+        # Training models
+        model.fit(X_train, y_train, epochs=10, batch_size=1, validation_data=(X_test, y_test), verbose=1)
+
+        # Assessment models
+        loss = model.evaluate(X_test, y_test, verbose=0)
+        print("Test Loss:", loss)
+
+        # Make projections
+        predictions = model.predict(X[-self.forecast_out:])
+        # forecast_set = forecast_set.flatten()
+        future_dates = pd.date_range(start=df.index[-1], periods=self.forecast_out + 1)[1:]
+
+        future_df = pd.DataFrame(
+            {'Date': future_dates, 'Predicted': predictions[:, 0]})
+        future_df.set_index('Date', inplace=True)
+        window_size = 5
+        future_df['SMA'] = future_df['Predicted'].rolling(window=window_size).mean()
+
+        def generate_recommendation(row):
+            if row['Predicted'] > row['SMA']:
+                return 'Buy'
+            elif row['Predicted'] < row['SMA']:
+                return 'Sell'
             else:
-                batch_size = 128
+                return 'Hold'
 
-            X, y = self.prepare_data()
+        future_df['Recommendation'] = future_df.apply(generate_recommendation, axis=1)
+        future_df = future_df.reset_index()
+        future_df['Date'] = future_df['Date'].dt.strftime('%Y-%m-%d')
+        result = future_df[['Date', 'Predicted', 'Recommendation']].to_dict(orient='records')
 
-            # Delineate training and test sets
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        return result
 
-            # Modelling
-            input_shape = (X_train.shape[1],)
-            model = self.build_model(input_shape)
-
-            # Training models
-            model.fit(X_train, y_train, epochs=100, batch_size=batch_size, validation_data=(X_test, y_test), verbose=1)
-
-            # Assessment models
-            loss = model.evaluate(X_test, y_test, verbose=0)
-            print("Test Loss:", loss)
-
-            # Make projections
-            forecast_set = model.predict(X[-self.forecast_out:])
-            forecast_set = forecast_set.flatten()
-
-            future_dates = pd.date_range(start=df.index[-1], periods=self.forecast_out + 1)[1:]
-
-            # Combine dates and predictions into a DataFrame
-            predictions_df = pd.DataFrame({'Date': future_dates, f'TF_LR Predicted Price for {self.tickerSymbol}': forecast_set})
-            predictions_df.set_index('Date', inplace=True)
-            json_string = predictions_df.to_json(date_format='iso').replace('T00:00:00.000', '')
-        except Exception as e:
-            raise e
-        return json_string
 
 # Examples of use
-# symbol = "bili"
+# symbol = "aapl"
 # forecast_out = 5
-# layersNum = 3
-# neuronsNum = 8
+# layersNum = 4
+# neuronsNum = 16
 #
 # df = LinearRegression_Model.get_stock_data(symbol)
-# forecast_prices = LinearRegression_Model(df, forecast_out, layersNum, neuronsNum).predict_stock_price()
+# forecast_prices = LinearRegression_Model('aapl',df, forecast_out, layersNum, neuronsNum).predict_stock_price()
 # print(forecast_prices)

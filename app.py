@@ -105,5 +105,40 @@ def getPredictionResult():
     except Exception as e:
         return jsonify(success=False, error=str(e))
 
+## crud sample
+items = []
+
+@app.route('/crudSample', methods=['GET'])
+def crudSample():
+    return render_template("CRUD_Sample.html")
+@app.route('/items', methods=['GET'])
+def get_items():
+    return jsonify(items)
+
+@app.route('/items', methods=['POST'])
+def add_item():
+    item = request.json
+    items.append(item)
+    return jsonify(item), 201
+
+@app.route('/items/<int:item_id>', methods=['PUT'])
+def update_item(item_id):
+    item = request.json
+    if 0 <= item_id < len(items):
+        items[item_id] = item
+        return jsonify(item)
+    else:
+        return jsonify({"error": "Item not found"}), 404
+
+@app.route('/items/<int:item_id>', methods=['DELETE'])
+def delete_item(item_id):
+    if 0 <= item_id < len(items):
+        removed_item = items.pop(item_id)
+        return jsonify(removed_item)
+    else:
+        return jsonify({"error": "Item not found"}), 404
+
+## sample end
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80,debug=True)
