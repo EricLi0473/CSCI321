@@ -8,6 +8,8 @@ class LoginController:
         pass
 
     def login(self,username,password) -> dict or Exception:
+        if username is None or password is None:
+            raise Exception('please enter both username and password')
         password = hashlib.md5(password.encode()).hexdigest()
         profile = Account().getTheProfile(username)
         if profile is None:
@@ -16,3 +18,4 @@ class LoginController:
             return IndividualAccount().verifyAccount(username,password)
         elif profile == 'business':
             return BusinessAccount().verifyAccount(username,password)
+

@@ -34,7 +34,7 @@ class Account:
             cursor.execute(sql, val)
             result = cursor.fetchone()
             cursor.close()
-            if cursor.fetchone() is None:
+            if result is None:
                 return None
             else:
                 return 'business'
