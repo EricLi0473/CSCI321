@@ -26,6 +26,10 @@ def login():
     except Exception as e:
         return jsonify({'success':False,'error':str(e)})
 
+@app.route('/',methods=['GET'])
+def officialWeb():
+    return render_template("system/officialWeb.html")
+
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
