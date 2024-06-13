@@ -28,7 +28,7 @@ def login():
 
 @app.route('/',methods=['GET'])
 def officialWeb():
-    return render_template("system/officialWeb.html")
+    return render_template("system/OfficialWeb.html")
 
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
