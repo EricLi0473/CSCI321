@@ -9,6 +9,7 @@ from Control.User.uploadFileController import *
 import pandas as pd
 import json
 from Control.User.loginController import *
+from Control.User.SignupController import *
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -26,9 +27,29 @@ def login():
     except Exception as e:
         return jsonify({'success':False,'error':str(e)})
 
+@app.route('/signup',methods=['POST','GET'])
+def signup():
+    if request.method == 'GET':
+        return render_template("system/signup.html")
+    try:
+        data = request.json
+        SignupController().individualSignUp(data['profile'],data['username'],data['email'],data['password'],data['repassword'],data['invitationCode'])
+        return jsonify({'success':True})
+    except Exception as e:
+        return jsonify({'success':False,'error':str(e)})
+@app.route('/businesssignup',methods=['POST','GET'])
+def businesssignup():
+    if request.method == 'GET':
+        return render_template("system/businessSignup.html")
+    try:
+        data = request.json
+        pass
+    except Exception as e:
+        return jsonify({'success':False,'error':str(e)})
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/OfficialWeb.html")
+
 
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():

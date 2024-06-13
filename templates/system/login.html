@@ -10,7 +10,7 @@
     <title>login</title>
   </head>
   <header>
-      <div class="navbar bg-base-100 border-solid bg-base-300">
+      <div class="navbar bg-neutral text-neutral-content">
   <div class="navbar-start">
     <div class="dropdown">
       <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
@@ -28,27 +28,28 @@
         <li><a>Item 3</a></li>
       </ul>
     </div>
-    <a class="btn btn-ghost text-xl">daisyUI</a>
+    <a class="btn btn-ghost text-xl" href="/">Stock Forecast4.me</a>
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1 text-lg">
+      <li><a href="/">Main</a></li>
       <li><a>Plan</a></li>
-      <li><a>Contact me</a></li>
+      <li><a>ContactUs</a></li>
+      <li><a>Documentation</a></li>
     </ul>
   </div>
   <div class="navbar-end">
-    <a class="btn">Login/Logout</a>
   </div>
 </div>
 
   </header>
   <body>
 
-  <div class="card w-96 bg-base-100 shadow-xl card-compact mx-auto mt-8" id="app" style="margin-top: 12%" >
+  <div class="card w-96 bg-base-100 shadow-xl card-compact mx-auto" id="app" style="margin-top: 10%" >
 <div class="card-body items-center space-y-2">
   <h2 class="card-title">Login</h2>
   <p>If you have an account,  please log in here.</p>
-  <p class="text-slate-500">Don't have an account? <a class="text-cyan-700">Sign up</a></p>
+  <p class="text-slate-500">Don't have an account? <a class="text-cyan-700" href="/signup">Sign up</a></p>
   <label class="input input-bordered flex items-center gap-2">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
     <input type="text" class="grow w-max" placeholder="Username" v-model="username" />
@@ -66,6 +67,17 @@
     <div class="modal-action">
       <form method="dialog">
         <button class="btn bg-red-200">Enter Again</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+            <dialog id="SignupSuccess" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-sky-300">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[exception]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn bg-sky-100">OK</button>
       </form>
     </div>
   </div>
@@ -93,6 +105,13 @@
           username: null,
           password: null,
           exception : null
+        },
+        created() {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('message') && urlParams.get('message') === 'signup-success') {
+          this.exception = 'Sign up successful! Please log in.';
+          document.getElementById('SignupSuccess').showModal();
+          }
         },
         methods: {
           login() {
