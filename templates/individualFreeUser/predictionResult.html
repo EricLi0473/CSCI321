@@ -1,10 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>predictionResult</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Prediction Result</title>
+  </head>
+  <body>
+    <div id="app">
+      <!-- 导航栏 -->
+      <nav class="bg-white shadow-lg">
+        <div class="container mx-auto px-4">
+          <div class="flex items-center justify-between h-16">
+            <!-- 项目Logo和名字 -->
+            <div class="flex items-center">
+              <img class="h-14 w-14 object-cover" src="static/resource/LOGOS/(Small)BlackLogoWhiteBack.jpg" alt="Logo">
+              <span class="ml-2 text-xl font-bold">Stock Forecast</span>
+            </div>
+            <!-- 导航按钮 -->
+            <div class="flex space-x-8">
+              <a href="#" class="text-gray-700 hover:text-blue-500">Dashboard</a>
+              <a href="#" class="text-gray-700 hover:text-blue-500">Start Prediction</a>
+              <a href="#" class="text-blue-500 relative">
+                History
+                <span class="absolute left-0 right-0 -bottom-1 h-1 bg-blue-300"></span>
+              </a>
+            </div>
+            <!-- 用户信息和登出按钮 -->
+            <div class="flex items-center">
+              <!-- 用户信息 -->
+              <div class="flex items-center space-x-2">
+                <img class="h-8 w-8 rounded-full" src="path-to-user-avatar.png" alt="User Avatar">
+                <span class="text-gray-700">Free User</span>
+              </div>
+              <!-- 登出按钮 -->
+              <div class="ml-12">
+                <button class="text-gray-700 hover:text-blue-500">Log Out</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div class="container mx-auto px-4 mt-4">
+        <div class="flex items-center">
+          <span class="font-bold text-xl">Search a prediction history here</span>
+        </div>
+          <!-- 搜索栏 -->
+        <div class="flex space-x-4 mt-4">
+          <input type="text" placeholder="Enter Model" class="input input-bordered w-full max-w-xs" />
+          <input type="text" placeholder="Enter Period" class="input input-bordered w-full max-w-xs" />
+          <input type="text" placeholder="Enter Layers" class="input input-bordered w-full max-w-xs" />
+          <input type="text" placeholder="Enter Neurons" class="input input-bordered w-full max-w-xs" />
+          <input type="text" placeholder="Enter APIKey" class="input input-bordered w-full max-w-xs" />
+          <input type="text" placeholder="Enter Date" class="input input-bordered w-full max-w-xs" />
+          <button class="btn btn-outline">Search</button>
+        </div>
+      </div>
+      <!-- 表格 -->
+      <div class="container mx-auto px-4 mt-4">
+        <div class="overflow-x-auto">
+          <table class="table">
+            <!-- head -->
+            <thead>
+              <tr>
+                <th></th>
+                <th class="text-lg">Model Used</th>
+                <th class="text-lg">Prediction Period</th>
+                <th class="text-lg">Number of Layers</th>
+                <th class="text-lg">Number of Neurons</th>
+                <th class="text-lg">Hashed APIKey</th>
+                <th class="text-lg">Prediction Date</th>
+                <th class="text-lg">Operation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- row 1 -->
+              <tr class="bg-base-200">
+                <th>1</th>
+                <td>GRU</td>
+                <td>30 Days</td>
+                <td>10</td>
+                <td>32</td>
+                <td>hashed_api_key_example</td>
+                <td>2024-06-10</td>
+                <td>
+                  <button class="btn btn-outline btn-info">Edit</button>
+                  <button class="btn btn-outline btn-error">Delete</button>
+               </tr>
+              <!-- row 2 -->
+              <tr class="bg-base-200">
+                <th>2</th>
+                <td>LSTM</td>
+                <td>60 Days</td>
+                <td>2</td>
+                <td>8</td>
+                <td>hashed_api_key_example</td>
+                <td>2024-06-11</td>
+                <td>
+                  <button class="btn btn-outline btn-info">Edit</button>
+                  <button class="btn btn-outline btn-error">Delete</button>
+                </td>
+              </tr>
+              <!-- row 3 -->
+              <tr class="bg-base-200">
+                <th>3</th>
+                <td>SVM</td>
+                <td>15 Days</td>
+                <td>4</td>
+                <td>16</td>
+                <td>hashed_api_key_example</td>
+                <td>2024-06-12</td>
+                <td>
+                  <button class="btn btn-outline btn-info">Edit</button>
+                  <button class="btn btn-outline btn-error">Delete</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-</body>
+    <script>
+      new Vue({
+        el: '#app',
+        data: {
+
+        },
+        methods: {
+
+        }
+      });
+    </script>
+  </body>
 </html>
