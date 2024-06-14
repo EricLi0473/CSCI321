@@ -36,7 +36,6 @@ class BusinessAccount():
             if result['status'] == 'invalid':
                 raise Exception("Your account has been banned.")
             elif result['hashedPassword'] == HashPassword:
-                result['accountType'] = 'business'
                 return result
             elif result['hashedPassword'] != HashPassword:
                 raise Exception("incorrect password")

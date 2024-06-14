@@ -35,7 +35,6 @@ class IndividualAccount():
             if result['status'] == 'invalid':
                 raise Exception("Your account has been banned.")
             elif result['hashedPassword'] == HashPassword:
-                result['accountType'] = 'individual'
                 return result
             elif result['hashedPassword'] != HashPassword:
                 raise Exception("incorrect password")
@@ -50,4 +49,11 @@ class IndividualAccount():
         last_id = self.commit(sql, (userName, apikey, hashedPassword, email, profile))
         sql = "SELECT * FROM individualaccount WHERE accountId = %s"
         result = self.fetchOne(sql, (last_id,))
+        return result
+
+    def findOneAccount(self,accountId) -> dict or Exception:
+        sql = "SELECT * FROM individualaccount WHERE accountId = %s"
+        result = self.fetchOne(sql, (accountId,))
+        if not result:
+            raise Exception("Account does not exist")
         return result
