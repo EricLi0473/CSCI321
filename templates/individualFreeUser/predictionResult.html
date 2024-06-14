@@ -10,7 +10,6 @@
     <title>Prediction Result</title>
   </head>
   <body>
-    <div id="app">
       <!-- 导航栏 -->
       <nav class="bg-white shadow-lg">
         <div class="container mx-auto px-4">
@@ -44,23 +43,23 @@
           </div>
         </div>
       </nav>
-      <div class="container mx-auto px-4 mt-4">
-        <div class="flex items-center">
-          <span class="font-bold text-xl">Search a prediction history here</span>
-        </div>
-          <!-- 搜索栏 -->
-        <div class="flex space-x-4 mt-4">
-          <input type="text" placeholder="Enter Model" class="input input-bordered w-full max-w-xs" />
-          <input type="text" placeholder="Enter Period" class="input input-bordered w-full max-w-xs" />
-          <input type="text" placeholder="Enter Layers" class="input input-bordered w-full max-w-xs" />
-          <input type="text" placeholder="Enter Neurons" class="input input-bordered w-full max-w-xs" />
-          <input type="text" placeholder="Enter APIKey" class="input input-bordered w-full max-w-xs" />
-          <input type="text" placeholder="Enter Date" class="input input-bordered w-full max-w-xs" />
-          <button class="btn btn-outline">Search</button>
-        </div>
-      </div>
+<div class="container mx-auto px-4 mt-4">
+  <div class="flex items-center">
+    <span class="font-bold text-xl">Search a prediction history here</span>
+  </div>
+  <!-- 搜索栏 -->
+  <div class="flex flex-wrap md:flex-nowrap gap-4 mt-4" id="searchBar">
+    <input type="text" placeholder="Model" class="input input-bordered w-full md:max-w-40" />
+    <input type="text" placeholder="Period" class="input input-bordered w-full md:max-w-40" />
+    <input type="text" placeholder="Layers" class="input input-bordered w-full md:max-w-40" />
+    <input type="text" placeholder="Neurons" class="input input-bordered w-full md:max-w-40" />
+    <input type="text" placeholder="APIKey" class="input input-bordered w-full md:max-w-40" />
+    <input type="text" placeholder="Date" class="input input-bordered w-full md:max-w-40" />
+    <button class="btn btn-outline w-full md:w-auto">Search</button>
+  </div>
+
       <!-- 表格 -->
-      <div class="container mx-auto px-4 mt-4">
+      <div class="container mx-auto mt-4" id="table">
         <div class="overflow-x-auto">
           <table class="table">
             <!-- head -->
@@ -87,8 +86,10 @@
                 <td>hashed_api_key_example</td>
                 <td>2024-06-10</td>
                 <td>
-                  <button class="btn btn-outline btn-info">Edit</button>
-                  <button class="btn btn-outline btn-error">Delete</button>
+                  <div class="flex flex-nowrap space-x-2">
+                  <button class="btn btn-sm btn-outline btn-info">View</button>
+                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
+                  </div>
                </tr>
               <!-- row 2 -->
               <tr class="bg-base-200">
@@ -100,8 +101,10 @@
                 <td>hashed_api_key_example</td>
                 <td>2024-06-11</td>
                 <td>
-                  <button class="btn btn-outline btn-info">Edit</button>
-                  <button class="btn btn-outline btn-error">Delete</button>
+                  <div class="flex flex-nowrap space-x-2">
+                  <button class="btn btn-sm btn-outline btn-info">View</button>
+                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
+                  </div>
                 </td>
               </tr>
               <!-- row 3 -->
@@ -114,8 +117,10 @@
                 <td>hashed_api_key_example</td>
                 <td>2024-06-12</td>
                 <td>
-                  <button class="btn btn-outline btn-info">Edit</button>
-                  <button class="btn btn-outline btn-error">Delete</button>
+                  <div class="flex flex-nowrap space-x-2">
+                  <button class="btn btn-sm btn-outline btn-info">View</button>
+                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -124,10 +129,21 @@
       </div>
 
     <script>
+<!--     如果添加一个最外部div的话会严重影响样式，所以我为搜索和表格各自添加了vue模块，Vue.prototype.$即可添加全局变量，方便不同模块之前传递 -->
+      Vue.prototype.$v = 'This is a global variable';
       new Vue({
-        el: '#app',
+        el: '#searchBar',
         data: {
+          $v : 10
+        },
+        methods: {
 
+        }
+      });
+      new Vue({
+        el: '#table',
+        data: {
+          $v : 10
         },
         methods: {
 
