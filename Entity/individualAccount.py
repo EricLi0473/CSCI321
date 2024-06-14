@@ -7,7 +7,8 @@ class IndividualAccount():
             host="154.64.252.69",
             user="root",
             password="csci321fyp",
-            database="csci321"
+            database="csci321",
+            auth_plugin = 'mysql_native_password'
         )
     def fetchOne(self,sql,val) -> dict:
         cursor = self.mydb.cursor(dictionary=True)
