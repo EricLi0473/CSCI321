@@ -32,10 +32,9 @@
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1 text-lg">
-      <li><a href="/">Main</a></li>
-      <li><a>Plan</a></li>
-      <li><a>ContactUs</a></li>
-      <li><a>Documentation</a></li>
+      <li><a href="">Dashboard</a></li>
+      <li><a href="">Start Prediction</a></li>
+      <li><a href="">History</a></li>
     </ul>
   </div>
   <div class="navbar-end">
@@ -71,9 +70,9 @@
 
   <div id="step1" class="step-content h-fit w-fit mx-auto mt-8">
     <div class="h-fit w-1/2 mx-auto text-center">
-      <h1 class="text-4xl font-bold">Introduction</h1><br>
+      <h1 class="text-4xl font-bold font-serif">Introduction</h1><br>
     </div>
-    <div class="h-fit w-1/2 mx-auto">
+    <div class="h-fit w-1/2 mx-auto font-serif">
       welcome to use our system for prediction, now you are a free user, you still can use our service but with limitate, please follow the step to complete your prediction.<br><br>
       <b>input type:</b> as a free user, you can input stock code, stock name to predict, but you only have 10 times every day for using our system, if you want to increase times, you can click on this link to upgrades to premium user.<br><br>
       after you finish this step, please go to the next step to complete your prediction.<br>
@@ -82,7 +81,7 @@
       <div class="relative flex">
   <input
     type="search"
-    class="relative m-0 block flex-auto rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
+    class="h-12 relative m-0 block flex-auto rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
     placeholder="Search"
     aria-label="Search"
     id="exampleFormControlInput2"
@@ -103,31 +102,65 @@
     </svg>
   </span>
 </div>
-      <div class="mx-auto w-fit">
-        <button onclick="nextStep(2)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded ">Next</button>
+      <div class="flex justify-end mt-4">
+        <button onclick="nextStep(2)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded font-serif ">Next</button>
       </div>
     </div>
   </div>
 
   <div id="step2" class="step-content h-fit w-fit mx-auto mt-8 hidden">
-    <h2 class="text-xl font-bold">Step 2: Module Choose</h2>
-    <div class="flex space-x-4 mt-4">
+    <div class="h-fit w-1/2 mx-auto text-center">
+      <h1 class="text-4xl font-bold font-serif">Introduction</h1><br>
+    </div>
+    <div class="h-fit w-1/2 mx-auto font-serif">
+      we prepare 3 kind of models for our system, as a free user you can select any one you want to predict<br><br>
+      <b>GRU:</b>Similar to LSTM, this neural network handles sequential data but is simpler and faster. It uses gates to control information flow,
+      helping it capture important patterns in stock prices while being more efficient in computation.<br><br>
+      <b>LSTM:</b>An advanced type of neural network that learns from sequences of data, like stock prices over time.
+      It remembers important trends while forgetting irrelevant details, making it effective for predicting future values based on past patterns.<br><br>
+      <b>Linear Regression:</b>A basic statistical method that predicts future stock prices by finding a straight-line relationship between past prices and other factors.
+      It's easy to understand and quick to compute, making it a common choice for straightforward predictions.
+      <div class="flex space-x-4 mt-4 w-fit mt-8">
+      <h1 class="text-2xl font-serif"><b>please select your module:</b></h1>
       <button class="px-4 py-2 bg-blue-500 text-white rounded">SVM</button>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded">LSTM</button>
+      <button class="px-4 py-2 bg-blue-500 text-white rounded ">LSTM</button>
       <button class="px-4 py-2 bg-blue-500 text-white rounded">Linear Regression</button>
     </div>
-    <button onclick="previousStep(1)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
-    <button onclick="nextStep(3)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+      <div class="flex">
+        <div class="flex-1">
+        <button onclick="previousStep(1)" class="mt-8 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+      </div>
+      <div class="flex justify-end">
+        <button onclick="nextStep(3)" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+      </div>
+      </div>
+
+
+    </div>
+
+
   </div>
 
-  <div id="step3" class="step-content h-fit w-fit mx-auto mt-8 hidden">
-    <h2 class="text-xl font-bold">Step 3: Layer Choose</h2>
+  <div id="step3" class="step-content h-fit w-fit mx-auto mt-8 hidden font-serif">
+    <div class="h-fit w-1/2 mx-auto text-center">
+      <h1 class="text-4xl font-bold font-serif">Introduction</h1><br>
+    </div>
+    <div class="h-fit w-1/2 mx-auto font-serif">
+      <b>Hidden Layers:</b> Intermediate layers in a neural network between the input and output layers.
+      They process and transform the input data, enabling the network to learn complex patterns and improve prediction accuracy.<br><br>
+      <b>Number of Neurons per Layer:</b>The count of individual units in a neural network layer.
+      More neurons increase the model's ability to learn intricate patterns but also require more computation.
+      Finding the right balance is crucial for optimal performance.<br><br>
     <div class="mt-4">
-      <label for="layers">Number of Layers:</label>
+      <label for="layers"><b>Number of Layers:</b></label>
       <select id="layers" class="ml-2 p-2 border rounded">
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
       </select>
     </div>
     <div class="mt-4">
@@ -138,20 +171,38 @@
         <option value="30">30</option>
       </select>
     </div>
-    <button onclick="previousStep(2)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
-    <button onclick="nextStep(4)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+    <div class="flex">
+        <div class="flex-1">
+        <button onclick="previousStep(2)" class="mt-8 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+      </div>
+      <div class="flex justify-end">
+        <button onclick="nextStep(4)" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+      </div>
+      </div>
+  </div>
   </div>
 
   <div id="step4" class="step-content h-fit w-fit mx-auto mt-8 hidden">
-    <h2 class="text-xl font-bold">Step 4: Time Choose</h2>
+    <div class="h-fit w-1/2 mx-auto text-center">
+      <h1 class="text-4xl font-bold font-serif">Introduction</h1><br>
+    </div>
+    <div class="h-fit w-1/2 mx-auto font-serif">
+      <b>number of Days:</b> This determines how long you want to predict the daily closing price of the stock as well as the recommendation,
+      bearing in mind that the longer the number of days the less accurate the prediction will become.<br><br>
     <label for="days" class="mt-4">Number of Days:</label>
-    <input type="range" id="days" min="1" max="100" value="50" class="ml-2">
-    <span id="daysValue" class="ml-2">50 Days</span>
+    <input type="range" min="1" max="100" value="40" class="range w-1/2 ml-6" id="days" />
+    <span id="daysValue" class="ml-2">50</span> days
     <br>
-    <button onclick="previousStep(3)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
-    <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Get Predict</button>
+    <div class="flex">
+        <div class="flex-1">
+        <button onclick="previousStep(3)" class="mt-8 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+      </div>
+      <div class="flex justify-end">
+        <button onclick="" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded">Get Predict</button>
+      </div>
+      </div>
   </div>
-
+  </div>
   <script>
     function activateStep(step) {
       const steps = ['step1', 'step2', 'step3', 'step4'];
@@ -183,6 +234,20 @@
 
     // Initialize first step
     activateStep(1); // Initialize step 1 as active
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const slider = document.getElementById('days');
+    const output = document.getElementById('daysValue');
+
+    // Initialize the output value
+    output.innerHTML = slider.value;
+
+    // Update the output value when the slider is moved
+    slider.oninput = function () {
+        output.innerHTML = this.value;
+    }
+});
+
   </script>
 </body>
 </html>
