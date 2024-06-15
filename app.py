@@ -79,6 +79,13 @@ def predictionresult():
         elif session['user']['accountType'] == 'business':
             pass
 
+@app.route('/updatePredictionResult',methods=['GET'])
+def updatePredictionResult():
+    session['user'] = GetAccountInfo().getAccountInfo("1")
+    predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
+    print(predictionResult)
+    return jsonify(predictionResult)
+
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/OfficialWeb.html")
