@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RequestPrediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+</head>
+
+<header>
+    <div class="navbar bg-neutral text-neutral-content">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+      </div>
+      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+        <li><a>Item 1</a></li>
+        <li>
+          <a>Parent</a>
+          <ul class="p-2">
+            <li><a>Submenu 1</a></li>
+            <li><a>Submenu 2</a></li>
+          </ul>
+        </li>
+        <li><a>Item 3</a></li>
+      </ul>
+    </div>
+    <a class="btn btn-ghost text-xl" href="/">Stock Forecast4.me</a>
+  </div>
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1 text-lg">
+      <li><a href="/">Main</a></li>
+      <li><a>Plan</a></li>
+      <li><a>ContactUs</a></li>
+      <li><a>Documentation</a></li>
+    </ul>
+  </div>
+  <div class="navbar-end">
+      <div class="dropdown dropdown-end">
+      <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+        <div class="w-10 rounded-full">
+          <img alt="Tailwind CSS Navbar component" src="../../static/resource/normal_u15.svg" />
+        </div>
+      </div>
+      <ul tabindex="0" class="mt-3 z-[1] p-2 menu menu-sm dropdown-content bg-neutral  rounded-box w-52">
+        <li>
+          <a class="justify-between">
+            Profile
+            <span class="badge">New</span>
+          </a>
+        </li>
+        <li><a>Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+</header>
+
+<body>
+  <div class="h-fit w-fit mx-auto mt-12">
+  <ul class="steps">
+    <li id="step1-nav" class="step step-primary">1. search</li>
+    <li id="step2-nav" class="step step-primary ml-3">2. modules</li>
+    <li id="step3-nav" class="step ml-4">3. layers</li>
+    <li id="step4-nav" class="step ml-4">4. days</li>
+  </ul>
+  </div>
+
+  <div id="step1" class="step-content h-fit w-fit mx-auto mt-8">
+    <div class="h-fit w-1/2 mx-auto text-center">
+      <h1 class="text-4xl font-bold">Introduction</h1><br>
+    </div>
+    <div class="h-fit w-1/2 mx-auto">
+      welcome to use our system for prediction, now you are a free user, you still can use our service but with limitate, please follow the step to complete your prediction.<br><br>
+      <b>input type:</b> as a free user, you can input stock code, stock name to predict, but you only have 10 times every day for using our system, if you want to increase times, you can click on this link to upgrades to premium user.<br><br>
+      after you finish this step, please go to the next step to complete your prediction.
+    </div>
+    <div class="h-fit w-1/2 mx-auto">
+      <input type="text" placeholder="Input stock code to get predictions..." class="mt-4 p-2 border rounded">
+      <button onclick="nextStep(2)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+    </div>
+  </div>
+
+  <div id="step2" class="step-content h-fit w-fit mx-auto mt-8 hidden">
+    <h2 class="text-xl font-bold">Step 2: Module Choose</h2>
+    <div class="flex space-x-4 mt-4">
+      <button class="px-4 py-2 bg-blue-500 text-white rounded">SVM</button>
+      <button class="px-4 py-2 bg-blue-500 text-white rounded">LSTM</button>
+      <button class="px-4 py-2 bg-blue-500 text-white rounded">Linear Regression</button>
+    </div>
+    <button onclick="previousStep(1)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+    <button onclick="nextStep(3)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+  </div>
+
+  <div id="step3" class="step-content h-fit w-fit mx-auto mt-8 hidden">
+    <h2 class="text-xl font-bold">Step 3: Layer Choose</h2>
+    <div class="mt-4">
+      <label for="layers">Number of Layers:</label>
+      <select id="layers" class="ml-2 p-2 border rounded">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+    </div>
+    <div class="mt-4">
+      <label for="neurons">Number of Neurons per Layer:</label>
+      <select id="neurons" class="ml-2 p-2 border rounded">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+      </select>
+    </div>
+    <button onclick="previousStep(2)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+    <button onclick="nextStep(4)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+  </div>
+
+  <div id="step4" class="step-content h-fit w-fit mx-auto mt-8 hidden">
+    <h2 class="text-xl font-bold">Step 4: Time Choose</h2>
+    <label for="days" class="mt-4">Number of Days:</label>
+    <input type="range" id="days" min="1" max="100" value="50" class="ml-2">
+    <span id="daysValue" class="ml-2">50 Days</span>
+    <br>
+    <button onclick="previousStep(3)" class="mt-4 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
+    <button class="mt-4 px-4 py-2 bg-blue-500 text-white rounded">Get Predict</button>
+  </div>
+
+  <script>
+    function activateStep(step) {
+      const steps = ['step1', 'step2', 'step3', 'step4'];
+      steps.forEach((s, index) => {
+        const stepNav = document.getElementById(`${s}-nav`);
+        if (index + 1 === step) {
+          stepNav.classList.add('step-primary');
+        } else {
+          stepNav.classList.remove('step-primary');
+        }
+      });
+    }
+
+    function nextStep(step) {
+      activateStep(step);
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step${i}`).classList.add('hidden');
+      }
+      document.getElementById(`step${step}`).classList.remove('hidden');
+    }
+
+    function previousStep(step) {
+      activateStep(step);
+      for (let i = 1; i <= 4; i++) {
+        document.getElementById(`step${i}`).classList.add('hidden');
+      }
+      document.getElementById(`step${step}`).classList.remove('hidden');
+    }
+
+    // Initialize first step
+    activateStep(1); // Initialize step 1 as active
+  </script>
+</body>
+</html>
