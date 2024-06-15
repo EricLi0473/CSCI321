@@ -96,13 +96,14 @@ class LinearRegression_Model:
         future_df = future_df.reset_index()
         future_df['Date'] = future_df['Date'].dt.strftime('%Y-%m-%d')
         result = future_df[['Date', 'Predicted', 'Recommendation']].to_dict(orient='records')
-
+        for record in result:
+            record['Predicted'] = round(record['Predicted'],2)
         return result
 
 
 # Examples of use
 # symbol = "aapl"
-# forecast_out = 5
+# forecast_out = 30
 # layersNum = 4
 # neuronsNum = 16
 #

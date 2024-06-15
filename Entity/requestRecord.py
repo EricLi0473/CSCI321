@@ -1,4 +1,5 @@
 import mysql.connector
+import ast
 # from aiosqlite import cursor
 
 
@@ -11,21 +12,26 @@ class RequestRecord:
             host="154.64.252.69",
             user="root",
             password="csci321fyp",
-            database="csci321"
+            database="csci321",
+            auth_plugin='mysql_native_password'
         )
-    def fetchOne(self,sql,val) -> dict:
-        cursor = self.mydb.cursor(dictionary=True)
-        cursor.execute(sql, val)
-        result = cursor.fetchone()
-        cursor.close()
+    def fetchOne(self, sql, val) -> dict:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchone()
         return result
 
-    def fetchAll(self,sql,val) -> dict:
-        cursor = self.mydb.cursor(dictionary=True)
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-        cursor.close()
+    def fetchAll(self, sql, val) -> list:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchall()
         return result
+
+    def commit(self,sql,val):
+        with self.mydb.cursor() as cursor:
+            cursor.execute(sql, val)
+            self.mydb.commit()
+
     def storeRequestRecord(self,keyHashedValue,requestTickerSymbol,requestTimeFrame,requestModel,requestLayersNum,requestNeuronsPerLayer,requestForecastResult) -> None:
         mydb = self.connectToDatabase()
         sql = "INSERT INTO requestrecord (keyHashedValue,requestTickerSymbol,requestTimeFrame,requestModel,requestLayersNum,requestNeuronsPerLayer,requestForecastResult) VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -51,6 +57,12 @@ class RequestRecord:
     def getRequestRecordByApiKey(self,apikey) -> list[dict] or Exception:
         sql = "SELECT * FROM requestrecord where apikey = %s"
         result = self.fetchAll(sql,(apikey,))
+        for record in result:
+            if record["forecastResult"] != 'waiting':
+                record["forecastResult"] = ast.literal_eval(record["forecastResult"])
+        self.mydb.close()
         return result
-# requestRecord = RequestRecord()
-# requestRecord.storeRequestRecord("8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",'123456','123456','123456','123456','123456')
+
+    def deleteRequestRecordById(self,requestId) -> None:
+        sql = "DELETE FROM requestrecord WHERE requestId = %s"
+        self.commit(sql,(requestId,))

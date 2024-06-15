@@ -1,152 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Prediction Result</title>
   </head>
   <body>
-      <!-- 导航栏 -->
-      <nav class="bg-white shadow-lg">
-        <div class="container mx-auto px-4">
-          <div class="flex items-center justify-between h-16">
-            <!-- 项目Logo和名字 -->
-            <div class="flex items-center">
-              <img class="h-14 w-14 object-cover" src="static/resource/LOGOS/(Small)BlackLogoWhiteBack.jpg" alt="Logo">
-              <span class="ml-2 text-xl font-bold">Stock Forecast</span>
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg">
+      <div class="container mx-auto px-4">
+        <div class="flex items-center justify-between h-16">
+          <!-- 项目Logo和名字 -->
+          <div class="flex items-center">
+            <img class="h-14 w-14 object-cover" src="../../static/resource/LOGOS(Small)BlackLogoWhiteBack.jpg" alt="Logo">
+            <span class="ml-2 text-xl font-bold">Stock Forecast</span>
+          </div>
+          <!-- 导航按钮 -->
+          <div class="flex space-x-8">
+            <a href="#" class="text-gray-700 hover:text-blue-500">Dashboard</a>
+            <a href="#" class="text-gray-700 hover:text-blue-500">Start Prediction</a>
+            <a href="#" class="text-blue-500 relative">
+              History
+              <span class="absolute left-0 right-0 -bottom-1 h-1 bg-blue-300"></span>
+            </a>
+          </div>
+          <!-- 用户信息和登出按钮 -->
+          <div class="flex items-center">
+            <!-- 用户信息 -->
+            <div class="flex items-center space-x-2">
+              <img class="h-8 w-8 rounded-full" src="path-to-user-avatar.png" alt="User Avatar">
+              <span class="text-gray-700">Free User</span>
             </div>
-            <!-- 导航按钮 -->
-            <div class="flex space-x-8">
-              <a href="#" class="text-gray-700 hover:text-blue-500">Dashboard</a>
-              <a href="#" class="text-gray-700 hover:text-blue-500">Start Prediction</a>
-              <a href="#" class="text-blue-500 relative">
-                History
-                <span class="absolute left-0 right-0 -bottom-1 h-1 bg-blue-300"></span>
-              </a>
-            </div>
-            <!-- 用户信息和登出按钮 -->
-            <div class="flex items-center">
-              <!-- 用户信息 -->
-              <div class="flex items-center space-x-2">
-                <img class="h-8 w-8 rounded-full" src="path-to-user-avatar.png" alt="User Avatar">
-                <span class="text-gray-700">Free User</span>
-              </div>
-              <!-- 登出按钮 -->
-              <div class="ml-12">
-                <button class="text-gray-700 hover:text-blue-500">Log Out</button>
-              </div>
+            <!-- 登出按钮 -->
+            <div class="ml-12">
+              <button class="text-gray-700 hover:text-blue-500">Log Out</button>
             </div>
           </div>
         </div>
-      </nav>
-<div class="container mx-auto px-4 mt-4">
-  <div class="flex items-center">
-    <span class="font-bold text-xl">Search a prediction history here</span>
-  </div>
-  <!-- 搜索栏 -->
-  <div class="flex flex-wrap md:flex-nowrap gap-4 mt-4" id="searchBar">
-    <input type="text" placeholder="Model" class="input input-bordered w-full md:max-w-40" />
-    <input type="text" placeholder="Period" class="input input-bordered w-full md:max-w-40" />
-    <input type="text" placeholder="Layers" class="input input-bordered w-full md:max-w-40" />
-    <input type="text" placeholder="Neurons" class="input input-bordered w-full md:max-w-40" />
-    <input type="text" placeholder="APIKey" class="input input-bordered w-full md:max-w-40" />
-    <input type="text" placeholder="Date" class="input input-bordered w-full md:max-w-40" />
-    <button class="btn btn-outline w-full md:w-auto">Search</button>
-  </div>
-
-      <!-- 表格 -->
-      <div class="container mx-auto mt-4" id="table">
-        <div class="overflow-x-auto">
-          <table class="table">
-            <!-- head -->
-            <thead>
-              <tr>
-                <th></th>
-                <th class="text-lg">Model Used</th>
-                <th class="text-lg">Prediction Period</th>
-                <th class="text-lg">Number of Layers</th>
-                <th class="text-lg">Number of Neurons</th>
-                <th class="text-lg">Hashed APIKey</th>
-                <th class="text-lg">Prediction Date</th>
-                <th class="text-lg">Operation</th>
-              </tr>
-            </thead>
+      </div>
+    </nav>
+    <div id="app">
+    <div class="container mx-auto px-4 mt-4">
+      <div class="flex items-center">
+        <span class="font-bold text-xl">Search a prediction history here</span>
+      </div>
+      <!-- 搜索栏 -->
+      <div class="flex flex-wrap md:flex-nowrap gap-4 mt-4" id="searchBar">
+        <input v-model="searchCriteria.tickerSymbol" @input="filterResults" type="text" placeholder="Ticker Symbol" class="input input-bordered w-full md:max-w-40">
+        <input v-model="searchCriteria.timeFrame" @input="filterResults" type="text" placeholder="Time Range" class="input input-bordered w-full md:max-w-40">
+        <input v-model="searchCriteria.model" @input="filterResults" type="text" placeholder="Model" class="input input-bordered w-full md:max-w-40">
+        <input v-model="searchCriteria.layersNum" @input="filterResults" type="text" placeholder="Layer" class="input input-bordered w-full md:max-w-40">
+        <input v-model="searchCriteria.neuronsPerLayer" @input="filterResults" type="text" placeholder="Neurons" class="input input-bordered w-full md:max-w-40">
+      </div>
+    </div>
+    <!-- 表格 -->
+    <div class="container mx-auto mt-4">
+      <div class="overflow-x-auto">
+        <table class="table">
+          <!-- head -->
+          <thead>
+            <tr>
+              <th>#</th>
+              <th class="text-lg">Ticker Symbol</th>
+              <th class="text-lg">Time Range</th>
+              <th class="text-lg">Model</th>
+              <th class="text-lg">Layer</th>
+              <th class="text-lg">Neurons</th>
+              <th class="text-lg">Prediction Date</th>
+              <th class="text-lg">Operation</th>
+            </tr>
+          </thead>
             <tbody>
-              <!-- row 1 -->
-              <tr class="bg-base-200">
-                <th>1</th>
-                <td>GRU</td>
-                <td>30 Days</td>
-                <td>10</td>
-                <td>32</td>
-                <td>hashed_api_key_example</td>
-                <td>2024-06-10</td>
+              <tr v-for="(result, index) in filteredResults" :key="result.requestId" class="bg-base-200">
+                <th>[[ index + 1 ]]</th>
+                <td>[[ result.tickerSymbol ]]</td>
+                <td>[[ result.timeFrame ]]</td>
+                <td>[[ result.model ]]</td>
+                <td>[[ result.layersNum ]]</td>
+                <td>[[ result.neuronsPerLayer ]]</td>
+                <td>[[ result.CreateDateTime ]]</td>
                 <td>
                   <div class="flex flex-nowrap space-x-2">
-                  <button class="btn btn-sm btn-outline btn-info">View</button>
-                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
-                  </div>
-               </tr>
-              <!-- row 2 -->
-              <tr class="bg-base-200">
-                <th>2</th>
-                <td>LSTM</td>
-                <td>60 Days</td>
-                <td>2</td>
-                <td>8</td>
-                <td>hashed_api_key_example</td>
-                <td>2024-06-11</td>
-                <td>
-                  <div class="flex flex-nowrap space-x-2">
-                  <button class="btn btn-sm btn-outline btn-info">View</button>
-                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
-                  </div>
-                </td>
-              </tr>
-              <!-- row 3 -->
-              <tr class="bg-base-200">
-                <th>3</th>
-                <td>SVM</td>
-                <td>15 Days</td>
-                <td>4</td>
-                <td>16</td>
-                <td>hashed_api_key_example</td>
-                <td>2024-06-12</td>
-                <td>
-                  <div class="flex flex-nowrap space-x-2">
-                  <button class="btn btn-sm btn-outline btn-info">View</button>
-                  <button class="btn btn-sm btn-outline btn-error">Delete</button>
+                    <template v-if="result.forecastResult === 'waiting'">
+                      <span class="loading loading-bars loading-md"></span>
+                    </template>
+                    <template v-else>
+                      <button class="btn btn-sm btn-outline btn-info" @click="showResult(result.forecastResult)">View</button>
+                      <button class="btn btn-sm btn-outline btn-error" @click="deleteRecord(result.requestId)">Delete</button>
+                    </template>
                   </div>
                 </td>
               </tr>
             </tbody>
-          </table>
-        </div>
+        </table>
+            <dialog id="showResultDialog" class="modal modal-bottom sm:modal-middle">
+              <div class="modal-box">
+                        <table class="table">
+          <!-- head -->
+          <thead>
+            <tr>
+              <th class="text-lg">Date</th>
+              <th class="text-lg">Prediction</th>
+              <th class="text-lg">Advice</th>
+            </tr>
+          </thead>
+            <tbody>
+              <tr v-for="result in forecastResult">
+                <td>[[ result.Date ]]</td>
+                <td>[[ result.Predicted ]]</td>
+                <td>[[ result.Recommendation ]]</td>
+              </tr>
+            </tbody>
+        </table>
+
+                <div class="modal-action">
+                  <form method="dialog">
+                    <button class="btn">OK</button>
+                  </form>
+                </div>
+              </div>
+            </dialog>
       </div>
-
+    </div>
+    </div>
     <script>
-<!--     如果添加一个最外部div的话会严重影响样式，所以我为搜索和表格各自添加了vue模块，Vue.prototype.$即可添加全局变量，方便不同模块之前传递 -->
-      Vue.prototype.$v = 'This is a global variable';
+      Vue.prototype.$results = []
       new Vue({
-        el: '#searchBar',
+        el: '#app',
+        delimiters: ['[[', ']]'],
         data: {
-          $v : 10
+          results: [],
+          forecastResult: [],
+          searchCriteria: {
+            tickerSymbol: '',
+            timeFrame: '',
+            model: '',
+            layersNum: '',
+            neuronsPerLayer: ''
+          },
+          filteredResults: []
+        },
+        created() {
+          this.fetchRecords();
         },
         methods: {
-
-        }
-      });
-      new Vue({
-        el: '#table',
-        data: {
-          $v : 10
-        },
-        methods: {
-
+          fetchRecords() {
+            axios.get('/updatePredictionResult')
+              .then(response => {
+                this.results = response.data;
+                this.filteredResults = this.results;
+              })
+              .catch(error => {
+                console.error('Error fetching records:', error);
+              });
+          },
+          filterResults() {
+            this.filteredResults = this.results.filter(result => {
+              return (!this.searchCriteria.tickerSymbol || result.tickerSymbol.includes(this.searchCriteria.tickerSymbol)) &&
+                     (!this.searchCriteria.timeFrame || result.timeFrame.toString().includes(this.searchCriteria.timeFrame)) &&
+                     (!this.searchCriteria.model || result.model.includes(this.searchCriteria.model)) &&
+                     (!this.searchCriteria.layersNum || result.layersNum.toString().includes(this.searchCriteria.layersNum)) &&
+                     (!this.searchCriteria.neuronsPerLayer || result.neuronsPerLayer.toString().includes(this.searchCriteria.neuronsPerLayer));
+            });
+          },
+          showResult(forecastResult) {
+            this.forecastResult = forecastResult;
+            document.getElementById('showResultDialog').showModal();
+          },
+          deleteRecord(requestId) {
+            axios.delete(`/deletePrediction/${requestId}`)
+              .then(response => {
+                const index = this.results.findIndex(result => result.requestId === requestId);
+                if (index !== -1) {
+                  this.results.splice(index, 1);
+                }
+                this.filterResults();
+              })
+              .catch(error => {
+                console.error('Error deleting record:', error);
+              });
+          }
         }
       });
     </script>

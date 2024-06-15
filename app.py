@@ -12,6 +12,7 @@ from Control.User.loginController import *
 from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.getRequestRecord import *
+from Control.User.deleteRequestRecord import *
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -69,11 +70,11 @@ def predictionresult():
         #hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
         session['user'] = GetAccountInfo().getAccountInfo("1")
-        predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-        print(predictionResult)
+        # predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
+        # print(predictionResult)
         if session['user']['accountType'] == 'individual':
             if session['user']['profile'] == 'free':
-                return render_template("individualFreeUser/predictionResult.html",predictionResult = predictionResult)
+                return render_template("individualFreeUser/predictionResult.html")
             elif session['user']['profile'] == 'premium':
                 pass
         elif session['user']['accountType'] == 'business':
@@ -85,6 +86,11 @@ def updatePredictionResult():
     predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
     print(predictionResult)
     return jsonify(predictionResult)
+
+@app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
+def deletePrediction(requestId):
+    DeleteRequestRecord().deleteRequestRecord(str(requestId))
+    return jsonify({'success':True})
 
 @app.route('/',methods=['GET'])
 def officialWeb():
