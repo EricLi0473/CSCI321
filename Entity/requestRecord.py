@@ -1,27 +1,36 @@
 import mysql.connector
+import ast
 # from aiosqlite import cursor
 
 
 class RequestRecord:
-    def __init__(self,requestId = None,keyHashedValue = None, requestTickerSymbol = None , requestTimeFrame = None, requestModel = None,
-                 requestLayersNum = None,requestNeuronsPerLayer = None,requestForecastResult = None,requestDataTime = None):
-        self.requestId = requestId
-        self.keyHashedValue = keyHashedValue
-        self.requestTickerSymbol = requestTickerSymbol
-        self.requestTimeFrame = requestTimeFrame
-        self.requestModel = requestModel
-        self.requestLayersNum = requestLayersNum
-        self.requestNeuronsPerLayer = requestNeuronsPerLayer
-        self.requestForecastResult = requestForecastResult
-        self.requestDataTime = requestDataTime
+    def __init__(self):
+        self.mydb = self.connectToDatabase()
 
     def connectToDatabase(self):
         return mysql.connector.connect(
             host="154.64.252.69",
             user="root",
             password="csci321fyp",
-            database="csci321"
+            database="csci321",
+            auth_plugin='mysql_native_password'
         )
+    def fetchOne(self, sql, val) -> dict:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchone()
+        return result
+
+    def fetchAll(self, sql, val) -> list:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchall()
+        return result
+
+    def commit(self,sql,val):
+        with self.mydb.cursor() as cursor:
+            cursor.execute(sql, val)
+            self.mydb.commit()
 
     def storeRequestRecord(self,keyHashedValue,requestTickerSymbol,requestTimeFrame,requestModel,requestLayersNum,requestNeuronsPerLayer,requestForecastResult) -> None:
         mydb = self.connectToDatabase()
@@ -45,5 +54,15 @@ class RequestRecord:
             recordsList.append(request_record)
         return recordsList
 
-# requestRecord = RequestRecord()
-# requestRecord.storeRequestRecord("8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",'123456','123456','123456','123456','123456')
+    def getRequestRecordByApiKey(self,apikey) -> list[dict] or Exception:
+        sql = "SELECT * FROM requestrecord where apikey = %s"
+        result = self.fetchAll(sql,(apikey,))
+        for record in result:
+            if record["forecastResult"] != 'waiting':
+                record["forecastResult"] = ast.literal_eval(record["forecastResult"])
+        self.mydb.close()
+        return result
+
+    def deleteRequestRecordById(self,requestId) -> None:
+        sql = "DELETE FROM requestrecord WHERE requestId = %s"
+        self.commit(sql,(requestId,))

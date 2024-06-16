@@ -9,7 +9,10 @@ from Control.User.uploadFileController import *
 import pandas as pd
 import json
 from Control.User.loginController import *
-
+from Control.User.SignupController import *
+from Control.IndividualUser.getAccountInfo import *
+from Control.IndividualUser.getRequestRecord import *
+from Control.User.deleteRequestRecord import *
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -26,9 +29,73 @@ def login():
     except Exception as e:
         return jsonify({'success':False,'error':str(e)})
 
+@app.route('/signup',methods=['POST','GET'])
+def signup():
+    if request.method == 'GET':
+        return render_template("system/signup.html")
+    try:
+        data = request.json
+        SignupController().individualSignUp(data['profile'],data['username'],data['email'],data['password'],data['repassword'],data['invitationCode'])
+        return jsonify({'success':True})
+    except Exception as e:
+        return jsonify({'success':False,'error':str(e)})
+@app.route('/businesssignup',methods=['POST','GET'])
+def businesssignup():
+    if request.method == 'GET':
+        return render_template("system/businessSignup.html")
+    try:
+        data = request.json
+        pass
+    except Exception as e:
+        return jsonify({'success':False,'error':str(e)})
+
+@app.route('/accountInfo',methods=['POST','GET'])
+def accountinfo():
+    if request.method == 'GET':
+        #hard code for test
+        #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
+        session['user'] = GetAccountInfo().getAccountInfo("1")
+        print(session['user'])
+        if session['user']['accountType'] == 'individual':
+            if session['user']['profile'] == 'free':
+                return render_template("individualFreeUser/accountInfo.html",user = session['user'])
+            elif session['user']['profile'] == 'premium':
+                pass
+        elif session['user']['accountType'] == 'business':
+            pass
+
+@app.route('/predictionResult',methods=['POST','GET'])
+def predictionresult():
+    if request.method == 'GET':
+        #hard code for test
+        #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
+        session['user'] = GetAccountInfo().getAccountInfo("1")
+        # predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
+        # print(predictionResult)
+        if session['user']['accountType'] == 'individual':
+            if session['user']['profile'] == 'free':
+                return render_template("individualFreeUser/predictionResult.html")
+            elif session['user']['profile'] == 'premium':
+                pass
+        elif session['user']['accountType'] == 'business':
+            pass
+
+@app.route('/updatePredictionResult',methods=['GET'])
+def updatePredictionResult():
+    session['user'] = GetAccountInfo().getAccountInfo("1")
+    predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
+    print(predictionResult)
+    return jsonify(predictionResult)
+
+@app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
+def deletePrediction(requestId):
+    DeleteRequestRecord().deleteRequestRecord(str(requestId))
+    return jsonify({'success':True})
+
 @app.route('/',methods=['GET'])
 def officialWeb():
-    return render_template("system/officialWeb.html")
+    return render_template("system/OfficialWeb.html")
+
 
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
@@ -39,12 +106,6 @@ def redirectToUserPage():
     else:
         return redirect(url_for('login'))
 
-@app.route('/accountInfo',methods=['GET'])
-def accountInfo():
-    if 'user' in session:
-        return render_template("individualFreeUser/accountInfo.html",user = session['user'])
-    else:
-        return redirect(url_for('login'))
 # @app.errorhandler(400)
 # def bad_request_error(error):
 #     return render_template('error400.html', error_message=error), 400

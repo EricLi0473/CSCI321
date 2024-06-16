@@ -135,7 +135,8 @@ class GRU_Model:
         future_df = future_df.reset_index()
         future_df['Date'] = future_df['Date'].dt.strftime('%Y-%m-%d')
         result = future_df[['Date', 'Predicted', 'Recommendation']].to_dict(orient='records')
-
+        for record in result:
+            record['Predicted'] = round(record['Predicted'],2)
         return result
 
     @staticmethod
@@ -170,7 +171,7 @@ class GRU_Model:
 # 示例用法
 # symbol = 'AAPL'  # 股票代码
 # df = GRU_Model.get_stock_data(symbol)
-# forecast_days = 10  # 预测天数
+# forecast_days = 30  # 预测天数
 # layers = 2  # GRU层数
 # neurons = 16  # 每层神经元数
 #

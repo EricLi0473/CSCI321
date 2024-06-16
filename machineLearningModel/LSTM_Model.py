@@ -118,10 +118,13 @@ class LSTM_Model:
                 return 'Hold'
 
         future_df['Recommendation'] = future_df.apply(generate_recommendation, axis=1)
+
         future_df = future_df.reset_index()
         future_df['Date'] = future_df['Date'].dt.strftime('%Y-%m-%d')
         result = future_df[['Date', 'Predicted', 'Recommendation']].to_dict(
             orient='records')
+        for record in result:
+            record['Predicted'] = round(record['Predicted'],2)
         return result
 
     def predict(self):
