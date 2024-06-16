@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>Business Sign Up</title>
+</head>
+<header>
+  <div class="navbar bg-neutral text-neutral-content">
+    <div class="navbar-start">
+      <div class="dropdown">
+        <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16"/></svg>
+        </div>
+        <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+          <li><a>Item 1</a></li>
+          <li>
+            <a>Parent</a>
+            <ul class="p-2">
+              <li><a>Submenu 1</a></li>
+              <li><a>Submenu 2</a></li>
+            </ul>
+          </li>
+          <li><a>Item 3</a></li>
+        </ul>
+      </div>
+      <a class="btn btn-ghost text-xl" href="/">Stock Forecast4.me</a>
+    </div>
+    <div class="navbar-center hidden lg:flex">
+      <ul class="menu menu-horizontal px-1 text-lg">
+        <li><a href="/">Main</a></li>
+        <li><a>Plan</a></li>
+        <li><a>ContactUs</a></li>
+        <li><a>Documentation</a></li>
+      </ul>
+    </div>
+    <div class="navbar-end">
+    </div>
+  </div>
+</header>
+<body>
+  <div class="card w-96 bg-base-100 shadow-xl card-compact mx-auto mt-8" id="app" style="margin-top: 3%; width: 30rem;">
+    <div class="card-body items-center space-y-1.5">
+      <h2 class="card-title">Business Sign Up</h2>
+      <p>If you have an account, <a class="text-cyan-700" href="login">login here</a></p>
+      <p>For Individual, <a class="text-cyan-700" href="signup">sign up here</a></p>
+      <label class="input input-bordered flex items-center gap-2 w-80">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/></svg>
+        <input type="text" class="grow" placeholder="Company Name" v-model="companyName"/>
+      </label>
+      <label class="input input-bordered flex items-center gap-2 w-80">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z"/><path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z"/></svg>
+        <input type="text" class="grow" placeholder="Company Type" v-model="companyType"/>
+      </label>
+      <label class="input input-bordered flex items-center gap-2 w-80">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/></svg>
+        <input type="email" class="grow" placeholder="Company Email" v-model="companyEmail"/>
+      </label>
+      <label class="input input-bordered flex items-center gap-2 w-80">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"/></svg>
+        <input type="tel" class="grow" placeholder="Company Phone Number" v-model="companyPhoneNumber"/>
+      </label>
+      <div class="w-80">
+        <label class="label">
+          <span class="label-text">Please Select The Number Of Premium Users:</span>
+        </label>
+        <input type="range" min="0" max="50" v-model="premiumUsers" class="range">
+        <input type="number" v-model="premiumUsers" min="0" max="50" class="input input-bordered mt-2 w-full" />
+      </div>
+      <button class="btn btn-primary btn-wide w-40">Sign Up</button>
+    </div>
+  </div>
+
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      background: url("static/resource/bck_city.jpg") no-repeat center center fixed;
+      background-size: cover;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+      data: {
+        companyName: '',
+        companyType: '',
+        companyEmail: '',
+        companyPhoneNumber: '',
+        premiumUsers: 10
+      }
+    });
+  </script>
+</body>
+</html>

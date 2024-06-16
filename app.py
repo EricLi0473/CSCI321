@@ -39,7 +39,7 @@ def signup():
         return jsonify({'success':True})
     except Exception as e:
         return jsonify({'success':False,'error':str(e)})
-@app.route('/businesssignup',methods=['POST','GET'])
+@app.route('/businessSignup',methods=['POST','GET'])
 def businesssignup():
     if request.method == 'GET':
         return render_template("system/businessSignup.html")
