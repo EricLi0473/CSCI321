@@ -8,7 +8,17 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
 </head>
-
+<style>
+  .btn {
+    @apply font-bold py-2 px-4 rounded;
+  }
+  .btn-blue {
+    @apply bg-blue-500 text-white;
+  }
+  .btn-blue:hover {
+    @apply bg-blue-700;
+  }
+</style>
 <header>
     <div class="navbar bg-neutral text-neutral-content">
   <div class="navbar-start">
@@ -122,9 +132,12 @@
       It's easy to understand and quick to compute, making it a common choice for straightforward predictions.
       <div class="flex space-x-4 mt-4 w-fit mt-8">
       <h1 class="text-2xl font-serif"><b>please select your module:</b></h1>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded">SVM</button>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded ">LSTM</button>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded">Linear Regression</button>
+      <div class="text-2xl">SVM</div>
+        <input type="radio" name="radio-2" class="radio radio-primary" checked />
+      <div class="text-2xl">LSTM</div>
+        <input type="radio" name="radio-2" class="radio radio-primary"/>
+      <div class="text-2xl">Linear Regression</div>
+        <input type="radio" name="radio-2" class="radio radio-primary"/>
     </div>
       <div class="flex">
         <div class="flex-1">
