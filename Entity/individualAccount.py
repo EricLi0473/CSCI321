@@ -72,9 +72,24 @@ class IndividualAccount():
                 return True
         except Exception as e:
             raise Exception(e)
-            
-    def updateAccount(self, user):
-        self.collection.update_one({'accountId': user['accountId']}, {"$set": user})
+
+    def updateAccount(self,accountId,userName,email,bio) -> bool or Exception:
+        try:
+            sql = "UPDATE individualaccount SET userName = %s, email = %s, bio = %s WHERE accountId = %s"
+            val  = (userName, email, bio, accountId)
+            self.commit(sql, val)
+            return True
+        except Exception as e:
+            raise Exception(e)
+
+    def updatePasswordByName(self, userName, hashedPassword) -> str or Exception:
+        try:
+            sql = "UPDATE individualaccount SET hashedPassword = %s WHERE userName = %s"
+            val = (hashedPassword, userName)
+            self.commit(sql, val)
+            return hashedPassword
+        except Exception as e:
+            raise Exception(e)
 
     def __del__(self):
         if self.mydb.is_connected():

@@ -15,7 +15,9 @@ from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.getRequestRecord import *
 from Control.User.deleteRequestRecord import *
-from Control.IndividualUser.updateBio import *
+from Control.IndividualUser.updatePersonalInfo import *
+from Control.User.changePasswordController import *
+import hashlib
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -83,36 +85,50 @@ def accountInfo():
         elif session['user']['accountType'] == 'business':
             pass
 
-
-@app.route('/updateBio', methods=['POST'])
+#handle personal info. update(name,bio,email), business update(name,bio,email,companyName)
+@app.route('/updatePersonalInfo', methods=['POST'])
 def update_bio():
     # if 'user' not in session:
     #     print("user not in session")
     #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
-    session['user'] = GetAccountInfo().getAccountInfo("1")
-
+    accountType = request.json.get('accountType')
+    accountId = request.json.get('accountId')
     bio = request.json.get('bio')
-    user_id = session['user']['accountId']  # Ensure you have accountId in the session user
-
-    # Update bio logic in database
-    success = update_bio().update_bio(user_id, bio)  # Implement this function
+    userName = request.json.get('userName')
+    email = request.json.get('email')
+    print(accountType,accountId,bio,userName,email)
+    if accountType == 'individual':
+        success = UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
+    elif accountType == 'business':
+        #company, updateBusinessInfo()
+        pass
 
     if success:
         session['user']['bio'] = bio
+        session['user']['userName'] = userName
+        session['user']['email'] = email
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
-    if 'user' not in session:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
-    old_password = request.json.get('oldPassword')
-    new_password = request.json.get('newPassword')
-    # Change password logic here...
-    # For example, verify old password, update to new password
-    return jsonify({'success': True})
+    # if 'user' not in session:
+    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    try:
+        old_password = request.json.get('oldPassword')
+        new_password = request.json.get('newPassword')
+        userName = session['user']['userName']
+        if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
+            raise Exception('Invalid old password')
+        if session['user']['accountType'] == 'individual':
+            session['user']['hashedPassword'] = ChangePasswordController().changeIndividualPassword(userName,old_password,new_password)
+        elif session['user']['accountType'] == 'business':
+            pass
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False,'error':str(e)})
 
 
 

@@ -9,7 +9,7 @@ class SignupController:
         pass
     def individualSignUp(self,profile,username,email,password,againPassword,invitationCode = None,) -> dict or Exception:
         print(profile,username,email,password,againPassword,invitationCode)
-        if profile is 'default' or not username or not email or not password or not againPassword:
+        if profile == 'default' or not username or not email or not password or not againPassword:
             raise Exception('Please fill the from')
         if password != againPassword:
             raise Exception('Reentered passwords do not match')
