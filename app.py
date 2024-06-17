@@ -50,7 +50,7 @@ def businesssignup():
         return jsonify({'success':False,'error':str(e)})
 
 @app.route('/accountInfo',methods=['POST','GET'])
-def accountinfo():
+def accountInfo():
     if request.method == 'GET':
         #hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
@@ -63,6 +63,27 @@ def accountinfo():
                 pass
         elif session['user']['accountType'] == 'business':
             pass
+
+@app.route('/updateBio', methods=['POST'])
+def update_bio():
+    if 'user' not in session:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    bio = request.json.get('bio')
+    # Update bio logic here...
+    session['user']['bio'] = bio
+    return jsonify({'success': True})
+
+@app.route('/changePassword', methods=['POST'])
+def change_password():
+    if 'user' not in session:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    old_password = request.json.get('oldPassword')
+    new_password = request.json.get('newPassword')
+    # Change password logic here...
+    # For example, verify old password, update to new password
+    return jsonify({'success': True})
+
+
 
 @app.route('/predictionResult',methods=['POST','GET'])
 def predictionresult():
