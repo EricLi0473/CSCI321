@@ -15,6 +15,7 @@ from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.getRequestRecord import *
 from Control.User.deleteRequestRecord import *
+from Control.IndividualUser.updateBio import *
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -68,7 +69,7 @@ def businesssignup():
         return jsonify({'success':False,'error':str(e)})
 
 @app.route('/accountInfo',methods=['POST','GET'])
-def accountinfo():
+def accountInfo():
     if request.method == 'GET':
         #hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
@@ -81,6 +82,39 @@ def accountinfo():
                 pass
         elif session['user']['accountType'] == 'business':
             pass
+
+
+@app.route('/updateBio', methods=['POST'])
+def update_bio():
+    # if 'user' not in session:
+    #     print("user not in session")
+    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    session['user'] = GetAccountInfo().getAccountInfo("1")
+
+    bio = request.json.get('bio')
+    user_id = session['user']['accountId']  # Ensure you have accountId in the session user
+
+    # Update bio logic in database
+    success = update_bio().update_bio(user_id, bio)  # Implement this function
+
+    if success:
+        session['user']['bio'] = bio
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
+
+@app.route('/changePassword', methods=['POST'])
+def change_password():
+    if 'user' not in session:
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    old_password = request.json.get('oldPassword')
+    new_password = request.json.get('newPassword')
+    # Change password logic here...
+    # For example, verify old password, update to new password
+    return jsonify({'success': True})
+
+
 
 @app.route('/predictionResult',methods=['POST','GET'])
 def predictionresult():

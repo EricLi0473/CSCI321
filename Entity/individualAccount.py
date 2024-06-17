@@ -61,6 +61,7 @@ class IndividualAccount():
             raise Exception("Account does not exist")
         return result
 
+
     def verifyApiKey(self, apiKey) -> bool or Exception:
         try:
             sql = "SELECT status FROM individualaccount WHERE apiKey = %s"
@@ -71,6 +72,10 @@ class IndividualAccount():
                 return True
         except Exception as e:
             raise Exception(e)
+            
+    def updateAccount(self, user):
+        self.collection.update_one({'accountId': user['accountId']}, {"$set": user})
+
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()

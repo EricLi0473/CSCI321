@@ -1,10 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <title>Account Info</title>
 </head>
 <body>
+  <!-- Navigation Bar -->
+  <nav class="bg-white shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center">
+          <img class="h-12 w-12 object-cover" src="static/resource/LOGOS/BlackLogo.png" alt="Logo">
+          <span class="ml-2 text-xl font-bold">Stock Forecast</span>
+        </div>
+        <div class="flex space-x-8">
+          <a href="#" class="text-gray-700 hover:text-blue-500">Dashboard</a>
+          <a href="#" class="text-gray-700 hover:text-blue-500">Results</a>
+          <a href="#" class="text-gray-700 hover:text-blue-500">History</a>
+        </div>
+        <div class="flex items-center">
+          <div class="flex items-center space-x-2">
+            <img class="h-8 w-8 rounded-full" src="../../static/resource/Icons/PersonIcon.JPG" alt="User Avatar">
+            <span class="text-gray-700">{{ user.userName }}</span>
+          </div>
+          <div class="ml-12">
+            <button class="text-gray-700 hover:text-blue-500">Log Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div id="app" class="container mx-auto px-4 mt-4">
+    <h2 class="text-2xl font-bold mb-4">Personal Info</h2>
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+      <div class="flex flex-col items-start mb-4">
+        <div class="flex-shrink-0">
+          <img class="h-24 w-24 rounded-full object-cover mb-4" src="../../static/resource/Icons/PersonIcon.JPG" alt="Avatar">
+        </div>
+        <div class="w-full">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-700 font-bold">Username:</label>
+              <input type="text" v-model="user.userName" class="input input-bordered w-full" disabled>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-bold">User Type:</label>
+              <input type="text" v-model="user.profile" class="input input-bordered w-full" disabled>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-bold">Email:</label>
+              <input type="email" v-model="user.email" class="input input-bordered w-full" disabled>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-bold">Password:</label>
+              <div class="relative">
+                <input type="password" v-model="user.hashedPassword" class="input input-bordered w-full" disabled>
+                <button class="absolute inset-y-0 right-0 px-3 flex items-center" @click="togglePasswordModal">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m4 4H9m-2 0a2 2 0 100-4 2 2 0 000 4zM15 12H9m4 4H9m-2 0a2 2 0 100-4 2 2 0 000 4zM9 12H7m2 0a2 2 0 100-4 2 2 0 000 4z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div>
+              <label class="block text-gray-700 font-bold">Company:</label>
+              <input type="text" v-model="user.company" class="input input-bordered w-full" disabled>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h3 class="text-xl font-bold mb-2">BIO</h3>
+      <textarea v-model="user.bio" class="textarea textarea-bordered w-full" rows="4"></textarea>
+      <div class="flex justify-end mt-4">
+        <button class="btn btn-primary" @click="updateBio">Update Bio</button>
+      </div>
+    </div>
+
+    <div v-if="showPasswordModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-lg shadow-lg">
+        <h3 class="text-xl font-bold mb-4">Change Password</h3>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold">Old Password:</label>
+          <input type="password" v-model="passwords.old" class="input input-bordered w-full">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold">New Password:</label>
+          <input type="password" v-model="passwords.new" class="input input-bordered w-full">
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 font-bold">Confirm New Password:</label>
+          <input type="password" v-model="passwords.confirm" class="input input-bordered w-full">
+        </div>
+        <div class="flex justify-end">
+          <button class="btn btn-secondary mr-2" @click="togglePasswordModal">Cancel</button>
+          <button class="btn btn-primary" @click="changePassword">Finish</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  new Vue({
+    el: '#app',
+    data: {
+      user: JSON.parse('{{ user|tojson }}'),
+      showPasswordModal: false,
+      passwords: {
+        old: '',
+        new: '',
+        confirm: ''
+      }
+    },
+    methods: {
+      togglePasswordModal() {
+        this.showPasswordModal = !this.showPasswordModal;
+      },
+      updateBio() {
+        axios.post('/updateBio', { bio: this.user.bio })
+          .then(response => {
+            if (response.data.success) {
+              alert('Bio updated successfully');
+            } else {
+              alert('Error updating bio: ' + response.data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error updating bio:', error);
+          });
+      },
+      changePassword() {
+        if (this.passwords.new !== this.passwords.confirm) {
+          alert('New passwords do not match');
+          return;
+        }
+
+        axios.post('/changePassword', {
+          oldPassword: this.passwords.old,
+          newPassword: this.passwords.new
+        })
+          .then(response => {
+            if (response.data.success) {
+              alert('Password changed successfully');
+              this.togglePasswordModal();
+            } else {
+              alert('Error changing password: ' + response.data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error changing password:', error);
+          });
+      }
+    }
+  });
+</script>
 
 </body>
 </html>
