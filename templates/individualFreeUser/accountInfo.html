@@ -26,7 +26,7 @@
         <div class="flex items-center">
           <div class="flex items-center space-x-2">
             <img class="h-8 w-8 rounded-full" src="../../static/resource/Icons/PersonIcon.JPG" alt="User Avatar">
-            <span class="text-gray-700">{{ user.username }}</span>
+            <span class="text-gray-700">{{ user.userName }}</span>
           </div>
           <div class="ml-12">
             <button class="text-gray-700 hover:text-blue-500">Log Out</button>
@@ -39,19 +39,19 @@
   <div id="app" class="container mx-auto px-4 mt-4">
     <h2 class="text-2xl font-bold mb-4">Personal Info</h2>
     <div class="bg-white shadow-md rounded-lg p-6 mb-6">
-      <div class="flex flex-col items-center mb-4">
-        <div>
+      <div class="flex flex-col items-start mb-4">
+        <div class="flex-shrink-0">
           <img class="h-24 w-24 rounded-full object-cover mb-4" src="../../static/resource/Icons/PersonIcon.JPG" alt="Avatar">
         </div>
         <div class="w-full">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label class="block text-gray-700 font-bold">Username:</label>
-              <input type="text" v-model="user.username" class="input input-bordered w-full" disabled>
+              <input type="text" v-model="user.userName" class="input input-bordered w-full" disabled>
             </div>
             <div>
               <label class="block text-gray-700 font-bold">User Type:</label>
-              <input type="text" v-model="user.userType" class="input input-bordered w-full" disabled>
+              <input type="text" v-model="user.profile" class="input input-bordered w-full" disabled>
             </div>
             <div>
               <label class="block text-gray-700 font-bold">Email:</label>
@@ -60,7 +60,7 @@
             <div>
               <label class="block text-gray-700 font-bold">Password:</label>
               <div class="relative">
-                <input type="password" v-model="user.password" class="input input-bordered w-full" disabled>
+                <input type="password" v-model="user.hashedPassword" class="input input-bordered w-full" disabled>
                 <button class="absolute inset-y-0 right-0 px-3 flex items-center" @click="togglePasswordModal">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12H9m4 4H9m-2 0a2 2 0 100-4 2 2 0 000 4zM15 12H9m4 4H9m-2 0a2 2 0 100-4 2 2 0 000 4zM9 12H7m2 0a2 2 0 100-4 2 2 0 000 4z"/>
@@ -124,7 +124,11 @@
       updateBio() {
         axios.post('/updateBio', { bio: this.user.bio })
           .then(response => {
-            alert('Bio updated successfully');
+            if (response.data.success) {
+              alert('Bio updated successfully');
+            } else {
+              alert('Error updating bio: ' + response.data.error);
+            }
           })
           .catch(error => {
             console.error('Error updating bio:', error);
@@ -145,7 +149,7 @@
               alert('Password changed successfully');
               this.togglePasswordModal();
             } else {
-              alert('Error changing password:', response.data.error);
+              alert('Error changing password: ' + response.data.error);
             }
           })
           .catch(error => {

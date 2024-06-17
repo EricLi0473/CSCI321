@@ -61,6 +61,8 @@ class IndividualAccount():
             raise Exception("Account does not exist")
         return result
 
+    def updateAccount(self, user):
+        self.collection.update_one({'accountId': user['accountId']}, {"$set": user})
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()

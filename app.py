@@ -13,6 +13,7 @@ from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.getRequestRecord import *
 from Control.User.deleteRequestRecord import *
+from Control.IndividualUser.updateBio import *
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -64,14 +65,26 @@ def accountInfo():
         elif session['user']['accountType'] == 'business':
             pass
 
+
 @app.route('/updateBio', methods=['POST'])
 def update_bio():
-    if 'user' not in session:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    # if 'user' not in session:
+    #     print("user not in session")
+    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    session['user'] = GetAccountInfo().getAccountInfo("1")
+
     bio = request.json.get('bio')
-    # Update bio logic here...
-    session['user']['bio'] = bio
-    return jsonify({'success': True})
+    user_id = session['user']['accountId']  # Ensure you have accountId in the session user
+
+    # Update bio logic in database
+    success = update_bio().update_bio(user_id, bio)  # Implement this function
+
+    if success:
+        session['user']['bio'] = bio
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
