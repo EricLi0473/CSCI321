@@ -76,7 +76,7 @@ class LinearRegression_Model:
         # Make projections
         predictions = model.predict(X[-self.forecast_out:])
         # forecast_set = forecast_set.flatten()
-        future_dates = pd.date_range(start=df.index[-1], periods=self.forecast_out + 1)[1:]
+        future_dates = pd.date_range(start=self.df.index[-1], periods=self.forecast_out + 1)[1:]
 
         future_df = pd.DataFrame(
             {'Date': future_dates, 'Predicted': predictions[:, 0]})

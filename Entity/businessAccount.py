@@ -10,25 +10,23 @@ class BusinessAccount():
             password="csci321fyp",
             database="csci321"
         )
-    def fetchOne(self,sql,val) -> tuple:
-        cursor = self.mydb.cursor(dictionary=True)
-        cursor.execute(sql, val)
-        result = cursor.fetchone()
-        cursor.close()
+    def fetchOne(self, sql, val) -> dict:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchone()
         return result
 
-    def fetchAll(self,sql,val) -> tuple:
-        cursor = self.mydb.cursor(dictionary=True)
-        cursor.execute(sql, val)
-        result = cursor.fetchall()
-        cursor.close()
+    def fetchAll(self, sql, val) -> list:
+        with self.mydb.cursor(dictionary=True) as cursor:
+            cursor.execute(sql, val)
+            result = cursor.fetchall()
         return result
-    def commit(self,sql,val):
-        cursor = self.mydb.cursor()
-        cursor.execute(sql, val)
-        self.mydb.commit()
-        cursor.close()
-        return cursor.lastrowid
+
+    def commit(self, sql, val):
+        with self.mydb.cursor() as cursor:
+            cursor.execute(sql, val)
+            self.mydb.commit()
+
     def verifyAccount(self, userName, HashPassword) -> dict or Exception:
         sql = "SELECT * FROM businessaccount WHERE userName = %s"
         result = self.fetchOne(sql, (userName,))
@@ -61,3 +59,18 @@ class BusinessAccount():
         accountId = self.commit(sql, val)
         sql = "select * from businessaccount where accountId = %s"
         return self.fetchOne(sql, (accountId,))
+
+    def verifyApiKey(self, apiKey) -> bool or Exception:
+        try:
+            sql = "SELECT status FROM businessaccount WHERE apiKey = %s"
+            result = self.fetchOne(sql, (apiKey,))
+            if result["status"] != 'valid':
+                return False
+            else:
+                return True
+        except Exception as e:
+            raise Exception(e)
+
+    def __del__(self):
+        if self.mydb.is_connected():
+            self.mydb.close()

@@ -1,7 +1,7 @@
 import mysql.connector
 import ast
 import time
-
+import json
 
 class RequestRecord:
     def __init__(self):
@@ -32,8 +32,9 @@ class RequestRecord:
         with self.mydb.cursor() as cursor:
             cursor.execute(sql, val)
             self.mydb.commit()
+            return cursor.lastrowid
 
-    def storeRequestRecord(self, keyHashedValue, requestTickerSymbol, requestTimeFrame, requestModel, requestLayersNum,
+    def storeRequestRecord1(self, keyHashedValue, requestTickerSymbol, requestTimeFrame, requestModel, requestLayersNum,
                            requestNeuronsPerLayer, requestForecastResult) -> None:
         sql = "INSERT INTO requestrecord (keyHashedValue, requestTickerSymbol, requestTimeFrame, requestModel, requestLayersNum, requestNeuronsPerLayer, requestForecastResult) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         val = (
@@ -58,6 +59,19 @@ class RequestRecord:
         sql = "DELETE FROM requestrecord WHERE requestId = %s"
         self.commit(sql, (requestId,))
 
+    def storeRequestRecord(self,apikey,tickerSymbol,timeFrame,model,layersNum,neuronsPerLayer,forecastResult = "waiting"):
+        sql = "INSERT INTO requestrecord (apikey,tickerSymbol,timeFrame,model,layersNum,neuronsPerLayer,forecastResult) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        val = (apikey, tickerSymbol, timeFrame, model, layersNum, neuronsPerLayer,forecastResult)
+        id = self.commit(sql, val)
+        return id
+    def updateResult(self,requestId,forecastResult):
+        try:
+            forecastResult = json.dumps(forecastResult)
+            sql = "UPDATE requestrecord SET forecastResult = %s WHERE requestId = %s"
+            val = (forecastResult, requestId)
+            self.commit(sql, val)
+        except Exception as e:
+            pass
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()
