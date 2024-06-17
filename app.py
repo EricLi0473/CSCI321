@@ -168,7 +168,6 @@ def predict():
 def officialWeb():
     return render_template("system/OfficialWeb.html")
 
-
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
