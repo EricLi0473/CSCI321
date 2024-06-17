@@ -16,7 +16,7 @@
         <div class="flex items-center justify-between h-16">
           <!-- 项目Logo和名字 -->
           <div class="flex items-center">
-            <img class="h-12 w-12 object-cover" src="static/resource/LOGOS/BlackLogo.png" alt="Logo">
+            <img class="h-12 w-12 object-cover" src="../../static/resource/LOGOS/BlackLogo.png" alt="Logo">
             <span class="ml-2 text-xl font-bold">Stock Forecast</span>
           </div>
           <!-- 导航按钮 -->
@@ -146,6 +146,7 @@
         },
         created() {
           this.fetchRecords();
+          setInterval(this.fetchRecords, 5000);
         },
         methods: {
           fetchRecords() {

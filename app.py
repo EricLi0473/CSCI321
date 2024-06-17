@@ -82,7 +82,7 @@ def predictionresult():
 
 @app.route('/updatePredictionResult',methods=['GET'])
 def updatePredictionResult():
-    session['user'] = GetAccountInfo().getAccountInfo("1")
+    # session['user'] = GetAccountInfo().getAccountInfo("1")
     predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
     print(predictionResult)
     return jsonify(predictionResult)
@@ -92,6 +92,10 @@ def deletePrediction(requestId):
     DeleteRequestRecord().deleteRequestRecord(str(requestId))
     return jsonify({'success':True})
 
+@app.route('/predict', methods=['GET','POST'])
+def predict():
+    if request.method == 'GET':
+        return render_template("individualFreeUser/RequestPrediction.html")
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/OfficialWeb.html")
