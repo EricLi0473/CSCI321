@@ -4,7 +4,7 @@ os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
 from werkzeug.exceptions import InternalServerError,BadRequest
 #slow start when loadin ML functions, normal turn off
-# from Control.User.requestForPrediction import RequestForPrediction
+from Control.User.requestForPrediction import RequestForPrediction
 #
 from Control.User.generateApiKeyController import *
 from Control.User.uploadFileController import *
@@ -74,10 +74,9 @@ def businesssignup():
 @app.route('/accountInfo',methods=['POST','GET'])
 def accountInfo():
     if request.method == 'GET':
-        #hard code for test
+        #todo hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
         session['user'] = GetAccountInfo().getAccountInfo("1")
-        print(session['user'])
         if session['user']['accountType'] == 'individual':
             if session['user']['profile'] == 'free':
                 return render_template("individualFreeUser/accountInfo.html",user = session['user'])
@@ -98,7 +97,6 @@ def update_bio():
     bio = request.json.get('bio')
     userName = request.json.get('userName')
     email = request.json.get('email')
-    print(accountType,accountId,bio,userName,email)
     if accountType == 'individual':
         success = UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
     elif accountType == 'business':
@@ -138,7 +136,7 @@ def predictionresult():
     if request.method == 'GET':
         #hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
-        session['user'] = GetAccountInfo().getAccountInfo("1")
+        # session['user'] = GetAccountInfo().getAccountInfo("1")
         # predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
         # print(predictionResult)
         if session['user']['accountType'] == 'individual':
@@ -153,18 +151,47 @@ def predictionresult():
 def updatePredictionResult():
     # session['user'] = GetAccountInfo().getAccountInfo("1")
     predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-    print(predictionResult)
     return jsonify(predictionResult)
 
 @app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
 def deletePrediction(requestId):
     DeleteRequestRecord().deleteRequestRecord(str(requestId))
     return jsonify({'success':True})
-
+@app.route('/verifyInput',methods=['POST'])
+def verifyInput():
+    if request.method == 'POST':
+        try:
+            apikey = session['user']['apikey']
+            tickerSymbol = request.json.get('tickerSymbol')
+            timeRange = request.json.get('timeRange')
+            model = request.json.get('model')
+            layers = request.json.get('layers')
+            neurons = request.json.get('neurons')
+            RequestForPrediction().verifyInput(apikey, tickerSymbol, timeRange, model, layers, neurons)
+            return jsonify({'success':True})
+        except Exception as e:
+            return jsonify({'success':False,'error':str(e)})
 @app.route('/predict', methods=['GET','POST'])
 def predict():
     if request.method == 'GET':
+        #todo hard code for test
+        # session['user'] = GetAccountInfo().getAccountInfo("1")
         return render_template("individualFreeUser/RequestPrediction.html")
+    if request.method == 'POST':
+        try:
+            apikey = session['user']['apikey']
+            tickerSymbol = request.json.get('tickerSymbol')
+            timeRange = request.json.get('timeRange')
+            model = request.json.get('model')
+            layers = request.json.get('layers')
+            neurons = request.json.get('neurons')
+            RequestForPrediction().getPrediction(apikey, tickerSymbol, timeRange, model, layers, neurons)
+            return jsonify({'success':True})
+        except Exception as e:
+            return jsonify({'success':False,'error':str(e)})
+    # print(apikey,tickerSymbol,timeRange,model,layers,neurons)
+    # print(type(apikey),type(tickerSymbol),type(timeRange),type(model),type(layers),type(neurons))
+    #
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/OfficialWeb.html")
@@ -178,6 +205,11 @@ def redirectToUserPage():
     else:
         return redirect(url_for('login'))
 
+@app.route('/logout',methods=['GET'])
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
+
 @app.route('/documentation',methods=['GET'])
 def documentation():
     return render_template("system/documentation.html")
@@ -187,4 +219,4 @@ def contact():
     return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80,debug=True)
+    app.run(host='0.0.0.0',port=80,debug=False)

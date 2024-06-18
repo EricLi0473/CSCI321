@@ -15,9 +15,13 @@ class RequestForPrediction:
         try:
             end_date = datetime.today().date()
             start_date = (end_date - timedelta(days=10))
-            yf.download(symbol, start=start_date, end=end_date)
+            df = yf.download(symbol, start=start_date, end=end_date)
+            all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+            df = df.reindex(all_dates)
+            df = df.fillna(method='ffill')
         except Exception:
             raise Exception(f"Stock with symbol ' {symbol} ' not found.")
+
 
     def get_stock_data(self,symbol) -> pd.DataFrame or Exception:
         try:
@@ -30,7 +34,17 @@ class RequestForPrediction:
         except Exception:
             raise Exception(f"Stock with symbol ' {symbol} ' not found.")
         return df
-    def verifyInput(self,tickerSymbol,timeRange,model,layers,neurons):
+    def verifyInput(self,apikey,tickerSymbol,timeRange,model,layers,neurons,method=None):
+        #if api
+        print(apikey,tickerSymbol,timeRange,model,layers,neurons,method)
+        if method == 'api':
+            timeRange = 5 if timeRange is None else timeRange
+            layers = 2 if layers is None else layers
+            neurons = 16 if neurons is None else neurons
+            model = "LR" if model is None else model
+            if IndividualAccount().verifyApiKey(apikey) == False and BusinessAccount().verifyApiKey(apikey) == False:
+                raise Exception("Invalid API key or Your member rank is not available for API function")
+
         if tickerSymbol is None:
             raise Exception(f"Please provide ticker symbol.")
         models = ["LSTM","GRU","LR"]
@@ -55,18 +69,11 @@ class RequestForPrediction:
                 raise Exception("Invalid number of neurons")
         except Exception:
             raise Exception("Invalid neurons, need to be an integer")
+        return True
 
     def getPrediction(self,apikey,tickerSymbol,timeRange,model,layers,neurons,method = None):
-        #if api
-        if method == 'api':
-            timeRange = 5 if timeRange is None else timeRange
-            layers = 2 if layers is None else layers
-            neurons = 16 if neurons is None else neurons
-            model = "LR" if model is None else model
-            if IndividualAccount().verifyApiKey(apikey) == False and BusinessAccount().verifyApiKey(apikey) == False:
-                raise Exception("Invalid API key or Your member rank is not available for API function")
         #verify input
-        self.verifyInput(tickerSymbol, timeRange, model, layers, neurons)
+        # self.verifyInput(tickerSymbol, timeRange, model, layers, neurons)
         timeRange = int(timeRange)
         layers = int(layers)
         neurons = int(neurons)
