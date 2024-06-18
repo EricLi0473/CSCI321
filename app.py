@@ -18,6 +18,7 @@ from Control.User.deleteRequestRecord import *
 from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
 import hashlib
+from flask import Flask, redirect
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -177,6 +178,13 @@ def redirectToUserPage():
     else:
         return redirect(url_for('login'))
 
+@app.route('/documentation',methods=['GET'])
+def documentation():
+    return render_template("system/documentation.html")
+
+@app.route('/contact',methods=['GET'])
+def contact():
+    return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',port=80,debug=True)
