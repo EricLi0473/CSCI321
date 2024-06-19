@@ -87,7 +87,7 @@ def accountInfo():
 
 #handle personal info. update(name,bio,email), business update(name,bio,email,companyName)
 @app.route('/updatePersonalInfo', methods=['POST'])
-def update_bio():
+def updatePersonalInfo_FreeUser():
     # if 'user' not in session:
     #     print("user not in session")
     #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
