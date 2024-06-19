@@ -42,9 +42,9 @@
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1 text-lg">
-      <li><a href="">Dashboard</a></li>
-      <li><a href="">Start Prediction</a></li>
-      <li><a href="">History</a></li>
+      <li><a href="/accountInfo">Dashboard</a></li>
+      <li><a href="/predict">Start Prediction</a></li>
+      <li><a href="/predictionResult">History</a></li>
     </ul>
   </div>
   <div class="navbar-end">
@@ -61,7 +61,7 @@
             <span class="badge">New</span>
           </a>
         </li>
-        <li><a>Logout</a></li>
+        <li><a href="/logout">Logout</a></li>
       </ul>
     </div>
   </div>
@@ -69,10 +69,11 @@
 </header>
 
 <body>
+<div id="app">
   <div class="h-fit w-fit mx-auto mt-12">
   <ul class="steps">
-    <li id="step1-nav" class="step step-primary">1. search</li>
-    <li id="step2-nav" class="step step-primary ml-3">2. modules</li>
+    <li id="step1-nav" class="step step-primary">1. Ticker</li>
+    <li id="step2-nav" class="step step-primary ml-3">2. Model</li>
     <li id="step3-nav" class="step ml-4">3. layers</li>
     <li id="step4-nav" class="step ml-4">4. days</li>
   </ul>
@@ -92,25 +93,27 @@
   <input
     type="search"
     class="h-12 relative m-0 block flex-auto rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
-    placeholder="Search"
-    aria-label="Search"
+    placeholder="Ticker Symbol"
+    aria-label="Ticker"
     id="exampleFormControlInput2"
-    aria-describedby="button-addon2" />
-  <span
-    class="flex items-center whitespace-nowrap px-3 py-[0.25rem] text-surface dark:border-neutral-400 dark:text-white [&>svg]:h-5 [&>svg]:w-5"
-    id="button-addon2">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke-width="2"
-      stroke="currentColor">
-      <path
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-    </svg>
-  </span>
+    aria-describedby="button-addon2"
+    v-model="tickerSymbol"
+  />
+<!--  <span-->`
+<!--    class="flex items-center whitespace-nowrap px-3 py-[0.25rem] text-surface dark:border-neutral-400 dark:text-white [&>svg]:h-5 [&>svg]:w-5"-->
+<!--    id="button-addon2">-->
+<!--    <svg-->
+<!--      xmlns="http://www.w3.org/2000/svg"-->
+<!--      fill="none"-->
+<!--      viewBox="0 0 24 24"-->
+<!--      stroke-width="2"-->
+<!--      stroke="currentColor">-->
+<!--      <path-->
+<!--        stroke-linecap="round"-->
+<!--        stroke-linejoin="round"-->
+<!--        d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />-->
+<!--    </svg>-->
+<!--  </span>-->
 </div>
       <div class="flex justify-end mt-4">
         <button onclick="nextStep(2)" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded font-serif ">Next</button>
@@ -132,12 +135,12 @@
       It's easy to understand and quick to compute, making it a common choice for straightforward predictions.
       <div class="flex space-x-4 mt-4 w-fit mt-8">
       <h1 class="text-2xl font-serif"><b>please select your module:</b></h1>
-      <div class="text-2xl">SVM</div>
-        <input type="radio" name="radio-2" class="radio radio-primary" checked />
+      <div class="text-2xl">GRU</div>
+        <input type="radio" name="radio-2" class="radio radio-primary" value="GRU" v-model="model" checked />
       <div class="text-2xl">LSTM</div>
-        <input type="radio" name="radio-2" class="radio radio-primary"/>
+        <input type="radio" name="radio-2" class="radio radio-primary" value="LSTM" v-model="model"/>
       <div class="text-2xl">Linear Regression</div>
-        <input type="radio" name="radio-2" class="radio radio-primary"/>
+        <input type="radio" name="radio-2" class="radio radio-primary" value="LR" v-model="model"/>
     </div>
       <div class="flex">
         <div class="flex-1">
@@ -166,22 +169,21 @@
       Finding the right balance is crucial for optimal performance.<br><br>
     <div class="mt-4">
       <label for="layers"><b>Number of Layers:</b></label>
-      <select id="layers" class="ml-2 p-2 border rounded">
+      <select id="layers" class="ml-2 p-2 border rounded" v-model="layers">
         <option value="1">1</option>
         <option value="2">2</option>
-        <option value="3">3</option>
         <option value="4">4</option>
-        <option value="5">5</option>
         <option value="6">6</option>
-        <option value="7">7</option>
+        <option value="8">8</option>
       </select>
     </div>
     <div class="mt-4">
       <label for="neurons">Number of Neurons per Layer:</label>
-      <select id="neurons" class="ml-2 p-2 border rounded">
-        <option value="10">10</option>
-        <option value="20">20</option>
-        <option value="30">30</option>
+      <select id="neurons" class="ml-2 p-2 border rounded" v-model="neurons">
+        <option value="2">2</option>
+        <option value="4">4</option>
+        <option value="8">8</option>
+        <option value="16">16</option>
       </select>
     </div>
     <div class="flex">
@@ -203,7 +205,7 @@
       <b>number of Days:</b> This determines how long you want to predict the daily closing price of the stock as well as the recommendation,
       bearing in mind that the longer the number of days the less accurate the prediction will become.<br><br>
     <label for="days" class="mt-4">Number of Days:</label>
-    <input type="range" min="1" max="100" value="40" class="range w-1/2 ml-6" id="days" />
+    <input type="range" min="1" max="100" value="40" class="range w-1/2 ml-6" id="days" v-model="timeRange"/>
     <span id="daysValue" class="ml-2">50</span> days
     <br>
     <div class="flex">
@@ -211,12 +213,79 @@
         <button onclick="previousStep(3)" class="mt-8 px-4 py-2 bg-gray-500 text-white rounded">Previous</button>
       </div>
       <div class="flex justify-end">
-        <button onclick="" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded">Get Predict</button>
+        <button onclick="" class="mt-8 px-4 py-2 bg-blue-500 text-white rounded" @click="sendPrediction">Get Predict</button>
       </div>
       </div>
   </div>
+  </div>
+    <dialog id="exception" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-red-400">
+    <h3 class="font-bold text-lg">Failed</h3>
+    <p class="py-4">[[exception]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn bg-red-200">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+                <dialog id="information" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-sky-300">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[information]]</p>
+    <a href="predictionResult"><u>Click here to prediction Result Page</u></a>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn bg-sky-100">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
   </div>
   <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+      data: {
+        tickerSymbol : null,
+        timeRange: "5",
+        model: "GRU",
+        layers: "2",
+        neurons: "8",
+        exception:null,
+        information:null
+      },
+      methods:{
+        sendPrediction(){
+          axios.post('/verifyInput', {
+            tickerSymbol: this.tickerSymbol,
+            timeRange: this.timeRange,
+            model: this.model,
+            layers: this.layers,
+            neurons: this.neurons
+          }).then(response => {
+            if (response.data.success) {
+              this.information = 'Send Predict Request successfully';
+              document.getElementById('information').showModal();
+              axios.post('/predict', {
+                tickerSymbol: this.tickerSymbol,
+                timeRange: this.timeRange,
+                model: this.model,
+                layers: this.layers,
+                neurons: this.neurons
+              });
+            } else {
+              this.exception = "Error to send Request: "+response.data.error
+              document.getElementById('exception').showModal();
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+          });
+        }
+      }
+    });
+
     function activateStep(step) {
       const steps = ['step1', 'step2', 'step3', 'step4'];
       steps.forEach((s, index) => {

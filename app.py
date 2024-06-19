@@ -3,7 +3,9 @@ import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
 from werkzeug.exceptions import InternalServerError,BadRequest
-# from Control.User.mlController import *
+#slow start when loadin ML functions, normal turn off
+from Control.User.requestForPrediction import RequestForPrediction
+#
 from Control.User.generateApiKeyController import *
 from Control.User.uploadFileController import *
 import pandas as pd
@@ -13,10 +15,29 @@ from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.getRequestRecord import *
 from Control.User.deleteRequestRecord import *
-from Control.IndividualUser.updateBio import *
+from Control.IndividualUser.updatePersonalInfo import *
+from Control.User.changePasswordController import *
+import hashlib
+from flask import Flask, redirect
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
+
+@app.route('/api',methods=['GET'])
+def api():
+    try:
+        apikey = request.args.get('apikey')
+        symbol = request.args.get('symbol')
+        timeframe = request.args.get('timeframe')
+        model = request.args.get('model')
+        layers = request.args.get('layers')
+        neurons = request.args.get('neurons')
+        result = RequestForPrediction().getPrediction(apikey,symbol,timeframe,model,layers,neurons,"api")
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error":str(e)})
+
+
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'GET':
@@ -53,10 +74,9 @@ def businesssignup():
 @app.route('/accountInfo',methods=['POST','GET'])
 def accountInfo():
     if request.method == 'GET':
-        #hard code for test
+        #todo hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
         session['user'] = GetAccountInfo().getAccountInfo("1")
-        print(session['user'])
         if session['user']['accountType'] == 'individual':
             if session['user']['profile'] == 'free':
                 return render_template("individualFreeUser/accountInfo.html",user = session['user'])
@@ -65,36 +85,49 @@ def accountInfo():
         elif session['user']['accountType'] == 'business':
             pass
 
-
-@app.route('/updateBio', methods=['POST'])
+#handle personal info. update(name,bio,email), business update(name,bio,email,companyName)
+@app.route('/updatePersonalInfo', methods=['POST'])
 def update_bio():
     # if 'user' not in session:
     #     print("user not in session")
     #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
-    session['user'] = GetAccountInfo().getAccountInfo("1")
-
+    accountType = request.json.get('accountType')
+    accountId = request.json.get('accountId')
     bio = request.json.get('bio')
-    user_id = session['user']['accountId']  # Ensure you have accountId in the session user
-
-    # Update bio logic in database
-    success = update_bio().update_bio(user_id, bio)  # Implement this function
+    userName = request.json.get('userName')
+    email = request.json.get('email')
+    if accountType == 'individual':
+        success = UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
+    elif accountType == 'business':
+        #company, updateBusinessInfo()
+        pass
 
     if success:
         session['user']['bio'] = bio
+        session['user']['userName'] = userName
+        session['user']['email'] = email
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
-    if 'user' not in session:
-        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
-    old_password = request.json.get('oldPassword')
-    new_password = request.json.get('newPassword')
-    # Change password logic here...
-    # For example, verify old password, update to new password
-    return jsonify({'success': True})
+    # if 'user' not in session:
+    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+    try:
+        old_password = request.json.get('oldPassword')
+        new_password = request.json.get('newPassword')
+        userName = session['user']['userName']
+        if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
+            raise Exception('Invalid old password')
+        if session['user']['accountType'] == 'individual':
+            session['user']['hashedPassword'] = ChangePasswordController().changeIndividualPassword(userName,old_password,new_password)
+        elif session['user']['accountType'] == 'business':
+            pass
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False,'error':str(e)})
 
 
 
@@ -103,7 +136,7 @@ def predictionresult():
     if request.method == 'GET':
         #hard code for test
         #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
-        session['user'] = GetAccountInfo().getAccountInfo("1")
+        # session['user'] = GetAccountInfo().getAccountInfo("1")
         # predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
         # print(predictionResult)
         if session['user']['accountType'] == 'individual':
@@ -118,22 +151,50 @@ def predictionresult():
 def updatePredictionResult():
     # session['user'] = GetAccountInfo().getAccountInfo("1")
     predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-    print(predictionResult)
     return jsonify(predictionResult)
 
 @app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
 def deletePrediction(requestId):
     DeleteRequestRecord().deleteRequestRecord(str(requestId))
     return jsonify({'success':True})
-
+@app.route('/verifyInput',methods=['POST'])
+def verifyInput():
+    if request.method == 'POST':
+        try:
+            apikey = session['user']['apikey']
+            tickerSymbol = request.json.get('tickerSymbol')
+            timeRange = request.json.get('timeRange')
+            model = request.json.get('model')
+            layers = request.json.get('layers')
+            neurons = request.json.get('neurons')
+            RequestForPrediction().verifyInput(apikey, tickerSymbol, timeRange, model, layers, neurons)
+            return jsonify({'success':True})
+        except Exception as e:
+            return jsonify({'success':False,'error':str(e)})
 @app.route('/predict', methods=['GET','POST'])
 def predict():
     if request.method == 'GET':
+        #todo hard code for test
+        # session['user'] = GetAccountInfo().getAccountInfo("1")
         return render_template("individualFreeUser/RequestPrediction.html")
+    if request.method == 'POST':
+        try:
+            apikey = session['user']['apikey']
+            tickerSymbol = request.json.get('tickerSymbol')
+            timeRange = request.json.get('timeRange')
+            model = request.json.get('model')
+            layers = request.json.get('layers')
+            neurons = request.json.get('neurons')
+            RequestForPrediction().getPrediction(apikey, tickerSymbol, timeRange, model, layers, neurons)
+            return jsonify({'success':True})
+        except Exception as e:
+            return jsonify({'success':False,'error':str(e)})
+    # print(apikey,tickerSymbol,timeRange,model,layers,neurons)
+    # print(type(apikey),type(tickerSymbol),type(timeRange),type(model),type(layers),type(neurons))
+    #
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/OfficialWeb.html")
-
 
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
@@ -144,104 +205,18 @@ def redirectToUserPage():
     else:
         return redirect(url_for('login'))
 
-# @app.errorhandler(400)
-# def bad_request_error(error):
-#     return render_template('error400.html', error_message=error), 400
-#
-# @app.route('/api')
-# def index():
-#     return render_template('apiPage.html')
-# @app.route('/apiRequest')
-# def api():
-#     apikey = request.args.get('apikey')
-#     symbol = request.args.get('symbol')
-#     timeframe = request.args.get('timeframe')
-#     model = request.args.get('model')
-#     layers = request.args.get('layers')
-#     neurons = request.args.get('neurons')
-#
-#     try:
-#         if len(timeframe) == 0:
-#             timeframe = "5"
-#         if len(model) == 0:
-#             model = 'lr'
-#         if len(layers) == 0:
-#             layers = "10"
-#         if len(neurons) == 0:
-#             neurons = "16"
-#         result = MlController().getMLResultByApi(apikey,symbol,model,timeframe,layers,neurons)
-#         resultDict = json.loads(result)
-#         return jsonify(resultDict)
-#     except Exception as e:
-#         raise BadRequest(e)
-#
-#
-# @app.route('/getapikey', methods=['POST'])
-# def get_api_key():
-#     user_type = request.form.get('userType')
-#     user_name = request.form.get('userName')
-#
-#     apikey = GenerateApiKeyController().generateApiKey(user_type, user_name)
-#     return render_template('front-end page/UserSystem/', apikey=apikey)
-#
-# @app.route('/getPredictionResult', methods=['POST'])
-# def getPredictionResult():
-#     apikey = request.form.get('apikey')
-#     tickerSymbol = request.form.get('tickerSymbol')
-#     modelName = request.form.get('modelName')
-#     timeFrame = request.form.get('timeFrame')
-#     layers = request.form.get('layers')
-#     neurons = request.form.get('neurons')
-#     file = request.files['file']
-#     try:
-#         if file:
-#             df = pd.read_csv(file)
-#             is_valid, message = UploadFileController().checkUploadDataFormat(df)
-#             if is_valid:
-#                 result = MlController().getMLResultByUploadData(df,apikey,file.filename[:-4],modelName,timeFrame,layers,neurons)
-#             else:
-#                 return jsonify(success=False, error=str(message))
-#         else:
-#             result = MlController().getMLResultByParameters(apikey, tickerSymbol, modelName, timeFrame, layers, neurons)
-#         resultDict = json.loads(result)
-#         return jsonify(success=True, result=resultDict)
-#     except Exception as e:
-#         return jsonify(success=False, error=str(e))
+@app.route('/logout',methods=['GET'])
+def logout():
+    session.pop('user', None)
+    return redirect(url_for('login'))
 
-## crud sample
-items = []
+@app.route('/documentation',methods=['GET'])
+def documentation():
+    return render_template("system/documentation.html")
 
-@app.route('/crudSample', methods=['GET'])
-def crudSample():
-    return render_template("CRUD_Sample.html")
-@app.route('/items', methods=['GET'])
-def get_items():
-    return jsonify(items)
-
-@app.route('/items', methods=['POST'])
-def add_item():
-    item = request.json
-    items.append(item)
-    return jsonify(item), 201
-
-@app.route('/items/<int:item_id>', methods=['PUT'])
-def update_item(item_id):
-    item = request.json
-    if 0 <= item_id < len(items):
-        items[item_id] = item
-        return jsonify(item)
-    else:
-        return jsonify({"error": "Item not found"}), 404
-
-@app.route('/items/<int:item_id>', methods=['DELETE'])
-def delete_item(item_id):
-    if 0 <= item_id < len(items):
-        removed_item = items.pop(item_id)
-        return jsonify(removed_item)
-    else:
-        return jsonify({"error": "Item not found"}), 404
-
-## sample end
+@app.route('/contact',methods=['GET'])
+def contact():
+    return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80,debug=True)
+    app.run(host='0.0.0.0',port=80,debug=False)
