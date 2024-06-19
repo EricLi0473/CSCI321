@@ -80,10 +80,10 @@
   </div>
 
   <div id="step1" class="step-content h-fit w-fit mx-auto mt-8">
-    <div class="h-fit w-1/2 mx-auto text-center">
-      <h1 class="text-4xl font-bold font-serif">Introduction</h1><br>
+    <div class="h-fit mx-auto text-center">
+      <h1 class="text-6xl lg:text-4xl font-bold font-serif">Introduction</h1><br>
     </div>
-    <div class="h-fit w-1/2 mx-auto font-serif">
+    <div class="h-fit w-3/4 lg:w-1/2 mx-auto font-serif text-4xl lg:text-2xl mt-5">
       welcome to use our system for prediction, now you are a free user, you still can use our service but with limitate, please follow the step to complete your prediction.<br><br>
       <b>input type:</b> as a free user, you can input stock code, stock name to predict, but you only have 10 times every day for using our system, if you want to increase times, you can click on this link to upgrades to premium user.<br><br>
       after you finish this step, please go to the next step to complete your prediction.<br>
@@ -92,7 +92,7 @@
       <div class="relative flex">
   <input
     type="search"
-    class="h-12 relative m-0 block flex-auto rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
+    class="mt-5 h-12 relative m-0 block flex-auto rounded border border-solid border-neutral-200 bg-transparent bg-clip-padding px-3 py-[0.25rem] text-base font-normal leading-[1.6] text-surface outline-none transition duration-200 ease-in-out placeholder:text-neutral-500 focus:z-[3] focus:border-primary focus:shadow-inset focus:outline-none motion-reduce:transition-none dark:border-white/10 dark:text-white dark:placeholder:text-neutral-200 dark:autofill:shadow-autofill dark:focus:border-primary"
     placeholder="Ticker Symbol"
     aria-label="Ticker"
     id="exampleFormControlInput2"
@@ -134,7 +134,9 @@
       <b>Linear Regression:</b>A basic statistical method that predicts future stock prices by finding a straight-line relationship between past prices and other factors.
       It's easy to understand and quick to compute, making it a common choice for straightforward predictions.
       <div class="flex space-x-4 mt-4 w-fit mt-8">
-      <h1 class="text-2xl font-serif"><b>please select your module:</b></h1>
+        <h1 class="text-2xl font-serif"><b>please select your module:</b></h1>
+      </div>
+      <div class="flex space-x-4 mt-1 w-fit">
       <div class="text-2xl">GRU</div>
         <input type="radio" name="radio-2" class="radio radio-primary" value="GRU" v-model="model" checked />
       <div class="text-2xl">LSTM</div>
