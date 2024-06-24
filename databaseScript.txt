@@ -3,14 +3,11 @@ CREATE TABLE account
 (
     accountId            INT AUTO_INCREMENT PRIMARY KEY,
     userName             VARCHAR(255) NULL,
-    apikey               VARCHAR(255) NULL,
     hashedPassword       VARCHAR(255) NULL,
     email                VARCHAR(255) NULL,
     bio                  VARCHAR(255) DEFAULT 'Welcome to stock4me!' NULL,
-    profile              ENUM ('free', 'premium', 'admin', 'dataManager') NULL,
+    profile              ENUM ('free', 'premium') NULL,
     status               ENUM ('valid', 'invalid') DEFAULT 'valid' NULL,
-    apikeyUsageCount     INT DEFAULT 0 NULL,
-    accountType          VARCHAR(255) DEFAULT 'individual' NULL,
     createDateTime       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     age                  INT NULL,
     sex                  ENUM('male', 'female', 'other') NULL,
@@ -19,15 +16,16 @@ CREATE TABLE account
     netWorth             DECIMAL(15, 2) NULL,
     investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
-    investmentGoals      VARCHAR(255) NULL,
+    investmentGoals      VARCHAR(255) NULL
 );
 
--- Table to store person favourites folder
-CREATE TABLE favourites
+-- Merged table to store person favourites and personal interests
+CREATE TABLE favouritesInterests
 (
-    favouriteId  INT AUTO_INCREMENT PRIMARY KEY,
+    favIntId     INT AUTO_INCREMENT PRIMARY KEY,
     accountId    INT NOT NULL,
-    stockSymbol  VARCHAR(10) NOT NULL,
+    stockSymbol  TEXT NOT NULL,
+    interest     VARCHAR(255) NULL,
     addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
@@ -48,47 +46,34 @@ CREATE TABLE searchHistory
 (
     searchId     INT AUTO_INCREMENT PRIMARY KEY,
     accountId    INT NOT NULL,
-    stockSymbol  VARCHAR(10) NOT NULL,
+    stockSymbol  TEXT NOT NULL,
     searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
 
--- Table to store every time a request for prediction is made
-CREATE TABLE predictionHistory
+-- Merged table to store stock prediction history and results
+CREATE TABLE predictionData
 (
-    predictionId INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    stockSymbol  VARCHAR(10) NOT NULL,
-    requestDate  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    predictionId      INT AUTO_INCREMENT PRIMARY KEY,
+    accountId         INT NOT NULL,
+    stockSymbol       TEXT NOT NULL,
+    requestDate       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    minPredictedPrice DECIMAL(10, 2) NULL,
+    avgPredictedPrice DECIMAL(10, 2) NULL,
+    maxPredictedPrice DECIMAL(10, 2) NULL,
+    buyPercentage     DECIMAL(5, 2) NULL,
+    holdPercentage    DECIMAL(5, 2) NULL,
+    sellPercentage    DECIMAL(5, 2) NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
 
--- Table to store stock prediction result
-CREATE TABLE predictionResult
-(
-    resultId     INT AUTO_INCREMENT PRIMARY KEY,
-    predictionId INT NOT NULL,
-    predictedPrice DECIMAL(10, 2) NOT NULL,
-    predictionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (predictionId) REFERENCES predictionHistory(predictionId)
-);
-
--- Table to store personal interests when they first login
-CREATE TABLE personalInterests
-(
-    interestId   INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    interest     VARCHAR(255) NOT NULL,
-    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
-);
 
 -- Table to store the recommendation based on personal interests
 CREATE TABLE recommendationList
 (
     recommendationId INT AUTO_INCREMENT PRIMARY KEY,
     accountId        INT NOT NULL,
-    recommendedStock VARCHAR(10) NOT NULL,
+    recommendedStock TEXT NOT NULL,
     recommendationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
@@ -98,7 +83,7 @@ CREATE TABLE thresholdSettings
 (
     thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
     accountId      INT NOT NULL,
-    stockSymbol    VARCHAR(10) NOT NULL,
+    stockSymbol    TEXT NOT NULL,
     changePercentage DECIMAL(5, 2) NOT NULL,
     notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
@@ -120,7 +105,7 @@ CREATE TABLE comment
 (
     commentId     INT AUTO_INCREMENT PRIMARY KEY,
     accountId     INT NOT NULL,
-    stockSymbol   VARCHAR(10) NOT NULL,
+    stockSymbol   TEXT NOT NULL,
     commentText   TEXT NOT NULL,
     commentDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
