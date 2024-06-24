@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Line Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div id="app">
+    <div v-for="(stock, index) in recommendationList" :key="index" style="width:600px; height: 400px; margin-bottom: 20px;">
+        <h1>[[stock.longName]]</h1>
+        <h2>[[stock.price]]</h2>
+        <h3>[[stock.relative_change + "%"]]</h3>
+        <h3>[[stock.absolute_change]]</h3>
+        <canvas :id="'myChart' + index" height="80px"></canvas>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        delimiters: ['[[', ']]'],
+        data: {
+            recommendationList: {{ recommendationList|tojson }} // 推荐的股票列表
+        },
+        mounted() {
+            this.update_recommendationList();
+        },
+        methods: {
+            update_recommendationList() {
+                this.recommendationList.forEach((stock, index) => {
+                    const data = stock.data;
+                    const labels = data.map(item => new Date(item.timestamp).toLocaleDateString());
+                    const closePrices = data.map(item => item.close);
+
+                    // 计算平均价格
+                    const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
+                    const averagePrices = new Array(closePrices.length).fill(averagePrice);
+
+                    this.$nextTick(() => {
+                        // 获取 Canvas 上下文
+                        const canvasId = 'myChart' + index;
+                        const ctx = document.getElementById(canvasId).getContext('2d');
+
+                        // 创建渐变
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                        if (stock.upsAndDowns === 0) {
+                            gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)'); // 红色渐变
+                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                        } else {
+                            gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)'); // 绿色渐变
+                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                        }
+
+                        // 绘制图表
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: '', // 隐藏标签
+                                        data: closePrices,
+                                        borderColor: stock.upsAndDowns === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        backgroundColor: gradient // 设置渐变填充
+                                    },
+                                    {
+                                        label: '', // 隐藏标签
+                                        data: averagePrices,
+                                        borderColor: 'rgba(128, 128, 128, 1)', // 灰色平均线
+                                        borderWidth: 2,
+                                        fill: false,
+                                        borderDash: [10, 5] // 设置虚线样式
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        display: false
+                                    },
+                                    y: {
+                                        display: false
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false // 隐藏图例
+                                    }
+                                },
+                                elements: {
+                                    point: {
+                                        radius: 0
+                                    }
+                                },
+                                layout: {
+                                    padding: {
+                                        left: 0,
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0
+                                    }
+                                }
+                            }
+                        });
+
+                        console.log('Chart initialized for:', stock.symbol);
+                    });
+                });
+            }
+        }
+    });
+</script>
+</body>
+</html>
