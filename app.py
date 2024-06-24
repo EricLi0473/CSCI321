@@ -1,10 +1,11 @@
 from flask import Flask, request, render_template, redirect, url_for
+import requests
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
 from werkzeug.exceptions import InternalServerError,BadRequest
 #slow start when loadin ML functions, normal turn off
-from Control.User.requestForPrediction import RequestForPrediction
+# from Control.User.requestForPrediction import RequestForPrediction
 #
 from Control.User.generateApiKeyController import *
 from Control.User.uploadFileController import *
@@ -17,12 +18,61 @@ from Control.IndividualUser.getRequestRecord import *
 from Control.User.deleteRequestRecord import *
 from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
+from Control.User.stockDataController import *
+from Control.User.newsController import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
 
+import yfinance as yf
+import pandas as pd
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+
+
+
+@app.route('/news', methods=['GET', 'POST'])
+def news():
+    result = NewsController().get_recommendation_news("cn")
+
+    return jsonify(result)
+
+
+@app.route('/symbol/<string:symbol>')
+def symbol(symbol):
+    data = StockDataController().get_update_stock_data(symbol,"180d")
+    return render_template('index.html', stockData=data,symbol=symbol)
+@app.route('/demo')
+def demo():
+    list = StockDataController().get_recommendation_stock("us","Energy,Technology")
+    recommendationList = []
+    print(list)
+    for stock in list:
+        try:
+            recommendationList.append(StockDataController().get_stock_info_medium(stock))
+        except Exception as e:
+            continue
+
+    return render_template('demo.html',recommendationList = recommendationList)
+@app.route('/stock_info_minimum/<string:symbol>', methods=['GET'])
+def stock_info_minimum(symbol):
+    return jsonify(StockDataController().get_stock_info_minimum(symbol))
+
+@app.route('/update_stock_data/<string:symbol>/<string:period>', methods=['GET'])
+def update_stock_data(symbol, period):
+    print(symbol,period)
+    return jsonify(StockDataController().get_update_stock_data(symbol, period))
+
+@app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
+def stock_data_medium(symbol):
+    return jsonify(StockDataController().get_stock_info_medium(symbol))
+
+@app.route('/stock_info_full/<string:symbol>', methods=['GET'])
+def stock_info_full(symbol):
+    return jsonify(StockDataController().get_stock_info_full(symbol))
 @app.route('/api',methods=['GET'])
 def api():
     try:
@@ -219,4 +269,4 @@ def contact():
     return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=80,debug=False)
+    app.run(host='0.0.0.0',port=80,debug=True)

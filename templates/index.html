@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="keywords" content="Quick Start"/>
+    <meta name="description" content="Quick Start"/>
+    <title>Quick Start</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div id="app">
+    <div>
+        <button @click="updatePeriod('180d')">180天</button>
+        <button @click="updatePeriod('7d')">一周</button>
+        <button @click="updatePeriod('1mo')">一个月</button>
+        <button @click="updatePeriod('1y')">一年</button>
+        <button @click="updatePeriod('10y')">十年</button>
+        <button @click="updatePeriod('max')">Max</button>
+    </div>
+    <div id="chart" style="width:1200px;height:600px"></div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            stockData: {{ stockData|tojson }},
+            symbol: {{ symbol|tojson }},
+            period: '30d', // 可以设置默认的period，或者通过其他方式获取
+            chart: null  // 保存图表实例
+        },
+        mounted() {
+            this.renderStockData(); // 调用renderStockData方法
+        },
+        methods: {
+            renderStockData() {
+                if (!this.chart) {
+                    this.chart = klinecharts.init('chart');
+                    this.chart.createIndicator('MA', false, { id: 'candle_pane' });
+                    this.chart.createIndicator('VOL');
+                }
+                this.chart.applyNewData(this.stockData);
+            },
+            updatePeriod(newPeriod) {
+                this.period = newPeriod;
+                const url = `/update_stock_data/${this.symbol}/${this.period}`;
+                axios.get(url)
+                    .then(response => {
+                        this.stockData = response.data;
+                        this.renderStockData();
+                    })
+                    .catch(error => {
+                        console.error("There was an error fetching the stock data!", error);
+                    });
+            }
+        }
+    });
+</script>
+</body>
+</html>
