@@ -1,0 +1,127 @@
+-- Table to store person account info with additional profiling and important attributes
+CREATE TABLE account
+(
+    accountId            INT AUTO_INCREMENT PRIMARY KEY,
+    userName             VARCHAR(255) NULL,
+    apikey               VARCHAR(255) NULL,
+    hashedPassword       VARCHAR(255) NULL,
+    email                VARCHAR(255) NULL,
+    bio                  VARCHAR(255) DEFAULT 'Welcome to stock4me!' NULL,
+    profile              ENUM ('free', 'premium', 'admin', 'dataManager') NULL,
+    status               ENUM ('valid', 'invalid') DEFAULT 'valid' NULL,
+    apikeyUsageCount     INT DEFAULT 0 NULL,
+    accountType          VARCHAR(255) DEFAULT 'individual' NULL,
+    createDateTime       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    age                  INT NULL,
+    sex                  ENUM('male', 'female', 'other') NULL,
+    occupation           VARCHAR(255) NULL,
+    incomeLevel          DECIMAL(10, 2) NULL,
+    netWorth             DECIMAL(15, 2) NULL,
+    investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
+    riskTolerance        ENUM('low', 'medium', 'high') NULL,
+    investmentGoals      VARCHAR(255) NULL,
+);
+
+-- Table to store person favourites folder
+CREATE TABLE favourites
+(
+    favouriteId  INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    stockSymbol  VARCHAR(10) NOT NULL,
+    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store person follow someone
+CREATE TABLE followList
+(
+    followId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    followedId   INT NOT NULL,
+    followDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    FOREIGN KEY (followedId) REFERENCES account(accountId)
+);
+
+-- Table to store person search stock history
+CREATE TABLE searchHistory
+(
+    searchId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    stockSymbol  VARCHAR(10) NOT NULL,
+    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store every time a request for prediction is made
+CREATE TABLE predictionHistory
+(
+    predictionId INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    stockSymbol  VARCHAR(10) NOT NULL,
+    requestDate  TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store stock prediction result
+CREATE TABLE predictionResult
+(
+    resultId     INT AUTO_INCREMENT PRIMARY KEY,
+    predictionId INT NOT NULL,
+    predictedPrice DECIMAL(10, 2) NOT NULL,
+    predictionDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (predictionId) REFERENCES predictionHistory(predictionId)
+);
+
+-- Table to store personal interests when they first login
+CREATE TABLE personalInterests
+(
+    interestId   INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    interest     VARCHAR(255) NOT NULL,
+    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store the recommendation based on personal interests
+CREATE TABLE recommendationList
+(
+    recommendationId INT AUTO_INCREMENT PRIMARY KEY,
+    accountId        INT NOT NULL,
+    recommendedStock VARCHAR(10) NOT NULL,
+    recommendationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store user-specific thresholds for stock changes (Configuration; 5% change in stock price
+CREATE TABLE thresholdSettings
+(
+    thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
+    accountId      INT NOT NULL,
+    stockSymbol    VARCHAR(10) NOT NULL,
+    changePercentage DECIMAL(5, 2) NOT NULL,
+    notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store user reviews of the product/website
+CREATE TABLE review
+(
+    reviewId      INT AUTO_INCREMENT PRIMARY KEY,
+    accountId     INT NOT NULL,
+    rating        INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    reviewText    TEXT NULL,
+    reviewDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+-- Table to store user comments on company stocks
+CREATE TABLE comment
+(
+    commentId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId     INT NOT NULL,
+    stockSymbol   VARCHAR(10) NOT NULL,
+    commentText   TEXT NOT NULL,
+    commentDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
