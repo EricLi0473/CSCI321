@@ -19,13 +19,21 @@ CREATE TABLE account
     investmentGoals      VARCHAR(255) NULL
 );
 
--- Merged table to store person favourites and personal interests
-CREATE TABLE favouritesInterests
-(
-    favIntId     INT AUTO_INCREMENT PRIMARY KEY,
+-- User Favourites List(watchList)
+CREATE TABLE watchList(
+    watchItemId INT AUTO_INCREMENT PRIMARY KEY,
     accountId    INT NOT NULL,
     stockSymbol  TEXT NOT NULL,
-    interest     VARCHAR(255) NULL,
+    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+-- User preferences List(Industry,Country), input when they sign up
+CREATE TABLE preferences
+(
+    preferencesId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    preferenceIndustry     TEXT NOT NULL,
+    preferenceCountry TEXT NOT NULL,
     addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
