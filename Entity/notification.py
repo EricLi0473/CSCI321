@@ -37,3 +37,25 @@ class Notification:
         sql = "select * from notification where accountId=%s"
         val = (accountId,)
         return self.fetchAll(sql, val)
+
+    def set_notification(self,accountId,notification,notificationType,referenceId):
+        sql = "INSERT INTO notification(accountId,notification,notificationType,referenceId) VALUES (%s,%s,%s,%s)"
+        val = (accountId,notification,notificationType,referenceId)
+        self.commit(sql, val)
+        sql = '''
+                DELETE FROM notification
+                WHERE notificationId NOT IN (
+                    SELECT min_id FROM (
+                        SELECT MIN(notificationId) as min_id
+                        FROM notification
+                        GROUP BY accountId, referenceId, notificationType
+                    ) as subquery
+                );'''
+        val = ("")
+        self.commit(sql, val)
+
+
+
+
+if __name__ == "__main__":
+    pass

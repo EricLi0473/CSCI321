@@ -1,5 +1,4 @@
-from Entity.individualAccount import *
-from Entity.businessAccount import *
+
 import secrets
 import string
 import hashlib

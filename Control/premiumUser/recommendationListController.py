@@ -19,6 +19,11 @@ class RecommendationListController:
     def insert_recommendation_by_accountId(self,id, countries,industry):
         stock_list = str(StockDataController().get_recommendation_stock_by_preference(countries,industry))
         RecommendationList().insert_recommendation_by_accountId(id, stock_list)
+
+    def update_recommendation_by_accountId(self,id, countries,industry):
+        stock_list = str(StockDataController().get_recommendation_stock_by_preference(countries,industry))
+        RecommendationList().update_recommendation_by_accountId(id, stock_list)
+
 if __name__ == '__main__':
     # print(RecommendationListController().get_recommendationList_by_accountId(1))
-    RecommendationListController().insert_recommendation_by_accountId(1,'us','Technology')
+    RecommendationListController().update_recommendation_by_accountId(1,'us','Technology')
