@@ -23,6 +23,7 @@ from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
 from Control.User.commentController import *
 from Control.premiumUser.recommendationListController import *
+from Control.User.notificationController import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -48,9 +49,13 @@ def recommendation_news(page):
 @app.route('/recommendation_symbol', methods=['GET', 'POST'])
 def recommendation_symbol():
     # hard code for test, userId in session['user']
-    userId = 1
-    return jsonify(RecommendationListController().get_recommendationList_by_id(userId))
-
+    accountId = 1
+    return jsonify(RecommendationListController().get_recommendationList_by_id(accountId))
+@app.route('/get_notification',methods=['GET', 'POST'])
+def get_notification():
+    # hard code for test, userId in session['user']
+    accountId = 1
+    return jsonify(NotificationController().get_notifications_by_accountId(accountId))
 
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
@@ -66,6 +71,14 @@ def symbol(symbol):
 @app.route('/symbol_comments/<string:symbol>')
 def symbol_comments(symbol):
     return jsonify(CommentController().get_comments_by_symbol(symbol))
+
+@app.route('/emailVerification', methods=['GET', 'POST'])
+def emailVerification():
+    return render_template("/system/emailVerification.html")
+
+@app.route('/preferenceSetup', methods=['GET', 'POST'])
+def preferenceSetup():
+    return render_template("/system/preferenceSetUp.html")
 @app.route('/demo')
 def demo():
     list = StockDataController().get_recommendation_stock("us","Energy,Technology")

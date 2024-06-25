@@ -1,5 +1,6 @@
 import mysql.connector
-class Notification:
+from datetime import datetime, timedelta
+class EmailVerification:
     def __init__(self):
         self.mydb = self.connectToDatabase()
 
@@ -33,7 +34,21 @@ class Notification:
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def get_notifications_by_accountId(self,accountId):
-        sql = "select * from notification where accountId=%s"
-        val = (accountId,)
-        return self.fetchAll(sql, val)
+    def emailVerify(self, email, code) -> None or Exception:
+        sql = "SELECT * FROM emailVerification WHERE email=%s AND code=%s"
+        val = (email, code)
+        record = self.fetchOne(sql, val)
+        if record is None:
+            raise Exception("Invalid code, please send and enter again")
+
+        verification_date = record['verificationDate']
+        if datetime.now() - verification_date > timedelta(minutes=5):
+            raise Exception("The verification code has expired, please request a new one")
+
+    def insert_verify_code(self, email, code):
+        sql = "INSERT INTO emailVerification (email, code) VALUES (%s, %s)"
+        val = (email, code)
+        self.commit(sql, val)
+
+if __name__ == "__main__":
+    EmailVerification().insert_verify_code("<EMAIL>", "1")
