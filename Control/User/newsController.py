@@ -5,7 +5,7 @@ class NewsController:
         pass
 
     def get_recommendation_news(self,countries='us',industries='Technology',pages=1) -> list[dict]:
-        url = f"https://api.marketaux.com/v1/news/all?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&language=en&industries={industries}&page={pages}&limit=2&countries={countries}"
+        url = f"https://api.marketaux.com/v1/news/all?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&language=en&industries={industries}&page={pages}&limit=10&countries={countries}"
         response = requests.get(url).json()
         news_list  = []
         for news in response['data']:

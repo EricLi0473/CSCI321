@@ -1,6 +1,5 @@
 import mysql.connector
 
-
 class IndividualAccount():
     def __init__(self):
         self.mydb = self.connectToDatabase()
