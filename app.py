@@ -66,7 +66,7 @@ def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = PredictionData().get_predictionData_by_symbol(symbol)
-    return render_template('index.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
+    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
 
 @app.route('/symbol_comments/<string:symbol>')
 def symbol_comments(symbol):
