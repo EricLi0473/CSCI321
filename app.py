@@ -50,7 +50,7 @@ def recommendation_news(page):
 def recommendation_symbol():
     # hard code for test, userId in session['user']
     accountId = 1
-    return jsonify(RecommendationListController().get_recommendationList_by_id(accountId))
+    return jsonify(RecommendationListController().get_recommendationList_by_accountId(accountId))
 @app.route('/get_notification',methods=['GET', 'POST'])
 def get_notification():
     # hard code for test, userId in session['user']
@@ -81,7 +81,7 @@ def preferenceSetup():
     return render_template("/system/preferenceSetUp.html")
 @app.route('/demo')
 def demo():
-    list = StockDataController().get_recommendation_stock("us","Energy,Technology")
+    list = StockDataController().get_recommendation_stock_by_preference("us", "Energy,Technology")
     recommendationList = []
     print(list)
     for stock in list:

@@ -6,11 +6,19 @@ class RecommendationListController:
     def __init__(self):
         pass
 
-    def get_recommendationList_by_id(self, id) -> list[dict]:
-        stockList = ast.literal_eval(RecommendationList().get_recommendations_by_id("1")['recommendedStock'])
+    def get_recommendationList_by_accountId(self, id) -> list[dict]:
+        stockList = ast.literal_eval(RecommendationList().get_recommendations_by_id(id)['recommendedStock'])
         result = []
         for stock in stockList:
-            result.append(StockDataController().get_stock_info_medium(stock))
+            try:
+                result.append(StockDataController().get_stock_info_medium(stock))
+            except Exception:
+                continue
         return result
+
+    def insert_recommendation_by_accountId(self,id, countries,industry):
+        stock_list = str(StockDataController().get_recommendation_stock_by_preference(countries,industry))
+        RecommendationList().insert_recommendation_by_accountId(id, stock_list)
 if __name__ == '__main__':
-    print(RecommendationListController().get_recommendationList_by_id(1))
+    # print(RecommendationListController().get_recommendationList_by_accountId(1))
+    RecommendationListController().insert_recommendation_by_accountId(1,'us','Technology')

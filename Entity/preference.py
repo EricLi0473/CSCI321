@@ -1,6 +1,5 @@
 import mysql.connector
-
-class RecommendationList():
+class Preference:
     def __init__(self):
         self.mydb = self.connectToDatabase()
 
@@ -29,18 +28,7 @@ class RecommendationList():
         with self.mydb.cursor() as cursor:
             cursor.execute(sql, val)
             self.mydb.commit()
-
+            return cursor.lastrowid
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()
-
-    def get_recommendations_by_id(self, accountId) -> list:
-        sql = "SELECT recommendedStock FROM recommendationList WHERE accountId = %s"
-        val = (accountId,)
-        return self.fetchOne(sql, val)
-
-    def insert_recommendation_by_accountId(self, accountId, recommendedStock):
-        sql = "INSERT INTO recommendationList (accountId, recommendedStock) VALUES (%s, %s)"
-        val = (accountId, recommendedStock)
-        self.commit(sql, val)
-

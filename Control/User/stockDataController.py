@@ -5,7 +5,7 @@ class StockDataController:
     def __init__(self):
         pass
 
-    def get_recommendation_stock(self, countries='us',industries='Technology') -> list:
+    def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
         current_date = datetime.now()
         two_days_ago = current_date - timedelta(days=2)
         date = two_days_ago.strftime('%Y-%m-%d')
