@@ -20,6 +20,8 @@ from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
 from Control.User.stockDataController import *
 from Control.User.newsController import *
+from Control.premiumUser.get_predictionData_by_symbol import *
+from Control.User.commentController import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -39,12 +41,20 @@ def news():
     result = NewsController().get_recommendation_news("cn")
 
     return jsonify(result)
-
+@app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
+def symbol_news(symbol,page):
+    return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
-    data = StockDataController().get_update_stock_data(symbol,"180d")
-    return render_template('index.html', stockData=data,symbol=symbol)
+    stockData = StockDataController().get_update_stock_data(symbol,"180d")
+    stockInfo = StockDataController().get_stock_info_full(symbol)
+    predictionresult = PredictionData().get_predictionData_by_symbol(symbol)
+    return render_template('index.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
+
+@app.route('/symbol_comments/<string:symbol>')
+def symbol_comments(symbol):
+    return jsonify(CommentController().get_comments_by_symbol(symbol))
 @app.route('/demo')
 def demo():
     list = StockDataController().get_recommendation_stock("us","Energy,Technology")
