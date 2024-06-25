@@ -51,6 +51,7 @@ def recommendation_symbol():
     userId = 1
     return jsonify(RecommendationListController().get_recommendationList_by_id(userId))
 
+
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
     return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
