@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="stock_card" class="w-1/2 mx-auto bg-slate-300">
+    <div id="stock_name" class="text-2xl flex justify-between">
+        <h1><b>Apple</b></h1>
+        <p class="text-right">watchlist</p>
+    </div>
+        <div class="">
+            <div id="stock_text" class="mt-4 flex justify-between">
+    <div id="price" class="w-fit">
+        <p class="text-2xl">0.12</p>
+    </div>
+    <div id="market_Cap_data" class="w-fit text-right">
+        <p>4.52M</p>
+    </div>
+</div>
+        <div id="stock_close" class="text-sm mt-1 flex justify-between">
+             <p>close Jun 21 </p>
+            <p class="text-right">Market Cap</p>
+        </div>
+
+        </div>
+      <div id="nav-button" class="mt-4 border-b-4">
+          <button>Overview</button>
+          <button class="mx-3">Analysis</button>
+          <button class="mx-3">company</button>
+          <button class="mx-3">News</button>
+          <button>comment</button>
+      </div>
+      <div id="data-search" class="mt-2">
+          <button>Days</button>
+          <button class="mx-3">months</button>
+          <button>years</button>
+      </div>
+<div id="stock_trent" class="w-full h-96 mt-4">
+
+      </div>
+</div>
+
+</body>
+</html>
