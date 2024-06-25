@@ -22,7 +22,6 @@ from Control.User.stockDataController import *
 from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
 from Control.User.commentController import *
-from Control.premiumUser.recommendationListController import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -36,21 +35,12 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 
 
-# user login main page
-@app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
-def recommendation_news(page):
-    # hard code for test, countries and industries store in session['preferences']
-    countries = 'cn'
-    industries = 'Technology'
-    result = NewsController().get_recommendation_news(countries,industries,str(page))
-    return jsonify(result)
-# user login main page
-@app.route('/recommendation_symbol', methods=['GET', 'POST'])
-def recommendation_symbol():
-    # hard code for test, userId in session['user']
-    userId = 1
-    return jsonify(RecommendationListController().get_recommendationList_by_id(userId))
 
+@app.route('/news', methods=['GET', 'POST'])
+def news():
+    result = NewsController().get_recommendation_news("cn")
+
+    return jsonify(result)
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
     return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
