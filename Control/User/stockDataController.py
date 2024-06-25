@@ -6,13 +6,10 @@ class StockDataController:
         pass
 
     def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
-        current_date = datetime.now()
-        two_days_ago = current_date - timedelta(days=2)
-        date = two_days_ago.strftime('%Y-%m-%d')
-        url = f"https://api.marketaux.com/v1/entity/stats/intraday?interval=day&industries={industries}&countries={countries}&published_after={date}&language=en&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        url = f"https://api.marketaux.com/v1/entity/stats/intraday?interval=year&industries={industries}&countries={countries}&published_after=2024-01-01&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
         response = requests.get(url).json()
         recommendation_stock_list = []
-        for stock in response['data'][1]['data']:
+        for stock in response['data'][0]['data']:
             recommendation_stock_list.append(stock['key'])
 
         return recommendation_stock_list
