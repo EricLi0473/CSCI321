@@ -7,15 +7,10 @@ from werkzeug.exceptions import InternalServerError,BadRequest
 #slow start when loadin ML functions, normal turn off
 # from Control.User.requestForPrediction import RequestForPrediction
 #
-from Control.User.generateApiKeyController import *
-from Control.User.uploadFileController import *
 import pandas as pd
 import json
-from Control.User.loginController import *
 from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
-from Control.IndividualUser.getRequestRecord import *
-from Control.User.deleteRequestRecord import *
 from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
 from Control.User.stockDataController import *
@@ -24,6 +19,8 @@ from Control.premiumUser.get_predictionData_by_symbol import *
 from Control.User.commentController import *
 from Control.premiumUser.recommendationListController import *
 from Control.User.notificationController import *
+from Control.premiumUser.getPremiumUsersController import *
+from Control.premiumUser.get_threshold_setting_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -33,8 +30,12 @@ app.secret_key = 'csci314'
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-
+import schedule
+import threading
+import time
 app = Flask(__name__)
+
+
 
 
 # user login main page
@@ -65,7 +66,7 @@ def symbol_news(symbol,page):
 def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
-    predictionresult = PredictionData().get_predictionData_by_symbol(symbol)
+    predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     return render_template('index.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
 
 @app.route('/symbol_comments/<string:symbol>')
@@ -302,5 +303,35 @@ def documentation():
 def contact():
     return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
+# Dynamically checking that user-selected stocks have not exceeded thresholds
+# Define a cache to store recent notifications
+# notification_cache = {}
+#
+# def threshold_notification():
+#     global notification_cache
+#     premiumUserList = GetPremiumUsersController().getPremiumUsers()
+#     for user in premiumUserList:
+#         thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
+#         if thresholds:
+#             for threshold in thresholds:
+#                 symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
+#                 if abs(symbol["relative_change"]) > threshold['changePercentage']:
+#                     cache_key = (user, threshold["stockSymbol"])
+#                     current_time = time.time()
+#                     # Checking for recent notifications
+#                     if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
+#                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
+#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'])
+#                         notification_cache[cache_key] = current_time
+
+# def run_schedule():
+#     schedule.every(5).seconds.do(threshold_notification)
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(1)
+
 if __name__ == '__main__':
+    # schedule_thread = threading.Thread(target=run_schedule)
+    # schedule_thread.daemon = True
+    # schedule_thread.start()
     app.run(host='0.0.0.0',port=80,debug=True)

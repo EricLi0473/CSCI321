@@ -1,6 +1,5 @@
 import mysql.connector
-
-class RecommendationList():
+class ThresholdSettings:
     def __init__(self):
         self.mydb = self.connectToDatabase()
 
@@ -34,17 +33,7 @@ class RecommendationList():
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def get_recommendations_by_id(self, accountId) -> list:
-        sql = "SELECT recommendedStock FROM recommendationList WHERE accountId = %s"
-        val = (accountId,)
-        return self.fetchOne(sql, val)
-
-    def insert_recommendation_by_accountId(self, accountId, recommendedStock):
-        sql = "INSERT INTO recommendationList (accountId, recommendedStock) VALUES (%s, %s)"
-        val = (accountId, recommendedStock)
-        self.commit(sql, val)
-
-    def update_recommendation_by_accountId(self, accountId, recommendedStock):
-        sql = "UPDATE recommendationList SET recommendedStock = %s WHERE accountId = %s"
-        val = (recommendedStock, accountId)
-        self.commit(sql, val)
+    def get_threshold_settings_by_id(self, id):
+        sql = "SELECT * FROM thresholdsettings WHERE accountId = %s"
+        val = (id,)
+        return self.fetchAll(sql, val)

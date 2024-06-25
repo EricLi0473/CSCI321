@@ -1,5 +1,4 @@
-from Entity.individualAccount import *
-from Entity.businessAccount import *
+
 import hashlib
 class ChangePasswordController:
     def __init__(self):
