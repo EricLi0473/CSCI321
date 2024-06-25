@@ -118,7 +118,8 @@ CREATE TABLE comment
 );
 CREATE TABLE emailVerification(
     verificationId INT AUTO_INCREMENT PRIMARY KEY ,
-    verificationCode INT NOT NULL ,
+    email VARCHAR(255) NOT NULL ,
+    code INT NOT NULL ,
     verificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL
 );
 CREATE TABLE notification(
