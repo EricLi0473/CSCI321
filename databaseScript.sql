@@ -12,8 +12,8 @@ CREATE TABLE account
     age                  INT NULL,
     sex                  ENUM('male', 'female', 'other') NULL,
     occupation           VARCHAR(255) NULL,
-    incomeLevel          DECIMAL(10, 2) NULL,
-    netWorth             DECIMAL(15, 2) NULL,
+    incomeLevel          FLOAT NULL,
+    netWorth             FLOAT NULL,
     investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
     investmentGoals      VARCHAR(255) NULL
@@ -63,16 +63,14 @@ CREATE TABLE searchHistory
 CREATE TABLE predictionData
 (
     predictionId      INT AUTO_INCREMENT PRIMARY KEY,
-    accountId         INT NOT NULL,
     stockSymbol       TEXT NOT NULL,
     requestDate       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    minPredictedPrice DECIMAL(10, 2) NULL,
-    avgPredictedPrice DECIMAL(10, 2) NULL,
-    maxPredictedPrice DECIMAL(10, 2) NULL,
-    buyPercentage     DECIMAL(5, 2) NULL,
-    holdPercentage    DECIMAL(5, 2) NULL,
-    sellPercentage    DECIMAL(5, 2) NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    minPredictedPrice FLOAT NULL,
+    avgPredictedPrice FLOAT NULL,
+    maxPredictedPrice FLOAT NULL,
+    buyPercentage     FLOAT NULL,
+    holdPercentage    FLOAT NULL,
+    sellPercentage    FLOAT NULL
 );
 
 
@@ -92,7 +90,7 @@ CREATE TABLE thresholdSettings
     thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
     accountId      INT NOT NULL,
     stockSymbol    TEXT NOT NULL,
-    changePercentage DECIMAL(5, 2) NOT NULL,
+    changePercentage FLOAT NOT NULL,
     notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
@@ -118,3 +116,15 @@ CREATE TABLE comment
     commentDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
+CREATE TABLE emailVerification(
+    verificationId INT AUTO_INCREMENT PRIMARY KEY ,
+    verificationCode INT NOT NULL ,
+    verificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL
+);
+CREATE TABLE notification(
+    notificationId INT AUTO_INCREMENT PRIMARY KEY ,
+    accountId INT NOT NULL ,
+    notification VARCHAR(255) NOT NULL DEFAULT 'Welcome to Stock Forecast4.me',
+    notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+)

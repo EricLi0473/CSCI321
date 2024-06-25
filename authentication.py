@@ -42,11 +42,11 @@ def verify_code(email, code):
         print("Verification failed!")
         return False
 
+if __name__ == "__main__":
+    # Send verification code
+    email = "ljr20040703@gmail.com"
+    send_verification_code(email)
 
-# Send verification code
-email = "ErrFunnSmelly@gmail.com"
-send_verification_code(email)
-
-# Verify verification code
-user_input_code = input("Enter the verification code sent to your email: ")
-verify_code(email, user_input_code)
+    # Verify verification code
+    user_input_code = input("Enter the verification code sent to your email: ")
+    verify_code(email, user_input_code)
