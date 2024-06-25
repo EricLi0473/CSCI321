@@ -132,20 +132,18 @@
             <h1><b>[[stockInfo.longName]]</b></h1>
             <div class="text-right pr-8 flex gap-5">
 <div class="text-md mt-3 ml-3">
-  <p>Notify me +-</p>
+  <p>Notify me when..</p>
 </div>
-              <div
-  class=" p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300"
->
-  <div class="flex items-center justify-center fill-white">
-    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
+
+ <div :class="{'bg-red-500': inputValid}" class="p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">    <div class="flex items-center justify-center fill-white" >
+      <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
+      </svg>
+    </div>
+    <input type="text" class="outline-none text-[20px] bg-transparent w-full text-white font-normal px-4"
+           placeholder="get up or down, %" v-model="percentage" @input="validateInput" @blur="submitPercentage"
+           >
   </div>
-  <input
-    type="text"
-    class="outline-none text-[20px] bg-transparent w-full text-white font-normal px-4"
-    placeholder="percentage ..%"
-  />
-</div>
 
 
               <button class="btn">watchList
@@ -1373,6 +1371,8 @@
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
+            percentage: '',
+            inputValid: false,
             stockData: {{ stockData|tojson }},
             stockInfo: {{ stockInfo|tojson }},
             predictionresult:{{predictionresult|tojson}},
@@ -1389,6 +1389,20 @@
             // this.get_symbol_comments(this.stockInfo.symbol)
         },
         methods: {
+              validateInput(event) {
+            // 允许输入小数点和数字
+            this.percentage = this.percentage.replace(/[^0-9.]/g, '');
+            },
+                      submitPercentage() {
+              if (this.percentage !== '') {
+                // 设置输入完成后的样式更改逻辑
+                this.inputValid = true;
+                console.log(`Submitted percentage: ${this.percentage}%`);
+                // 在此处添加将数据传送到 Vue 2 的逻辑
+              } else {
+                this.inputValid = false;
+              }
+            },
             renderStockData() {
                 if (!this.chart) {
                     this.chart = klinecharts.init('chart');
