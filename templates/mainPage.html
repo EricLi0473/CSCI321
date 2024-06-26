@@ -78,24 +78,26 @@
             </div>
             <!-- Content Start! -->
             <div class="overflow-y-scroll p-8 bg-white border mt-16">
-                <div class="grid grid-cols-3 gap-4">
-                    <div>
-                        <h2 class="text-lg font-bold mb-4">Notification Center</h2>
-                        <div v-for="notification in notifications" :key="notification.id" class="mb-4">
-                            <div class="bg-green-100 p-2 rounded-md flex items-center justify-between">
-                                <div>
-                                    <p class="text-green-700 font-bold">{{ notification.title }}</p>
-                                    <p>{{ notification.message }}</p>
-                                </div>
-                                <button @click="removeNotification(notification.id)" class="text-red-500">&times;</button>
+                <h2 class="text-lg font-bold mb-4">Notifications</h2>
+                <div class="overflow-y-scroll p-8 bg-white border mt-4 h-40">
+                    <div v-for="notification in notifications" :key="notification.notificationId" class="mb-4">
+                        <div class="bg-green-100 p-2 rounded-md flex items-center justify-between">
+                            <div>
+                                <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
+                                <p>[[ notification.notification]]</p>
                             </div>
+                            <button @click="removeNotification(notification.notificationId)" class="text-red-500">&times;</button>
                         </div>
                     </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-8">
                     <div>
                         <h2 class="text-lg font-bold mb-4">Recommendation News</h2>
                         <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md">
-                            <h3 class="font-bold">{{ news.title }}</h3>
-                            <p>{{ news.description }}</p>
+                            <h3 class="font-bold">
+                                <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
+                            </h3>
+                            <p>[[news.description]]</p>
                             <img :src="news.image_url" alt="" class="w-full h-32 object-cover mt-2 rounded-md">
                         </div>
                         <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4">Load More</button>
@@ -104,9 +106,8 @@
                         <h2 class="text-lg font-bold mb-4">Recommendation Ticker</h2>
                         <div v-for="stock in recommendationSymbols" :key="stock.symbol" class="mb-4 bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
                             <div>
-                                <p class="font-bold">{{ stock.symbol }}</p>
-                                <p>{{ stock.name }}</p>
-                                <p :class="{'text-green-500': stock.change > 0, 'text-red-500': stock.change < 0}">{{ stock.price }} <span v-if="stock.change > 0">↑</span><span v-else>↓</span></p>
+                                <p class="font-bold">[[ stock.symbol ]]</p>
+                                <p :class="{'text-green-500': stock.change > 0, 'text-red-500': stock.change < 0}"> [[stock.price]]  <span v-if="stock.change > 0">↑</span><span v-else>↓</span></p>
                             </div>
                             <button @click="toggleWatchlist(stock.symbol)" class="text-2xl">&#9829;</button>
                         </div>
@@ -126,6 +127,7 @@
     <script>
         new Vue({
             el: '#app',
+            delimiters: ['[[', ']]'],
             data: {
                 notifications: [],
                 recommendationNews: [],
@@ -161,7 +163,7 @@
                     this.getRecommendationNews();
                 },
                 removeNotification(id) {
-                    this.notifications = this.notifications.filter(notification => notification.id !== id);
+                    this.notifications = this.notifications.filter(notification => notification.notificationId !== id);
                 },
                 toggleWatchlist(symbol) {
                     // Logic to toggle watchlist status
@@ -171,7 +173,3 @@
     </script>
 </body>
 </html>
-
-
-
-
