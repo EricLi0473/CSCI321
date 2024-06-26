@@ -2,10 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 import requests
 import os
 
-from Control.IndividualUser.getRequestRecord import GetRequestRecord
-from Control.User.deleteRequestRecord import DeleteRequestRecord
 from Control.User.loginController import LoginController
-from Control.User.requestForPrediction import RequestForPrediction
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
@@ -124,8 +121,8 @@ def api():
         model = request.args.get('model')
         layers = request.args.get('layers')
         neurons = request.args.get('neurons')
-        result = RequestForPrediction().getPrediction(apikey,symbol,timeframe,model,layers,neurons,"api")
-        return jsonify(result)
+
+        return
     except Exception as e:
         return jsonify({"error":str(e)})
 
@@ -242,12 +239,11 @@ def predictionresult():
 @app.route('/updatePredictionResult',methods=['GET'])
 def updatePredictionResult():
     # session['user'] = GetAccountInfo().getAccountInfo("1")
-    predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-    return jsonify(predictionResult)
+    return
 
 @app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
 def deletePrediction(requestId):
-    DeleteRequestRecord().deleteRequestRecord(str(requestId))
+
     return jsonify({'success':True})
 @app.route('/verifyInput',methods=['POST'])
 def verifyInput():
@@ -259,7 +255,7 @@ def verifyInput():
             model = request.json.get('model')
             layers = request.json.get('layers')
             neurons = request.json.get('neurons')
-            RequestForPrediction().verifyInput(apikey, tickerSymbol, timeRange, model, layers, neurons)
+
             return jsonify({'success':True})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
@@ -277,7 +273,7 @@ def predict():
             model = request.json.get('model')
             layers = request.json.get('layers')
             neurons = request.json.get('neurons')
-            RequestForPrediction().getPrediction(apikey, tickerSymbol, timeRange, model, layers, neurons)
+
             return jsonify({'success':True})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
