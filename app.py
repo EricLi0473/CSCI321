@@ -1,6 +1,12 @@
 from flask import Flask, request, render_template, redirect, url_for
 import requests
 import os
+
+from Control.IndividualUser.getRequestRecord import GetRequestRecord
+from Control.User.deleteRequestRecord import DeleteRequestRecord
+from Control.User.loginController import LoginController
+from Control.User.requestForPrediction import RequestForPrediction
+
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
 from werkzeug.exceptions import InternalServerError,BadRequest
@@ -30,7 +36,6 @@ app.secret_key = 'csci314'
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import schedule
 import threading
 import time
 app = Flask(__name__)
