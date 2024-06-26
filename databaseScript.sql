@@ -44,6 +44,7 @@ CREATE TABLE followList
     followId     INT AUTO_INCREMENT PRIMARY KEY,
     accountId    INT NOT NULL,
     followedId   INT NOT NULL,
+    notifyMe BOOL NULL ,
     followDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId),
     FOREIGN KEY (followedId) REFERENCES account(accountId)
@@ -70,7 +71,9 @@ CREATE TABLE predictionData
     maxPredictedPrice FLOAT NULL,
     buyPercentage     FLOAT NULL,
     holdPercentage    FLOAT NULL,
-    sellPercentage    FLOAT NULL
+    sellPercentage    FLOAT NULL,
+    timeRange INT NULL ,
+    target VARCHAR(255) NULL
 );
 
 
@@ -126,6 +129,16 @@ CREATE TABLE notification(
     notificationId INT AUTO_INCREMENT PRIMARY KEY ,
     accountId INT NOT NULL ,
     notification VARCHAR(255) NOT NULL DEFAULT 'Welcome to Stock Forecast4.me',
+    notificationType VARCHAR(255) NOT NULL,
+    referenceId INT NULL ,
     notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
-)
+);
+
+DELETE n1
+FROM notification n1
+INNER JOIN notification n2
+ON n1.accountId = n2.accountId
+AND n1.notificationType = n2.notificationType
+AND n1.referenceId = n2.referenceId
+AND n1.notificationId > n2.notificationId;

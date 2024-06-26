@@ -47,5 +47,8 @@ class Account:
             list.append(id['accountId'])
         return list
 
+    def get_account_by_accountId(self,accountId) -> list[dict]:
+        pass
+
 if __name__ == '__main__':
     print(Account().get_premium_accountId())

@@ -5,6 +5,9 @@ class StockDataController:
     def __init__(self):
         pass
 
+    def search_stock(self, content):
+        pass
+
     def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
         url = f"https://api.marketaux.com/v1/entity/stats/intraday?interval=year&industries={industries}&countries={countries}&published_after=2024-01-01&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
         response = requests.get(url).json()
