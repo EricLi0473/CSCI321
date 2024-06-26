@@ -55,7 +55,7 @@ def mainPage():
     return render_template('mainPage.html', UserNotification=notification, RecommendedNews=news, RecommendedStocks=recommendation)
 
 #remove notification
-@app.route()
+# @app.route()
 
 
 # user login main page
@@ -86,7 +86,7 @@ def symbol_news(symbol,page):
 def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
-
+    predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
 
 
