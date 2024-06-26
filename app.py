@@ -2,10 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 import requests
 import os
 
-from Control.IndividualUser.getRequestRecord import GetRequestRecord
-from Control.User.deleteRequestRecord import DeleteRequestRecord
 from Control.User.loginController import LoginController
-from Control.User.requestForPrediction import RequestForPrediction
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session

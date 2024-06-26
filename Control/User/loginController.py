@@ -1,7 +1,7 @@
-import hashlib
-from Entity.account import *
-from Entity.businessAccount import *
-from Entity.individualAccount import *
+# import hashlib
+# from Entity.account import *
+# from Entity.businessAccount import *
+# from Entity.individualAccount import *
 
 class LoginController:
     def __init__(self):
