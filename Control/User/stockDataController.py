@@ -6,16 +6,30 @@ class StockDataController:
         pass
 
     def search_stock(self, content):
-        url = f"https://api.marketaux.com/v1/entity/search?search={content}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey=1TI3ZQ9MXCZ08O3M"
         response = requests.get(url).json()
         list = []
-        count = 0
-        for stock in response['data']:
-            if count > 10:
-                break
+        for stock in response["bestMatches"]:
             try:
-                count +=1
-                list.append(self.get_stock_info_minimum(stock["symbol"]))
+                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={stock['1. symbol']}&apikey=1TI3ZQ9MXCZ08O3M"
+                response = requests.get(url).json()
+                global_quote = response['Global Quote']
+                key_mapping = {
+                    "absolute_change": "09. change",
+                    "price": "05. price",
+                    "relative_change": "10. change percent",
+                    "symbol": "01. symbol",
+                    "upsAndDowns": "09. change"
+                }
+                new_data = {
+                    "absolute_change": float(global_quote[key_mapping["absolute_change"]]),
+                    "price": float(global_quote[key_mapping["price"]]),
+                    "relative_change": float(global_quote[key_mapping["relative_change"]].replace('%', '')),
+                    "symbol": global_quote[key_mapping["symbol"]],
+                    "upsAndDowns": 1 if float(global_quote[key_mapping["upsAndDowns"]]) > 1 else 0,
+                    "longName":stock['2. name']
+                }
+                list.append(new_data)
             except Exception:
                 continue
         return list
@@ -69,35 +83,75 @@ class StockDataController:
         data_dict['longName'] = info.get('longName', 'N/A')
         return data_dict
     def get_stock_info_medium(self,symbol):
-        df = yf.download(symbol, period="30d")
-        df = df.reset_index()
-        df["Close"] = round(df["Close"], 2)
-        df["Open"] = round(df["Open"], 2)
-        df["High"] = round(df["High"], 2)
-        df["Low"] = round(df["Low"], 2)
-        df['timestamp'] = df['Date'].apply(lambda x: int(x.timestamp() * 1000))  # 转换为Unix时间戳（毫秒）
+        if isinstance(symbol, str):
+            df = yf.download(symbol, period="30d")
+            df = df.reset_index()
+            df["Close"] = round(df["Close"], 2)
+            df["Open"] = round(df["Open"], 2)
+            df["High"] = round(df["High"], 2)
+            df["Low"] = round(df["Low"], 2)
+            df['timestamp'] = df['Date'].apply(lambda x: int(x.timestamp() * 1000))  # 转换为Unix时间戳（毫秒）
 
-        result = df[['timestamp', 'Open', 'Close', 'High', 'Low', 'Volume']].rename(
-            columns={
-                'Open': 'open',
-                'Close': 'close',
-                'High': 'high',
-                'Low': 'low',
-                'Volume': 'volume'
-            }
-        ).to_dict(orient='records')
+            result = df[['timestamp', 'Open', 'Close', 'High', 'Low', 'Volume']].rename(
+                columns={
+                    'Open': 'open',
+                    'Close': 'close',
+                    'High': 'high',
+                    'Low': 'low',
+                    'Volume': 'volume'
+                }
+            ).to_dict(orient='records')
 
-        data_dict = {}
-        data_dict['absolute_change'] = round(result[-1]['close'] - result[-2]['close'], 2)
-        data_dict["relative_change"] = round(((result[-1]['close'] - result[-2]['close']) / result[-2]['close'] * 100), 2)
-        data_dict['upsAndDowns'] = 1 if data_dict['absolute_change'] >= 0 else 0
-        data_dict['price'] = result[-1]['close']
-        data_dict['symbol'] = symbol.upper()
-        info = yf.Ticker(symbol).info
-        data_dict['longName'] = info.get('longName', 'N/A')
-        data_dict["data"] = result
-        return data_dict
+            data_dict = {}
+            data_dict['absolute_change'] = round(result[-1]['close'] - result[-2]['close'], 2)
+            data_dict["relative_change"] = round(((result[-1]['close'] - result[-2]['close']) / result[-2]['close'] * 100), 2)
+            data_dict['upsAndDowns'] = 1 if data_dict['absolute_change'] >= 0 else 0
+            data_dict['price'] = result[-1]['close']
+            data_dict['symbol'] = symbol.upper()
+            info = yf.Ticker(symbol).info
+            data_dict['longName'] = info.get('longName', 'N/A')
+            data_dict["data"] = result
+            return data_dict
+        else:
+            symbol = [item.upper() for item in symbol]
+            symbol_str = " ".join(symbol)
+            tickers = yf.Tickers(symbol_str)
+            result_list = []
 
+            for ticker in tickers.tickers.keys():
+                try:
+                    df = tickers.tickers[ticker].history(period="5d").reset_index()
+                    df["Close"] = round(df["Close"], 2)
+                    df["Open"] = round(df["Open"], 2)
+                    df["High"] = round(df["High"], 2)
+                    df["Low"] = round(df["Low"], 2)
+                    df['timestamp'] = df['Date'].apply(lambda x: int(x.timestamp() * 1000))  # 转换为Unix时间戳（毫秒）
+
+                    result = df[['timestamp', 'Open', 'Close', 'High', 'Low', 'Volume']].rename(
+                        columns={
+                            'Open': 'open',
+                            'Close': 'close',
+                            'High': 'high',
+                            'Low': 'low',
+                            'Volume': 'volume'
+                        }
+                    ).to_dict(orient='records')
+
+                    data_dict = {}
+                    data_dict['absolute_change'] = round(result[-1]['close'] - result[-2]['close'], 2)
+                    data_dict["relative_change"] = round(
+                        ((result[-1]['close'] - result[-2]['close']) / result[-2]['close'] * 100), 2)
+                    data_dict['upsAndDowns'] = 1 if data_dict['absolute_change'] >= 0 else 0
+                    data_dict['price'] = result[-1]['close']
+                    data_dict['symbol'] = ticker  # 使用 ticker 而不是 symbol.upper()，以确保正确的股票符号
+                    info = tickers.tickers[ticker].info
+                    data_dict['longName'] = info.get('longName', 'N/A')
+                    data_dict["data"] = result
+
+                    result_list.append(data_dict)
+                except Exception:
+                    continue
+            return result_list
     def get_update_stock_data(self,symbol, period):
         df = yf.download(symbol, period=period)
         df = df.reset_index()
@@ -168,17 +222,8 @@ class StockDataController:
         return data_dict
 
 if __name__ == '__main__':
-    # print(StockDataController().get_recommendation_stock("us","Energy,Technology"))
-    tickers = yf.Tickers("NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER")
+    list = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
+    # print(StockDataController().get_stock_info_medium(list))
+    StockDataController().search_stock("boeing")
 
-    # 获取所有ticker的名称
-    ticker_names = tickers.tickers.keys()
 
-    for ticker in ticker_names:
-        ticker_info = tickers.tickers[ticker].info
-        ticker_history = tickers.tickers[ticker].history(period="1mo")
-
-        print(f"Ticker: {ticker}")
-        print("Info:", ticker_info)
-        print("History (1 month):", ticker_history)
-        print(ticker)

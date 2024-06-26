@@ -37,3 +37,8 @@ class ThresholdSettings:
         sql = "SELECT * FROM thresholdsettings WHERE accountId = %s"
         val = (id,)
         return self.fetchAll(sql, val)
+
+    def remove_threshold_settings_by_thresholdId(self, thresholdId):
+        sql = "DELETE FROM thresholdsettings WHERE thresholdId = %s"
+        val = (thresholdId,)
+        self.commit(sql, val)

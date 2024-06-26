@@ -54,6 +54,10 @@ AND n1.notificationId > n2.notificationId;
         val = ("")
         self.commit(sql, val)
 
+    def remove_notification_by_id(self,notificationId):
+        sql = "DELETE FROM notification where notificationId=%s"
+        val = (notificationId,)
+        self.commit(sql, val)
 
 
 
