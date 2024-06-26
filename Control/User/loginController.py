@@ -3,6 +3,7 @@
 # from Entity.businessAccount import *
 # from Entity.individualAccount import *
 
+
 class LoginController:
     def __init__(self):
         pass
@@ -17,5 +18,5 @@ class LoginController:
         elif profile == 'individual':
             return IndividualAccount().verifyAccount(username,password)
         elif profile == 'business':
-            return BusinessAccount().verifyAccount(username,password)
+            pass
 
