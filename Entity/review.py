@@ -1,5 +1,5 @@
 import mysql.connector
-class ThresholdSettings:
+class Review:
     def __init__(self):
         self.mydb = self.connectToDatabase()
 
@@ -28,17 +28,29 @@ class ThresholdSettings:
         with self.mydb.cursor() as cursor:
             cursor.execute(sql, val)
             self.mydb.commit()
-
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def get_threshold_settings_by_id(self, id):
-        sql = "SELECT * FROM thresholdsettings WHERE accountId = %s"
-        val = (id,)
-        return self.fetchAll(sql, val)
+    def get_all_reviews(self):
+        sql = "SELECT * FROM review"
+        return self.fetchAll(sql,"")
 
-    def remove_threshold_settings_by_thresholdId(self, thresholdId):
-        sql = "DELETE FROM thresholdsettings WHERE thresholdId = %s"
-        val = (thresholdId,)
-        self.commit(sql, val)
+    def insert_review_by_id(self, accountId,rating,reviewText):
+        sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s)"
+        val = (accountId,rating,reviewText)
+        self.commit(sql,val)
+
+    def headline_review_by_id(self,reviewId):
+        sql = "UPDATE review SET isHeadline= 1 WHERE reviewId=%s"
+        val = (reviewId,)
+        self.commit(sql,val)
+
+    def delete_review_by_id(self,reviewId):
+        sql = "DELETE FROM review WHERE reviewId=%s"
+        val = (reviewId,)
+        self.commit(sql,val)
+
+if __name__ == "__main__":
+    review = Review()
+    print(review.delete_review_by_id("2"))

@@ -103,8 +103,9 @@ CREATE TABLE review
 (
     reviewId      INT AUTO_INCREMENT PRIMARY KEY,
     accountId     INT NOT NULL,
-    rating        INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    rating        FLOAT NOT NULL CHECK (rating BETWEEN 0 AND 5),
     reviewText    TEXT NULL,
+    isHeadline    BOOL NULL DEFAULT 0,
     reviewDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );

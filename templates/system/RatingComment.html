@@ -85,20 +85,12 @@
             </div>
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
             <h2 class="text-xl font-bold mb-4 text-black">How would you rate our product?</h2>
-            <div class="rating rating-lg rating-half mb-10">
-              <input type="radio" name="rating-10" class="rating-hidden" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-1 bg-orange-400" />
-              <input type="radio" name="rating-10" class="mask mask-star-2 mask-half-2 bg-orange-400" checked="checked" />
-            </div>
-            <h2 class="text-xl font-bold mb-2 text-black">What do you think of our service?</h2>
+    <div class="rating rating-lg rating-half mb-4">
+      <input v-for="n in 10" type="radio" :key="n" name="rating-10" :class="getClass(n)" @click="setRating(n)" :checked="rating === n">
+    </div>
+              <p class="text-sm">Now Rating: <b>[[ rating / 2 ]]</b> Star</p>
+
+            <h2 class="text-xl font-bold mb-2 mt-6 text-black">What do you think of our service?</h2>
             <p class="text-gray-600 text-sm mb-4">Good comments have a chance to be selected by our administrators and recommended to the homepage!</p>
             <div class="max-w-2xl">
               <label for="OrderNotes" class="sr-only">Order notes</label>
@@ -108,21 +100,27 @@
                   class="w-full resize-none border-none align-top focus:ring-0 sm:text-sm bg-transparent text-black"
                   rows="4"
                   placeholder="Enter your comment here..."
+                  v-model="comment"
                 ></textarea>
               </div>
               <div class="flex items-center justify-end gap-2 bg-white p-3">
                 <button
                   type="button"
                   class="rounded bg-gray-200 px-3 py-1.5 text-sm font-medium text-gray-700 hover:text-gray-600"
+                  @click="clearText()"
+                  v-if="!isButtonDisabled"
                 >
                   Clear
                 </button>
                 <button
                   type="button"
                   class="rounded bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700"
+                  @click="sendRequest()" :disabled="isButtonDisabled"
+                  v-if="!isButtonDisabled"
                 >
                   Confirm
                 </button>
+                  <p v-if="isButtonDisabled">Please wait <b>[[ remainingTime ]]</b> seconds to send again</p>
               </div>
             </div>
           </div>
@@ -134,26 +132,105 @@
       </svg>
   </button>
         </div>
-
+            <dialog id="success" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box bg-sky-300">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[message]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn bg-sky-100">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
         </div>
 
-      </div>
 
-      <script>
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'],
+      data: {
+        rating: 10, // 默认评分，可以根据需要更改
+        comment: "",
+        message: "",
+        isButtonDisabled: false,
+        remainingTime: 0,
+      },
+      methods: {
+        sendRequest() {
+          if (this.isButtonDisabled) return;
+
+          axios.post('/ratingComment', {
+            comment: this.comment,
+            rating: this.rating / 2
+          })
+          .then(response => {
+            this.message = "Congratulations, you have successfully submitted a comment, our administrator will see it soon!";
+            document.getElementById('success').showModal();
+            this.startTimer();
+          })
+          .catch(error => {
+            console.error('Bad:', error);
+          });
+        },
+        clearText() {
+          this.comment = "";
+        },
+        setRating(value) {
+          this.rating = value;
+        },
+        getClass(index) {
+          const half = index % 2 === 1 ? 'mask-half-1' : 'mask-half-2';
+          return `mask mask-star-2 ${half} bg-orange-400`;
+        },
+        startTimer() {
+          const currentTime = new Date().getTime();
+          const endTime = currentTime + 30000; // 10seconds
+          localStorage.setItem('endTime', endTime);
+          this.isButtonDisabled = true;
+          this.updateRemainingTime();
+        },
+        updateRemainingTime() {
+          const interval = setInterval(() => {
+            const currentTime = new Date().getTime();
+            const endTime = localStorage.getItem('endTime');
+            this.remainingTime = Math.max(Math.floor((endTime - currentTime) / 1000), 0);
+            if (this.remainingTime <= 0) {
+              clearInterval(interval);
+              this.isButtonDisabled = false;
+              localStorage.removeItem('endTime');
+            }
+          }, 1000);
+        },
+        checkRemainingTime() {
+          const currentTime = new Date().getTime();
+          const endTime = localStorage.getItem('endTime');
+          if (endTime && currentTime < endTime) {
+            this.isButtonDisabled = true;
+            this.updateRemainingTime();
+          }
+        }
+      },
+      mounted() {
+        this.checkRemainingTime();
+
         // Scroll to the top when the button is clicked
         document.getElementById('toTopButton').addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
         // Show or hide the button based on scroll position
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 200) {
-                document.getElementById('toTopButton').classList.remove('hidden');
-            } else {
-                document.getElementById('toTopButton').classList.add('hidden');
-            }
+          if (window.scrollY > 200) {
+            document.getElementById('toTopButton').classList.remove('hidden');
+          } else {
+            document.getElementById('toTopButton').classList.add('hidden');
+          }
         });
-    </script>
+      }
+    });
+  </script>
 
 </body>
 </html>

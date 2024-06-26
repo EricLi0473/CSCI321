@@ -30,6 +30,12 @@ from Control.premiumUser.get_accountList_by_followedId import *
 from Control.premiumUser.get_threshold_by_symbol_and_id import *
 from Control.User.get_accounts_by_userName import *
 from Control.User.get_account_by_accountId import *
+from Control.premiumUser.remove_notification_by_id import *
+from Control.premiumUser.remove_threshold_settings_by_thresholdId import *
+from Control.User.insert_review_by_id import *
+from Control.Admin.headline_review_by_id import *
+from Control.Admin.get_all_reviews import *
+from Control.Admin.delete_review_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -44,8 +50,14 @@ import time
 app = Flask(__name__)
 
 
-
-
+@app.route('/ratingComment', methods=['GET', 'POST'])
+def ratingComment():
+    if request.method == 'GET':
+        return render_template("/system/RatingComment.html")
+    if request.method == 'POST':
+        data = request.json
+        Insert_review_by_id().insert_review_by_id("1",data.get("rating"),data.get("comment"))
+        return jsonify({'success': True})
 @app.route('/search/<string:content>')
 def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
@@ -57,8 +69,14 @@ def mainPage():
     return render_template('mainPage.html',account=account)
 
 #remove notification
-# @app.route()
-
+@app.route('/remove_notification/<int:notificationId>/<string:notificationType>/<int:referenceId>', methods=['GET', 'POST'])
+def remove_notification(notificationId,notificationType,referenceId):
+    if notificationType == "threshold":
+        Remove_notification_by_id().remove_notification_by_id(notificationId)
+        Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(referenceId)
+    else:
+        Remove_notification_by_id().remove_notification_by_id(notificationId)
+    return jsonify({'success': True})
 
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
@@ -93,7 +111,7 @@ def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-    threshold = Get_threshold_by_symbol_and_id("1",symbol)
+    threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold)
 
 
@@ -126,7 +144,6 @@ def stock_info_minimum(symbol):
 
 @app.route('/update_stock_data/<string:symbol>/<string:period>', methods=['GET'])
 def update_stock_data(symbol, period):
-    print(symbol,period)
     return jsonify(StockDataController().get_update_stock_data(symbol, period))
 
 @app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
@@ -368,4 +385,4 @@ if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)
     # schedule_thread.daemon = True
     # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=False)
+    app.run(host='0.0.0.0',port=80,debug=True)
