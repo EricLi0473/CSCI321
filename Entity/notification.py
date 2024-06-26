@@ -43,14 +43,14 @@ class Notification:
         val = (accountId,notification,notificationType,referenceId)
         self.commit(sql, val)
         sql = '''
-                DELETE FROM notification
-                WHERE notificationId NOT IN (
-                    SELECT min_id FROM (
-                        SELECT MIN(notificationId) as min_id
-                        FROM notification
-                        GROUP BY accountId, referenceId, notificationType
-                    ) as subquery
-                );'''
+              DELETE n1
+FROM notification n1
+INNER JOIN notification n2 
+ON n1.accountId = n2.accountId 
+AND n1.notificationType = n2.notificationType 
+AND n1.referenceId = n2.referenceId 
+AND n1.notificationId > n2.notificationId;
+              '''
         val = ("")
         self.commit(sql, val)
 

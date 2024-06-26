@@ -21,6 +21,9 @@ from Control.premiumUser.recommendationListController import *
 from Control.User.notificationController import *
 from Control.premiumUser.getPremiumUsersController import *
 from Control.premiumUser.get_threshold_setting_by_id import *
+from Control.premiumUser.get_notifyMe_value_from_accountAndFollowId import *
+from Control.premiumUser.get_followList_by_accountId import *
+from Control.premiumUser.get_accountList_by_followedId import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -37,6 +40,9 @@ app = Flask(__name__)
 
 
 
+@app.route('/search/<string:content>')
+def search(content):
+    return content
 
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
@@ -67,7 +73,6 @@ def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
 
-    predictionresult = PredictionData().get_predictionData_by_symbol(symbol)
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
 
 
@@ -307,8 +312,8 @@ def contact():
 
 # Dynamically checking that user-selected stocks have not exceeded thresholds
 # Define a cache to store recent notifications
-# notification_cache = {}
-#
+notification_cache = {}
+
 # def threshold_notification():
 #     global notification_cache
 #     premiumUserList = GetPremiumUsersController().getPremiumUsers()
@@ -325,9 +330,16 @@ def contact():
 #                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
 #                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'])
 #                         notification_cache[cache_key] = current_time
+#                         Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
+#                         if Personal_who_follow_user_List:
+#                             for userFollow in Personal_who_follow_user_List:
+#                                 if userFollow['notifyMe'] == 1:
+#                                     notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
+#                                     hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
+#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol)
 
 # def run_schedule():
-#     schedule.every(5).seconds.do(threshold_notification)
+#     schedule.every(2).seconds.do(threshold_notification)
 #     while True:
 #         schedule.run_pending()
 #         time.sleep(1)
