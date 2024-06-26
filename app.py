@@ -39,6 +39,16 @@ app = Flask(__name__)
 
 
 
+@app. route('/mainPage', methods=['GET', 'POST'])
+def mainPage():
+    notification = get_notification()
+    news = recommendation_news(1)
+    recommendation = recommendation_symbol()
+    return render_template('mainPage.html', UserNotification=notification, RecommendedNews=news, RecommendedStocks=recommendation)
+
+#remove notification
+@app.route()
+
 
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
