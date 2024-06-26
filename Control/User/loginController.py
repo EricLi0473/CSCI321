@@ -1,7 +1,8 @@
-import hashlib
-from Entity.account import *
-from Entity.businessAccount import *
-from Entity.individualAccount import *
+# import hashlib
+# from Entity.account import *
+# from Entity.businessAccount import *
+# from Entity.individualAccount import *
+
 
 class LoginController:
     def __init__(self):
@@ -17,5 +18,5 @@ class LoginController:
         elif profile == 'individual':
             return IndividualAccount().verifyAccount(username,password)
         elif profile == 'business':
-            return BusinessAccount().verifyAccount(username,password)
+            pass
 

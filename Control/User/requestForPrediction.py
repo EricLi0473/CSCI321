@@ -1,9 +1,8 @@
 from machineLearningModel.TF_LR_Model import LinearRegression_Model
 from machineLearningModel.LSTM_Model import LSTM_Model
 from machineLearningModel.GRU_Model import GRU_Model
-from Entity.requestRecord import *
 from Entity.individualAccount import *
-from Entity.businessAccount import *
+
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta

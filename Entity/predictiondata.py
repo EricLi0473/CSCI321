@@ -38,8 +38,10 @@ class PredictionData:
     def get_predictionData_by_symbol(self,symbol) -> dict:
         sql = "SELECT * FROM predictiondata WHERE stockSymbol=%s"
         result = self.fetchOne(sql, (symbol,))
+        if result is None:
+            return {}
         return result
 
 if __name__ == "__main__":
-    PredictionData().insert_predictionData("aapl","10.5","10.5","10.5","10.5","10.5","10.5")
-    print(PredictionData().get_predictionData_by_symbol("AAPL"))
+    # PredictionData().insert_predictionData("aapl","10.5","10.5","10.5","10.5","10.5","10.5")
+    print(PredictionData().get_predictionData_by_symbol("BILI"))

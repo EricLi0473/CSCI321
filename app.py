@@ -1,6 +1,9 @@
 from flask import Flask, request, render_template, redirect, url_for
 import requests
 import os
+
+from Control.User.loginController import LoginController
+
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
 from werkzeug.exceptions import InternalServerError,BadRequest
@@ -33,16 +36,27 @@ app.secret_key = 'csci314'
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import schedule
 import threading
 import time
 app = Flask(__name__)
 
 
 
+
 @app.route('/search/<string:content>')
 def search(content):
     return content
+
+@app. route('/mainPage', methods=['GET', 'POST'])
+def mainPage():
+    notification = get_notification()
+    news = recommendation_news(1)
+    recommendation = recommendation_symbol()
+    return render_template('mainPage.html', UserNotification=notification, RecommendedNews=news, RecommendedStocks=recommendation)
+
+#remove notification
+@app.route()
+
 
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
@@ -124,8 +138,8 @@ def api():
         model = request.args.get('model')
         layers = request.args.get('layers')
         neurons = request.args.get('neurons')
-        result = RequestForPrediction().getPrediction(apikey,symbol,timeframe,model,layers,neurons,"api")
-        return jsonify(result)
+
+        return
     except Exception as e:
         return jsonify({"error":str(e)})
 
@@ -242,12 +256,11 @@ def predictionresult():
 @app.route('/updatePredictionResult',methods=['GET'])
 def updatePredictionResult():
     # session['user'] = GetAccountInfo().getAccountInfo("1")
-    predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-    return jsonify(predictionResult)
+    return
 
 @app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
 def deletePrediction(requestId):
-    DeleteRequestRecord().deleteRequestRecord(str(requestId))
+
     return jsonify({'success':True})
 @app.route('/verifyInput',methods=['POST'])
 def verifyInput():
@@ -259,7 +272,7 @@ def verifyInput():
             model = request.json.get('model')
             layers = request.json.get('layers')
             neurons = request.json.get('neurons')
-            RequestForPrediction().verifyInput(apikey, tickerSymbol, timeRange, model, layers, neurons)
+
             return jsonify({'success':True})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
@@ -277,7 +290,7 @@ def predict():
             model = request.json.get('model')
             layers = request.json.get('layers')
             neurons = request.json.get('neurons')
-            RequestForPrediction().getPrediction(apikey, tickerSymbol, timeRange, model, layers, neurons)
+
             return jsonify({'success':True})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
