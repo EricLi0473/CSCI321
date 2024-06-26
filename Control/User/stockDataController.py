@@ -6,7 +6,20 @@ class StockDataController:
         pass
 
     def search_stock(self, content):
-        pass
+        url = f"https://api.marketaux.com/v1/entity/search?search={content}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        response = requests.get(url).json()
+        list = []
+        count = 0
+        for stock in response['data']:
+            if count > 10:
+                break
+            try:
+                count +=1
+                list.append(self.get_stock_info_minimum(stock["symbol"]))
+            except Exception:
+                continue
+        return list
+
 
     def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
         url = f"https://api.marketaux.com/v1/entity/stats/intraday?interval=year&industries={industries}&countries={countries}&published_after=2024-01-01&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
@@ -156,4 +169,16 @@ class StockDataController:
 
 if __name__ == '__main__':
     # print(StockDataController().get_recommendation_stock("us","Energy,Technology"))
-    print(StockDataController().get_stock_info_medium('SMCI'))
+    tickers = yf.Tickers("NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER NVDA AAPL MSFT SONY AMD AVGO AVGOP SMCI INTC CSCO ORCL MU IBM SAP SAPGF 4333.HK PLTR AMAT SNOW UBER")
+
+    # 获取所有ticker的名称
+    ticker_names = tickers.tickers.keys()
+
+    for ticker in ticker_names:
+        ticker_info = tickers.tickers[ticker].info
+        ticker_history = tickers.tickers[ticker].history(period="1mo")
+
+        print(f"Ticker: {ticker}")
+        print("Info:", ticker_info)
+        print("History (1 month):", ticker_history)
+        print(ticker)

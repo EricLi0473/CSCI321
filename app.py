@@ -27,6 +27,9 @@ from Control.premiumUser.get_threshold_setting_by_id import *
 from Control.premiumUser.get_notifyMe_value_from_accountAndFollowId import *
 from Control.premiumUser.get_followList_by_accountId import *
 from Control.premiumUser.get_accountList_by_followedId import *
+from Control.premiumUser.get_threshold_by_symbol_and_id import *
+from Control.User.get_accounts_by_userName import *
+from Control.User.get_account_by_accountId import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -45,14 +48,13 @@ app = Flask(__name__)
 
 @app.route('/search/<string:content>')
 def search(content):
-    return content
+    accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
+    return render_template("/system/search.html",content=content,accountsList=accountsList)
 
 @app. route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
-    notification = get_notification()
-    news = recommendation_news(1)
-    recommendation = recommendation_symbol()
-    return render_template('mainPage.html', UserNotification=notification, RecommendedNews=news, RecommendedStocks=recommendation)
+    account = GetAccountByAccountId().get_account_by_accountId("1")
+    return render_template('mainPage.html',account=account)
 
 #remove notification
 # @app.route()
@@ -62,7 +64,7 @@ def mainPage():
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
 def recommendation_news(page):
     # hard code for test, countries and industries store in session['preferences']
-    countries = 'cn'
+    countries = 'us'
     industries = 'Technology'
     result = NewsController().get_recommendation_news(countries,industries,str(page))
     return jsonify(result)
@@ -82,12 +84,17 @@ def get_notification():
 def symbol_news(symbol,page):
     return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
 
+@app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
+def searchSymbol(symbol):
+    return jsonify(StockDataController().search_stock(symbol))
+
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
     stockData = StockDataController().get_update_stock_data(symbol,"180d")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult)
+    threshold = Get_threshold_by_symbol_and_id("1",symbol)
+    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold)
 
 
 @app.route('/symbol_comments/<string:symbol>')
@@ -361,4 +368,4 @@ if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)
     # schedule_thread.daemon = True
     # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=True)
+    app.run(host='0.0.0.0',port=80,debug=False)

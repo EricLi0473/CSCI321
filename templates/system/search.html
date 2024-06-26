@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+<!--在这里写-->
+
+
+</div>
+
+    <script>
+        new Vue({
+        el: '#app',
+        delimiters: ['[[', ']]'],
+        data: {
+        accountList:[],
+        symbolList: []
+    },
+        mounted() {
+        this.getSymbol();
+    },
+        methods: {
+        getSymbol() {
+        axios.get('/get_notification')
+        .then(response => {
+        this.notifications = response.data;
+    });
+    },
+        getRecommendationSymbols() {
+        axios.get('/recommendation_symbol')
+        .then(response => {
+        this.recommendationSymbols = response.data;
+    });
+    },
+        getRecommendationNews() {
+        this.newsPage += 1;
+        axios.get('/recommendation_news/' + this.newsPage)
+        .then(response => {
+        this.recommendationNews.push(...response.data);
+    });
+    },
+        loadMoreNews() {
+        this.getRecommendationNews();
+    },
+        removeNotification(id) {
+        this.notifications = this.notifications.filter(notification => notification.notificationId !== id);
+    },
+        toggleWatchlist(symbol) {
+        // Logic to toggle watchlist status
+    }
+    }
+    });
+</script>
+
+
+</body>
+</html>

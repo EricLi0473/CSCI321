@@ -47,8 +47,21 @@ class Account:
             list.append(id['accountId'])
         return list
 
-    def get_account_by_accountId(self,accountId) -> list[dict]:
-        pass
+    def get_account_by_accountId(self,accountId) -> dict:
+        sql = "select * from account where accountId = %s"
+        val = (accountId,)
+        return self.fetchOne(sql,val)
 
+    def get_all_account(self):
+        sql = "select * from account"
+        return self.fetchAll(sql,"")
+
+    def get_accounts_by_userName(self,userName) -> list[dict]:
+        if not userName:
+            return []
+        sql = "select * from account where userName like %s"
+
+        val = (f"{userName}%",)
+        return self.fetchAll(sql,val)
 if __name__ == '__main__':
-    print(Account().get_premium_accountId())
+    print(Account().get_accounts_by_userName("w"))
