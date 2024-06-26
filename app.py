@@ -32,6 +32,10 @@ from Control.User.get_accounts_by_userName import *
 from Control.User.get_account_by_accountId import *
 from Control.premiumUser.remove_notification_by_id import *
 from Control.premiumUser.remove_threshold_settings_by_thresholdId import *
+from Control.User.insert_review_by_id import *
+from Control.Admin.headline_review_by_id import *
+from Control.Admin.get_all_reviews import *
+from Control.Admin.delete_review_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -46,6 +50,14 @@ import time
 app = Flask(__name__)
 
 
+@app.route('/ratingComment', methods=['GET', 'POST'])
+def ratingComment():
+    if request.method == 'GET':
+        return render_template("/system/RatingComment.html")
+    if request.method == 'POST':
+        data = request.json
+        Insert_review_by_id().insert_review_by_id("1",data.get("rating"),data.get("comment"))
+        return jsonify({'success': True})
 @app.route('/search/<string:content>')
 def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
