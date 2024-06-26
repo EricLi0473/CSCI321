@@ -9,6 +9,8 @@ class RecommendationListController:
     def get_recommendationList_by_accountId(self, id) -> list[dict]:
         stockList = ast.literal_eval(RecommendationList().get_recommendations_by_id(id)['recommendedStock'])
         result = []
+        tickers_string = " ".join(stockList)
+        print(tickers_string)
         for stock in stockList:
             try:
                 result.append(StockDataController().get_stock_info_medium(stock))
@@ -26,4 +28,4 @@ class RecommendationListController:
 
 if __name__ == '__main__':
     # print(RecommendationListController().get_recommendationList_by_accountId(1))
-    RecommendationListController().update_recommendation_by_accountId(1,'us','Technology')
+    RecommendationListController().get_recommendationList_by_accountId("1")
