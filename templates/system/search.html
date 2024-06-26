@@ -85,71 +85,125 @@
         </div>
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
             <!-- Main Content -->
-            <h1 class="text-black text-xl font-bold mb-4">Searching Result</h1>
-            <label class="flex cursor-pointer gap-2 items-center">
-                <span class="label-text text-lg">Stock</span>
-                <input type="checkbox" class="toggle" @change="toggleTable" />
-                <span class="label-text text-lg">Friend</span>
-            </label>
+            <div class="flex justify-center mb-4">
+                <div class="inline-flex rounded-lg border border-gray-100 bg-gray-100 p-1">
+                    <button
+                        :class="{'bg-white text-blue-500 shadow-sm': showStock, 'text-gray-500 hover:text-gray-700': !showStock}"
+                        class="inline-block rounded-md px-8 py-3 text-md focus:relative"
+                        @click="showStockTable"
+                    >
+                        Stock
+                    </button>
 
+                    <button
+                        :class="{'bg-white text-blue-500 shadow-sm': !showStock, 'text-gray-500 hover:text-gray-700': showStock}"
+                        class="inline-block rounded-md px-8 py-3 text-md focus:relative"
+                        @click="showFriendTable"
+                    >
+                        Friend
+                    </button>
+                </div>
+            </div>
+            <h1 class="text-black text-2xl font-bold mb-4">[[ title ]]</h1>
             <div v-if="showStock">
                 <h2 class="text-lg font-bold">Stock Information</h2>
-                <table class="min-w-full bg-white">
-                    <thead class="bg-gray-800 text-white">
-                        <tr>
-                            <th class="w-1/3 py-2">Stock</th>
-                            <th class="w-1/3 py-2">Price</th>
-                            <th class="w-1/3 py-2">Change</th>
-                        </tr>
+                <div class="overflow-x-auto">
+                  <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>Symbol</th>
+                        <th>Full Name</th>
+                        <th>Latest Price</th>
+                        <th>Chg</th>
+                        <th>%Chg</th>
+                        <th>Volume</th>
+                        <th>Watch List</th>
+                      </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="py-2 px-4 border-b">AAPL</td>
-                            <td class="py-2 px-4 border-b">$150</td>
-                            <td class="py-2 px-4 border-b">+1.2%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">GOOG</td>
-                            <td class="py-2 px-4 border-b">$2800</td>
-                            <td class="py-2 px-4 border-b">-0.5%</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">AMZN</td>
-                            <td class="py-2 px-4 border-b">$3400</td>
-                            <td class="py-2 px-4 border-b">+2.3%</td>
-                        </tr>
+                      <!-- row 1 -->
+                      <tr v-for="(stock, index) in stocks" :key="index">
+                        <th>[[ index + 1 ]]</th>
+                        <td>[[ stock.symbol ]]</td>
+                        <td>[[ stock.fullName ]]</td>
+                        <td>[[ stock.latestPrice ]]</td>
+                        <td>[[ stock.chg ]]</td>
+                        <td>[[ stock.percentChg ]]</td>
+                        <td>[[ stock.volume ]]</td>
+                        <td>
+                          <button
+                            class="btn btn-outline btn-sm w-40"
+                            @click="toggleFollow(index)"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6 text-black"
+                              :fill="stock.followed ? 'currentColor' : 'none'"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                              />
+                            </svg>
+                            <span class="text-black">[[ stock.followed ? 'Followed' : 'Follow' ]]</span>
+                          </button>
+                        </td>
+                      </tr>
                     </tbody>
-                </table>
+                  </table>
+                </div>
             </div>
-
             <div v-else>
                 <h2 class="text-lg font-bold">Friend Information</h2>
-                <table class="min-w-full bg-white">
-                    <thead class="bg-gray-800 text-white">
-                        <tr>
-                            <th class="w-1/3 py-2">Name</th>
-                            <th class="w-1/3 py-2">Age</th>
-                            <th class="w-1/3 py-2">Location</th>
-                        </tr>
+                <div class="overflow-x-auto">
+                  <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>User Name</th>
+                        <th>BIO</th>
+                        <th>Follow</th>
+                      </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td class="py-2 px-4 border-b">John</td>
-                            <td class="py-2 px-4 border-b">30</td>
-                            <td class="py-2 px-4 border-b">New York</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Jane</td>
-                            <td class="py-2 px-4 border-b">25</td>
-                            <td class="py-2 px-4 border-b">Los Angeles</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b">Doe</td>
-                            <td class="py-2 px-4 border-b">35</td>
-                            <td class="py-2 px-4 border-b">Chicago</td>
-                        </tr>
+                      <!-- row 1 -->
+                      <tr v-for="(friend, index) in friends" :key="index">
+                        <th>[[ index + 1 ]]</th>
+                        <td>[[ friend.userName ]]</td>
+                        <td class="break-words">[[ friend.bio ]]</td>
+                        <td>
+                          <button
+                            class="btn btn-outline btn-sm w-40"
+                            @click="toggleFriendFollow(index)"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6 text-black"
+                              :fill="friend.followed ? 'currentColor' : 'none'"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                              />
+                            </svg>
+                            <span class="text-black">[[ friend.followed ? 'Followed' : 'Follow' ]]</span>
+                          </button>
+                        </td>
+                      </tr>
                     </tbody>
-                </table>
+                  </table>
+                </div>
             </div>
             <!-- Main Content END -->
         </div>
@@ -163,11 +217,69 @@
         data: {
             accountList: [],
             symbolList: [],
-            showStock: true  // 添加这个变量来控制显示的表格
+            showStock: true,  // 控制显示的表格
+            title: 'Searching Result',  // 标题
+            stocks: [
+                {
+                    symbol: 'AAPL',
+                    fullName: 'Apple Inc.',
+                    latestPrice: '$150',
+                    chg: '+1.2',
+                    percentChg: '0.8%',
+                    volume: '100K',
+                    followed: false
+                },
+                {
+                    symbol: 'GOOG',
+                    fullName: 'Alphabet Inc.',
+                    latestPrice: '$2800',
+                    chg: '-0.5',
+                    percentChg: '-0.02%',
+                    volume: '50K',
+                    followed: false
+                },
+                {
+                    symbol: 'AMZN',
+                    fullName: 'Amazon.com Inc.',
+                    latestPrice: '$3400',
+                    chg: '+2.3',
+                    percentChg: '1.1%',
+                    volume: '75K',
+                    followed: false
+                }
+            ],
+            friends: [
+                {
+                    userName: 'John Doe',
+                    bio: 'Hello, I\'m John, a passionate software engineer with over 5 years of experience in developing web and mobile applications. I specialize in full-stack development, particularly using JavaScript, React, and Node.js. My goal is to create efficient and scalable solutions that enhance user experiences.',
+                    followed: true
+                },
+                {
+                    userName: 'Jane Smith',
+                    bio: 'Hi, I\'m Jane, a dedicated marketing specialist with a knack for crafting compelling campaigns that drive engagement and growth. With a background in digital marketing and social media strategy, I excel at connecting brands with their target audiences and delivering measurable results.',
+                    followed: true
+                },
+                {
+                    userName: 'Michael Johnson',
+                    bio: 'Greetings, I\'m Micheal, a creative graphic designer with a strong background in visual storytelling. I have a passion for creating stunning visuals that communicate messages effectively, using tools like Adobe Creative Suite. My expertise spans branding, illustration, and user interface design, aimed at making lasting impressions.',
+                    followed: true
+                }
+            ]
         },
         methods: {
-            toggleTable(event) {
-                this.showStock = !event.target.checked;
+            showStockTable() {
+                this.showStock = true;
+                this.title = 'Searching Result';
+            },
+            showFriendTable() {
+                this.showStock = false;
+                this.title = 'Friend List';
+            },
+            toggleFollow(index) {
+                this.stocks[index].followed = !this.stocks[index].followed;
+            },
+            toggleFriendFollow(index) {
+                this.friends[index].followed = !this.friends[index].followed;
             },
             getSymbol() {
                 axios.get('/get_notification')
