@@ -1,5 +1,5 @@
 import mysql.connector
-class Preference:
+class Watchlist():
     def __init__(self):
         self.mydb = self.connectToDatabase()
 
@@ -33,22 +33,12 @@ class Preference:
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def get_preference_by_accountId(self, accountId):
-        sql = "SELECT * FROM preferences WHERE accountId = %s"
+    def get_watchlist_by_accountID(self,accountId):
+        sql = "select * from watchlist where accountId=%s"
         val = (accountId,)
         return self.fetchOne(sql, val)
 
-    def set_preference_by_accountId(self, accountId, preferenceIndustry,preferenceCountry):
-        sql = "INSERT INTO preferences(accountId, preferenceIndustry,preferenceCountry) VALUES (%s, %s, %s)"
-        val = (accountId, preferenceIndustry, preferenceCountry)
+    def update_watchlist(self, accountId, stockSymbol):
+        sql = "insert into watchlist (accountId, stockSymbol) values (%s, %s)"
+        val = (accountId, stockSymbol)
         self.commit(sql, val)
-
-    def update_preference_by_accountId(self, accountId, preferenceIndustry,preferenceCountry):
-        sql = "UPDATE preferences SET preferenceIndustry = %s, preferenceCountry = %s WHERE accountId = %s"
-        val = (preferenceIndustry, preferenceCountry, accountId)
-        self.commit(sql, val)
-
-if __name__ == "__main__":
-    Preference().set_preference_by_accountId("1","big","small")
-    print(Preference().get_preference_by_accountId("2"))
-    Preference().update_preference_by_accountId("1","small","big")

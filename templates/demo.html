@@ -36,16 +36,16 @@
                     const labels = data.map(item => new Date(item.timestamp).toLocaleDateString());
                     const closePrices = data.map(item => item.close);
 
-                    // 计算平均价格
+                    // Calculation of average price
                     const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
                     const averagePrices = new Array(closePrices.length).fill(averagePrice);
 
                     this.$nextTick(() => {
-                        // 获取 Canvas 上下文
+                        // Getting the Canvas Context
                         const canvasId = 'myChart' + index;
                         const ctx = document.getElementById(canvasId).getContext('2d');
 
-                        // 创建渐变
+                        // Creating Gradients
                         const gradient = ctx.createLinearGradient(0, 0, 0, 300);
                         if (stock.upsAndDowns === 0) {
                             gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)'); // 红色渐变
@@ -55,14 +55,14 @@
                             gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
                         }
 
-                        // 绘制图表
+                        // plot
                         new Chart(ctx, {
                             type: 'line',
                             data: {
                                 labels: labels,
                                 datasets: [
                                     {
-                                        label: '', // 隐藏标签
+                                        label: '', // Hide Tags
                                         data: closePrices,
                                         borderColor: stock.upsAndDowns === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)',
                                         borderWidth: 2,
