@@ -39,6 +39,6 @@ class Watchlist():
         return self.fetchOne(sql, val)
 
     def update_watchlist(self, accountId, stockSymbol):
-        sql = "insert into watchlist (accountId, stockSymbol) values (%s, %s)"
-        val = (accountId, stockSymbol)
+        sql = "UPDATE watchlist SET stockSymbol=%s WHERE accountId=%s"
+        val = (stockSymbol,accountId)
         self.commit(sql, val)
