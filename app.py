@@ -68,8 +68,7 @@ def search(content):
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     account = GetAccountByAccountId().get_account_by_accountId("1")
-    recommendationList = RecommendationListController().get_recommendationList_by_accountId("1")
-    return render_template('mainPage.html',account=account, recommendationList=recommendationList)
+    return render_template('mainPage.html',account=account)
 
 #remove notification
 @app.route('/remove_notification', methods=['POST'])
@@ -139,7 +138,6 @@ def preferenceSetup():
 def demo():
     list = StockDataController().get_recommendation_stock_by_preference("us", "Energy,Technology")
     recommendationList = []
-    print(list)
     for stock in list:
         try:
             recommendationList.append(StockDataController().get_stock_info_medium(stock))
