@@ -41,10 +41,19 @@ class FollowList():
         pass
 
     def get_followList_by_accountId(self,accountId):
-        sql = "SELECT * FROM followList WHERE accountId = %s"
+        sql = """
+        SELECT followList.followId, followList.accountId AS followListAccountId, followList.followedId, followList.notifyMe, followList.followDate, 
+               account.accountId AS accountAccountId, account.userName, account.hashedPassword, account.email, account.bio, account.profile, 
+               account.status, account.createDateTime, account.age, account.sex, account.occupation, account.incomeLevel, account.netWorth, 
+               account.investmentExperience, account.riskTolerance, account.investmentGoals
+        FROM followList
+        LEFT JOIN account ON followList.followedId = account.accountId
+        WHERE followList.accountId = %s
+        """
         val = (accountId,)
         return self.fetchAll(sql, val)
 
+    #this function use for threshold update
     def get_accountList_by_followedId(self,followedId):
         sql = """
         SELECT followList.followId, followList.accountId AS followListAccountId, followList.followedId, followList.notifyMe, followList.followDate, 
@@ -58,10 +67,24 @@ class FollowList():
         val = (followedId,)
         return self.fetchAll(sql, val)
 
+    #this function use for get who follows me
+    def get_who_follows_me_by_accountID(self,followedId):
+        sql = """
+        SELECT followList.followId, followList.accountId AS followListAccountId, followList.followedId, followList.notifyMe, followList.followDate, 
+               account.accountId AS accountAccountId, account.userName, account.hashedPassword, account.email, account.bio, account.profile, 
+               account.status, account.createDateTime, account.age, account.sex, account.occupation, account.incomeLevel, account.netWorth, 
+               account.investmentExperience, account.riskTolerance, account.investmentGoals
+        FROM followList
+        LEFT JOIN account ON followList.accountId = account.accountId
+        WHERE followList.followedId = %s
+        """
+        val = (followedId,)
+        return self.fetchAll(sql, val)
+
     def get_notifyMe_value_from_accountAndFollowId(self,accountId,followedId) ->int:
         sql = "SELECT notifyMe FROM followList WHERE accountId = %s AND followedId = %s"
         val = (accountId,followedId,)
         return self.fetchOne(sql, val)["notifyMe"]
 
 if __name__ == "__main__":
-    print(FollowList().get_notifyMe_value_from_accountAndFollowId("1","2"))
+    print(FollowList().get_who_follows_me_by_accountID('1'))
