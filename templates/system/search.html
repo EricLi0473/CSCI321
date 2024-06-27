@@ -100,46 +100,46 @@
                         class="inline-block rounded-md px-8 py-3 text-md focus:relative"
                         @click="showFriendTable"
                     >
-                        Friend
+                        User
                     </button>
                 </div>
             </div>
             <h1 class="text-black text-2xl font-bold mb-4">[[ title ]]</h1>
             <div v-if="showStock">
-                <h2 class="text-lg font-bold">Stock Information</h2>
+                <h2 class="text-lg font-bold text-black">Stock Information</h2>
                 <div class="overflow-x-auto">
                   <table class="table">
                     <!-- head -->
                     <thead>
                       <tr>
-                        <th></th>
-                        <th>Symbol</th>
-                        <th>Full Name</th>
-                        <th>Latest Price</th>
-                        <th>Chg</th>
-                        <th>%Chg</th>
-                        <th>Volume</th>
-                        <th>Watch List</th>
+                        <th class="text-black">#</th>
+                        <th class="text-black text-xl">Symbol</th>
+                        <th class="text-black text-xl">Full Name</th>
+                        <th class="text-black text-xl">Latest Price</th>
+                        <th class="text-black text-xl">Chg</th>
+                        <th class="text-black text-xl">%Chg</th>
+                        <th class="text-black text-xl">Volume</th>
+                        <th class="text-black text-xl">Watch List</th>
                       </tr>
                     </thead>
                     <tbody>
                       <!-- row 1 -->
                       <tr v-for="(stock, index) in stocks" :key="index">
-                        <th>[[ index + 1 ]]</th>
-                        <td>[[ stock.symbol ]]</td>
-                        <td>[[ stock.fullName ]]</td>
-                        <td>[[ stock.latestPrice ]]</td>
-                        <td>[[ stock.chg ]]</td>
-                        <td>[[ stock.percentChg ]]</td>
-                        <td>[[ stock.volume ]]</td>
-                        <td>
+                        <th class="text-black text-xl">[[ index + 1 ]]</th>
+                        <td class="text-black text-xl">[[ stock.symbol ]]</td>
+                        <td class="text-black text-xl">[[ stock.fullName ]]</td>
+                        <td :class="{'text-green-500': stock.chg > 0, 'text-red-500': stock.chg < 0}" class="text-xl">[[ stock.latestPrice ]]</td>
+                        <td :class="{'text-green-500': stock.chg > 0, 'text-red-500': stock.chg < 0}" class="text-xl">[[ stock.chg ]]</td>
+                        <td :class="{'text-green-500': stock.percentChg > 0, 'text-red-500': stock.percentChg < 0}" class="text-xl">[[ stock.percentChg ]]</td>
+                        <td class="text-black text-xl">[[ stock.volume ]]</td>
+                        <td class="text-xl">
                           <button
                             class="btn btn-outline btn-sm w-40"
                             @click="toggleFollow(index)"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              class="h-6 w-6 text-black"
+                              class="h-6 w-6 text-red-500"
                               :fill="stock.followed ? 'currentColor' : 'none'"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -151,7 +151,7 @@
                                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                               />
                             </svg>
-                            <span class="text-black">[[ stock.followed ? 'Followed' : 'Follow' ]]</span>
+                            <span class="text-red-500">[[ stock.followed ? 'Followed' : 'Follow' ]]</span>
                           </button>
                         </td>
                       </tr>
@@ -160,32 +160,32 @@
                 </div>
             </div>
             <div v-else>
-                <h2 class="text-lg font-bold">Friend Information</h2>
+                <h2 class="text-lg font-bold text-black">User Information</h2>
                 <div class="overflow-x-auto">
                   <table class="table">
                     <!-- head -->
                     <thead>
                       <tr>
-                        <th></th>
-                        <th>User Name</th>
-                        <th>BIO</th>
-                        <th>Follow</th>
+                        <th class="text-black">#</th>
+                        <th class="text-black text-lg " style="width: 15%;">User Name</th>
+                        <th class="text-black text-lg">BIO</th>
+                        <th class="text-black text-lg">Follow</th>
                       </tr>
                     </thead>
                     <tbody>
                       <!-- row 1 -->
                       <tr v-for="(friend, index) in friends" :key="index">
-                        <th>[[ index + 1 ]]</th>
-                        <td>[[ friend.userName ]]</td>
-                        <td class="break-words">[[ friend.bio ]]</td>
-                        <td>
+                        <th class="text-black text-lg">[[ index + 1 ]]</th>
+                        <td class="text-black text-lg" style="width: 15%;">[[ friend.userName ]]</td>
+                        <td class="text-black text-md break-words">[[ friend.bio ]]</td>
+                        <td class="text-lg">
                           <button
                             class="btn btn-outline btn-sm w-40"
                             @click="toggleFriendFollow(index)"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
-                              class="h-6 w-6 text-black"
+                              class="h-6 w-6 text-red-500"
                               :fill="friend.followed ? 'currentColor' : 'none'"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -197,7 +197,7 @@
                                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                               />
                             </svg>
-                            <span class="text-black">[[ friend.followed ? 'Followed' : 'Follow' ]]</span>
+                            <span class="text-red-500">[[ friend.followed ? 'Followed' : 'Follow' ]]</span>
                           </button>
                         </td>
                       </tr>
@@ -224,8 +224,8 @@
                     symbol: 'AAPL',
                     fullName: 'Apple Inc.',
                     latestPrice: '$150',
-                    chg: '+1.2',
-                    percentChg: '0.8%',
+                    chg: 1.2,
+                    percentChg: 0.8,
                     volume: '100K',
                     followed: false
                 },
@@ -233,8 +233,8 @@
                     symbol: 'GOOG',
                     fullName: 'Alphabet Inc.',
                     latestPrice: '$2800',
-                    chg: '-0.5',
-                    percentChg: '-0.02%',
+                    chg: -0.5,
+                    percentChg: -0.02,
                     volume: '50K',
                     followed: false
                 },
@@ -242,8 +242,8 @@
                     symbol: 'AMZN',
                     fullName: 'Amazon.com Inc.',
                     latestPrice: '$3400',
-                    chg: '+2.3',
-                    percentChg: '1.1%',
+                    chg: -2.3,
+                    percentChg: -1.1,
                     volume: '75K',
                     followed: false
                 }
@@ -273,7 +273,7 @@
             },
             showFriendTable() {
                 this.showStock = false;
-                this.title = 'Friend List';
+                this.title = 'User List';
             },
             toggleFollow(index) {
                 this.stocks[index].followed = !this.stocks[index].followed;
