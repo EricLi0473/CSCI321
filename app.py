@@ -38,6 +38,7 @@ from Control.Admin.get_all_reviews import *
 from Control.Admin.delete_review_by_id import *
 from Control.premiumUser.update_watchlist import *
 from Control.premiumUser.get_watchlist_by_accountID import *
+from Control.User.get_who_follows_me_by_accountID import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -52,6 +53,13 @@ import time
 app = Flask(__name__)
 
 
+@app.route('/friend',methods=['GET','POST'])
+def friend_list():
+    if request.method == 'GET':
+        followList = GetFollowListByAccountId().get_followList_by_accountId("1")
+        who_follow_me_list = Get_who_follows_me_by_accountID().get_who_follows_me_by_accountID("1")
+        account = GetAccountByAccountId().get_account_by_accountId("1")
+        return render_template("/system/friend.html",followList=followList,who_follow_me_list=who_follow_me_list,account=account)
 @app.route('/ratingComment', methods=['GET', 'POST'])
 def ratingComment():
     if request.method == 'GET':
@@ -63,7 +71,8 @@ def ratingComment():
 @app.route('/search/<string:content>')
 def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
-    return render_template("/system/search.html",content=content,accountsList=accountsList)
+    stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
+    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList)
 
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
@@ -116,7 +125,7 @@ def searchSymbol(symbol):
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
-    stockData = StockDataController().get_update_stock_data(symbol,"180d")
+    stockData = StockDataController().get_update_stock_data(symbol,"3mo")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
