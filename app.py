@@ -39,6 +39,7 @@ from Control.Admin.delete_review_by_id import *
 from Control.premiumUser.update_watchlist import *
 from Control.premiumUser.get_watchlist_by_accountID import *
 from Control.User.get_who_follows_me_by_accountID import *
+from Control.premiumUser.update_threshold_settings import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -125,13 +126,33 @@ def searchSymbol(symbol):
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
-    stockData = StockDataController().get_update_stock_data(symbol,"3mo")
+    user = GetAccountByAccountId().get_account_by_accountId("1")
+    stockData = StockDataController().get_update_stock_data(symbol,"1y")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
-    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold)
+    watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
+    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>',methods=['POST'])
+def request_for_prediction(symbol,days,model):
+    print(symbol,days,model)
+    return jsonify({'success': True})
 
+@app.route('/submit_comment',methods=["POST"])
+def submit_comment():
+    data = request.json
+    CommentController().insert_comment("1",data["symbol"],data["comment"])
+    return jsonify({'success': True})
+@app.route('/update_watchList',methods=['POST'])
+def update_watchList():
+    data = request.json
+    UpdateWatchlist().update_Watchlist("1",data.get("watchList"))
+    return jsonify({'success': True})
 
+@app.route("/update_threshold_setting/<string:symbol>/<string:threshold>", methods=['POST'])
+def update_threshold_setting(symbol, threshold):
+    Update_threshold_settings().update_threshold_settings("1", symbol, float(threshold))
+    return jsonify({'success': True})
 @app.route('/symbol_comments/<string:symbol>')
 def symbol_comments(symbol):
     return jsonify(CommentController().get_comments_by_symbol(symbol))
