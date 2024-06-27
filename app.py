@@ -36,6 +36,8 @@ from Control.User.insert_review_by_id import *
 from Control.Admin.headline_review_by_id import *
 from Control.Admin.get_all_reviews import *
 from Control.Admin.delete_review_by_id import *
+from Control.premiumUser.update_watchlist import *
+from Control.premiumUser.get_watchlist_by_accountID import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
