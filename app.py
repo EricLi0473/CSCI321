@@ -63,19 +63,26 @@ def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
     return render_template("/system/search.html",content=content,accountsList=accountsList)
 
-@app. route('/mainPage', methods=['GET', 'POST'])
+@app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     account = GetAccountByAccountId().get_account_by_accountId("1")
-    return render_template('mainPage.html',account=account)
+    recommendationList = RecommendationListController().get_recommendationList_by_accountId("1")
+    return render_template('mainPage.html',account=account, recommendationList=recommendationList)
 
 #remove notification
-@app.route('/remove_notification/<int:notificationId>/<string:notificationType>/<int:referenceId>', methods=['GET', 'POST'])
-def remove_notification(notificationId,notificationType,referenceId):
+@app.route('/remove_notification', methods=['POST'])
+def remove_notification():
+    data = request.json
+    notificationId = data.get('notificationId')
+    notificationType = data.get('notificationType')
+    referenceId = data.get('referenceId')
+
     if notificationType == "threshold":
         Remove_notification_by_id().remove_notification_by_id(notificationId)
         Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(referenceId)
     else:
         Remove_notification_by_id().remove_notification_by_id(notificationId)
+
     return jsonify({'success': True})
 
 # user login main page

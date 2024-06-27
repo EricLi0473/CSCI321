@@ -1,3 +1,4 @@
+<!-- before CP -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div id="app" class="flex h-screen">
@@ -66,7 +69,7 @@
                     </button>
                 </form>
             </div>
-        </div>  <!-- comment312312312 -->
+        </div>
         <!-- Right Content Area -->
         <div class="flex-1 bg-gray-100 ml-16">
             <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
@@ -86,32 +89,47 @@
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button @click="removeNotification(notification.notificationId)" class="text-red-500">&times;</button>
+                            <button @click="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
                         </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mt-8">
                     <div>
-                        <h2 class="text-lg font-bold mb-4">Recommendation News</h2>
+                        <h2 class="text-lg font-bold mb-4">Recommended News For You</h2>
                         <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md">
                             <h3 class="font-bold">
                                 <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
                             </h3>
                             <p>[[news.description]]</p>
-                            <img :src="news.image_url" alt="" class="w-full h-32 object-cover mt-2 rounded-md">
+                            <img :src="news.image_url || '../../static/resource/altNewsIMG.jpg'"
+                             @error="onImageError"
+                             alt="News Image2"
+                             class="w-full h-32 object-cover mt-2 rounded-md">
+                            <p class = "text-gray-500 mt-2">Published on: [[news.published_at]]</p>
                         </div>
                         <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4">Load More</button>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-bold mb-4">Recommendation Ticker</h2>
-                        <div v-for="stock in recommendationSymbols" :key="stock.symbol" class="mb-4 bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
-                            <div>
-                                <p class="font-bold">[[ stock.symbol ]]</p>
-                                <p :class="{'text-green-500': stock.change > 0, 'text-red-500': stock.change < 0}"> [[stock.price]]  <span v-if="stock.change > 0">↑</span><span v-else>↓</span></p>
+                        <div>
+                            <h2 class="text-lg font-bold mb-4">Recommended Stocks For You</h2>
+<!--                            <div v-for="stock in recommendationSymbols" :key="stock.symbol" class="mb-4 bg-white p-4 rounded-lg shadow-md">-->
+<!--                                <div>-->
+<!--                                    <p class="font-bold">[[ stock.symbol ]]</p>-->
+<!--                                    <p :class="{'text-green-500': stock.change > 0, 'text-red-500': stock.change < 0}"> [[stock.price]]  <span v-if="stock.change > 0">↑</span><span v-else>↓</span></p>-->
+<!--                                </div>-->
+<!--                                <div :id="'chart-' + stock.symbol" style="width: 100%; height: 300px;"></div>-->
+<!--                                <button @click="toggleWatchlist(stock.symbol)" class="text-2xl">&#9829;</button>-->
+<!--                            </div>-->
+                            <div v-for="(stock, index) in recommendationList" :key="index" style="width:600px; height: 400px; margin-bottom: 20px;">
+                                <h1>[[stock.longName]]</h1>
+                                <h2>[[stock.price]]</h2>
+                                <h3>[[stock.relative_change + "%"]]</h3>
+                                <h3>[[stock.absolute_change]]</h3>
+                                <canvas :id="'myChart' + index" height="80px"></canvas>
                             </div>
-                            <button @click="toggleWatchlist(stock.symbol)" class="text-2xl">&#9829;</button>
+
                         </div>
-                    </div>
+
+
                 </div>
             </div>
             <!-- Content END! -->
@@ -125,6 +143,21 @@
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Scroll to the top when the button is clicked
+            document.getElementById('toTopButton').addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // Show or hide the button based on scroll position
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 200) {
+                    document.getElementById('toTopButton').classList.remove('hidden');
+                } else {
+                    document.getElementById('toTopButton').classList.add('hidden');
+                }
+            });
+        });
         new Vue({
             el: '#app',
             delimiters: ['[[', ']]'],
@@ -132,12 +165,15 @@
                 notifications: [],
                 recommendationNews: [],
                 recommendationSymbols: [],
-                newsPage: 0
+                newsPage: 0,
+                chart: null,
+                recommendationList: JSON.parse('{{ recommendationList|tojson }}')
             },
             mounted() {
                 this.getNotifications();
                 this.getRecommendationSymbols();
                 this.getRecommendationNews();
+                this.update_recommendationList();
             },
             methods: {
                 getNotifications() {
@@ -150,6 +186,7 @@
                     axios.get('/recommendation_symbol')
                         .then(response => {
                             this.recommendationSymbols = response.data;
+                            this.recommendationList = response.data.jsonify()
                         });
                 },
                 getRecommendationNews() {
@@ -162,14 +199,107 @@
                 loadMoreNews() {
                     this.getRecommendationNews();
                 },
-                removeNotification(id) {
-                    this.notifications = this.notifications.filter(notification => notification.notificationId !== id);
+                removeNotification(notificationId, notificationType, referenceId) {
+                    axios.post('/remove_notification', { notificationId: notificationId, notificationType: notificationType, referenceId: referenceId })
+                        .then(response => {
+                            if (response.data.success) {
+                                this.notifications = this.notifications.filter(notification => notification.notificationId !== notificationId);
+                            }
+                        });
                 },
                 toggleWatchlist(symbol) {
                     // Logic to toggle watchlist status
-                }
+                },
+                onImageError(event) {
+                    event.target.src = '../../static/resource/altNewsIMG.jpg';
+                },
+                update_recommendationList() {
+                this.recommendationList.forEach((stock, index) => {
+                    const data = stock.data;
+                    const labels = data.map(item => new Date(item.timestamp).toLocaleDateString());
+                    const closePrices = data.map(item => item.close);
+
+                    // 计算平均价格
+                    const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
+                    const averagePrices = new Array(closePrices.length).fill(averagePrice);
+
+                    this.$nextTick(() => {
+                        // 获取 Canvas 上下文
+                        const canvasId = 'myChart' + index;
+                        const ctx = document.getElementById(canvasId).getContext('2d');
+
+                        // 创建渐变
+                        const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                        if (stock.upsAndDowns === 0) {
+                            gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)'); // 红色渐变
+                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                        } else {
+                            gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)'); // 绿色渐变
+                            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                        }
+
+                        // 绘制图表
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [
+                                    {
+                                        label: '', // 隐藏标签
+                                        data: closePrices,
+                                        borderColor: stock.upsAndDowns === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)',
+                                        borderWidth: 2,
+                                        fill: true,
+                                        backgroundColor: gradient // 设置渐变填充
+                                    },
+                                    {
+                                        label: '', // 隐藏标签
+                                        data: averagePrices,
+                                        borderColor: 'rgba(128, 128, 128, 1)', // 灰色平均线
+                                        borderWidth: 2,
+                                        fill: false,
+                                        borderDash: [10, 5] // 设置虚线样式
+                                    }
+                                ]
+                            },
+                            options: {
+                                scales: {
+                                    x: {
+                                        display: false
+                                    },
+                                    y: {
+                                        display: false
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        display: false // 隐藏图例
+                                    }
+                                },
+                                elements: {
+                                    point: {
+                                        radius: 0
+                                    }
+                                },
+                                layout: {
+                                    padding: {
+                                        left: 0,
+                                        right: 0,
+                                        top: 0,
+                                        bottom: 0
+                                    }
+                                }
+                            }
+                        });
+
+                        console.log('Chart initialized for:', stock.symbol);
+                    });
+                });
+            }
             }
         });
+
+
     </script>
 </body>
 </html>

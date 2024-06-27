@@ -9,6 +9,9 @@ class NotificationController:
     def set_notification(self,accountId,notification,notificationType,referenceId):
         Notification().set_notification(accountId,notification,notificationType,referenceId)
 
+    def delete_notification(self,notificationId):
+        Notification().delete_notification(notificationId)
+
 if __name__ == '__main__':
     import hashlib
 

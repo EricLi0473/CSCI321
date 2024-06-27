@@ -16,7 +16,7 @@ class NewsController:
             new['snippet'] = news['snippet']
             new['image_url'] = news['image_url']
             published_at_dt = datetime.strptime(news['published_at'], '%Y-%m-%dT%H:%M:%S.%fZ')
-            new['published_at'] = published_at_dt.strftime('%Y-%m-%d %H:%M')
+            new['published_at'] = published_at_dt.strftime('%H:%M, %Y-%m-%d')
             news_list.append(new)
         return news_list
 
