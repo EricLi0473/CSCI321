@@ -77,8 +77,58 @@
               <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
             </div>
             <!-- Content Start! -->
-          <div class="overflow-y-scroll p-8 bg-white border mt-16">
+          <div class="overflow-y-scroll p-8 bg-white border mt-16" v-if="">
+              <div class="overflow-x-auto" v-for="follower in who_follow_me_list" :key="follower.followId">
+  <table class="table">
+    <!-- head -->
+      <div class="flex">
+          <h1 class=" text-4xl">Follow List</h1>
+          <button class="btn btn-outline btn-sm ml-5 mt-1 h-fit  " value="follows">Fans</button>
+      </div>
+    <thead>
+      <tr class="text-xl">
+        <th>User Name</th>
+        <th>subscribe</th>
+        <th>stocks</th>
+          <th>status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      <tr>
+          <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
+        <td>YES</td>
+        <td>20%</td>
+        <td><button class="btn btn-outline btn-sm">cancel</button></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
+         </div>
+          <div class="overflow-y-scroll p-8 bg-white border mt-16">
+              <div class="overflow-x-auto" v-for="follower in who_follow_me_list" :key="follower.followId">
+  <table class="table">
+    <!-- head -->
+      <div class="flex">
+          <h1 class=" text-4xl">Fans</h1>
+          <button class="btn btn-outline btn-sm ml-5 mt-1 h-fit">Follow</button>
+      </div>
+    <thead>
+      <tr class="text-xl">
+        <th>User Name</th>
+          <th>follow time</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- row 1 -->
+      <tr>
+          <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
+        <td>[[ new Date(follower.followDate).toLocaleDateString() ]]</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
          </div>
           <!-- Content END! -->
@@ -104,7 +154,8 @@
         </div>
 
         </div>
-      <script>
+    <script>
+
           new Vue({
         el: '#app',
         delimiters: ['[[', ']]'],

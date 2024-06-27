@@ -84,7 +84,7 @@ class StockDataController:
         return data_dict
     def get_stock_info_medium(self,symbol):
         if isinstance(symbol, str):
-            df = yf.download(symbol, period="1mo")
+            df = yf.download(symbol, period="30d")
             df = df.reset_index()
             df["Close"] = round(df["Close"], 2)
             df["Open"] = round(df["Open"], 2)
@@ -174,7 +174,7 @@ class StockDataController:
 
     def get_stock_info_full(self,symbol):
         data_dict = {}
-        df = yf.download(symbol, period="5d")
+        df = yf.download(symbol, period="3d")
         df = df.reset_index()
         df["Close"] = round(df["Close"], 2)
         df["Open"] = round(df["Open"], 2)
