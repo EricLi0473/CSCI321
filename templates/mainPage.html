@@ -8,7 +8,6 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -119,14 +118,13 @@
 <!--                                <div :id="'chart-' + stock.symbol" style="width: 100%; height: 300px;"></div>-->
 <!--                                <button @click="toggleWatchlist(stock.symbol)" class="text-2xl">&#9829;</button>-->
 <!--                            </div>-->
-                            <div v-for="(stock, index) in recommendationList" :key="index" style="width:600px; height: 400px; margin-bottom: 20px;">
-                                <h1>[[stock.longName]]</h1>
-                                <h2>[[stock.price]]</h2>
-                                <h3>[[stock.relative_change + "%"]]</h3>
-                                <h3>[[stock.absolute_change]]</h3>
-                                <canvas :id="'myChart' + index" height="80px"></canvas>
-
-                            </div>
+                                <div v-for="(stock, index) in recommendationList" :key="index" style="width:600px; height: 400px; margin-bottom: 20px;">
+                                    <h1>[[stock.longName]]</h1>
+                                    <h2>[[stock.price]]</h2>
+                                    <h3>[[stock.relative_change + "%"]]</h3>
+                                    <h3>[[stock.absolute_change]]</h3>
+                                    <canvas :id="'myChart' + index" height="80px"></canvas>
+                                </div>
 
                         </div>
 
@@ -187,7 +185,6 @@
                     axios.get('/recommendation_symbol')
                         .then(response => {
                             this.recommendationSymbols = response.data;
-                            this.recommendationList = response.data.jsonify()
                         });
                 },
                 getRecommendationNews() {
