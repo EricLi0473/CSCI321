@@ -80,8 +80,8 @@
             <div class="">
                 <a class="btn btn-ghost text-xl">Stock4Me</a>
             </div>
-            <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
-            <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
+            <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
+            <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
         </div>
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
             <!-- Main Content -->
@@ -106,9 +106,13 @@
             </div>
             <h1 class="text-black text-2xl font-bold mb-4">[[ title ]]</h1>
             <div v-if="showStock">
-                <h2 class="text-lg font-bold text-black">Stock Information</h2>
+  <div class="join mt-8 md-4">
+    <button class="btn join-item" @click="sortStockList('price')">Filter by Price</button>
+    <button class="btn join-item" @click="sortStockList('absolute_change')">Filter by Change</button>
+    <button class="btn join-item" @click="sortStockList('volume')">Filter by Volume</button>
+  </div>
                 <div class="overflow-x-auto">
-                  <table class="table">
+                  <table class="table" v-if="stockHasNoData !== 1">
                     <!-- head -->
                     <thead>
                       <tr>
@@ -124,23 +128,23 @@
                     </thead>
                     <tbody>
                       <!-- row 1 -->
-                      <tr v-for="(stock, index) in stocks" :key="index">
+                      <tr v-for="(stock, index) in stockList" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
                         <th class="text-black text-xl">[[ index + 1 ]]</th>
                         <td class="text-black text-xl">[[ stock.symbol ]]</td>
-                        <td class="text-black text-xl">[[ stock.fullName ]]</td>
-                        <td :class="{'text-green-500': stock.chg > 0, 'text-red-500': stock.chg < 0}" class="text-xl">[[ stock.latestPrice ]]</td>
-                        <td :class="{'text-green-500': stock.chg > 0, 'text-red-500': stock.chg < 0}" class="text-xl">[[ stock.chg ]]</td>
-                        <td :class="{'text-green-500': stock.percentChg > 0, 'text-red-500': stock.percentChg < 0}" class="text-xl">[[ stock.percentChg ]]</td>
+                        <td class="text-black text-xl">[[ stock.longName ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
                         <td class="text-black text-xl">[[ stock.volume ]]</td>
                         <td class="text-xl">
                           <button
                             class="btn btn-outline btn-sm w-40"
-                            @click="toggleFollow(index)"
+                            @click.stop="toggleFollow(stock.symbol)"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               class="h-6 w-6 text-red-500"
-                              :fill="stock.followed ? 'currentColor' : 'none'"
+                              :fill="stockWatchList.includes(stock.symbol) ? 'currentColor' : 'none'"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
                             >
@@ -151,18 +155,38 @@
                                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                               />
                             </svg>
-                            <span class="text-red-500">[[ stock.followed ? 'Followed' : 'Follow' ]]</span>
+                            <span class="text-red-500">[[ stockWatchList.includes(stock.symbol) ? 'Followed' : 'Follow' ]]</span>
                           </button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                   <div class="flex w-full flex-col gap-4 mt-8">
+  <div class="skeleton h-32 w-full" v-if="stockList.length === 0 && stockHasNoData === 0"></div>
+  <div class="skeleton h-4 w-28" v-if="stockList.length === 0 && stockHasNoData === 0"></div>
+  <div class="skeleton h-4 w-full" v-if="stockList.length === 0 && stockHasNoData === 0"></div>
+  <div class="skeleton h-4 w-full" v-if="stockList.length === 0 && stockHasNoData === 0"></div>
+                       <div role="alert" class="alert mt-8" v-if="stockHasNoData === 1">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="stroke-info h-6 w-6 shrink-0">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  <span>Oh, we didn't find any related stocks, please try searching again!</span>
+</div>
+</div>
                 </div>
             </div>
             <div v-else>
                 <h2 class="text-lg font-bold text-black">User Information</h2>
                 <div class="overflow-x-auto">
-                  <table class="table">
+                  <table class="table" v-if="accountHasNoData !== 1">
                     <!-- head -->
                     <thead>
                       <tr>
@@ -174,19 +198,19 @@
                     </thead>
                     <tbody>
                       <!-- row 1 -->
-                      <tr v-for="(friend, index) in friends" :key="index">
+                      <tr v-for="(account, index) in accountsList" :key="index">
                         <th class="text-black text-lg">[[ index + 1 ]]</th>
-                        <td class="text-black text-lg" style="width: 15%;">[[ friend.userName ]]</td>
-                        <td class="text-black text-md break-words">[[ friend.bio ]]</td>
+                        <td class="text-black text-lg" style="width: 15%;">[[ account.userName ]]</td>
+                        <td class="text-black text-md break-words">[[ account.bio ]]</td>
                         <td class="text-lg">
                           <button
                             class="btn btn-outline btn-sm w-40"
-                            @click="toggleFriendFollow(index)"
+                            @click="toggleFriendFollow(account.accountId)"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               class="h-6 w-6 text-red-500"
-                              :fill="friend.followed ? 'currentColor' : 'none'"
+                              :fill="accountFavoList.includes(account.accountId) ? 'currentColor' : 'none'"
                               viewBox="0 0 24 24"
                               stroke="currentColor"
                             >
@@ -197,12 +221,26 @@
                                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
                               />
                             </svg>
-                            <span class="text-red-500">[[ friend.followed ? 'Followed' : 'Follow' ]]</span>
+                            <span class="text-red-500">[[ accountFavoList.includes(account.accountId) ? 'Followed' : 'Follow' ]]</span>
                           </button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
+                                           <div role="alert" class="alert mt-8" v-if="accountHasNoData === 1">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="stroke-info h-6 w-6 shrink-0">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  <span>Oh, we didn't find any related accounts, please try searching again!</span>
+</div>
                 </div>
             </div>
             <!-- Main Content END -->
@@ -215,58 +253,60 @@
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
-            accountList: [],
-            symbolList: [],
+            search:"",
+            stockHasNoData:0,
+            accountHasNoData:0,
+            accountsList: JSON.parse('{{accountsList|tojson}}'),  // 用户搜索结果列表
+            accountFavoList: JSON.parse('{{accountFavoList|tojson}}'),  // 用户关注列表
+            stockWatchList: JSON.parse('{{stockWatchList|tojson}}'),  // 股票关注列表
+            stockList: [],  // 股票搜索结果列表
             showStock: true,  // 控制显示的表格
             title: 'Searching Result',  // 标题
-            stocks: [
-                {
-                    symbol: 'AAPL',
-                    fullName: 'Apple Inc.',
-                    latestPrice: '$150',
-                    chg: 1.2,
-                    percentChg: 0.8,
-                    volume: '100K',
-                    followed: false
-                },
-                {
-                    symbol: 'GOOG',
-                    fullName: 'Alphabet Inc.',
-                    latestPrice: '$2800',
-                    chg: -0.5,
-                    percentChg: -0.02,
-                    volume: '50K',
-                    followed: false
-                },
-                {
-                    symbol: 'AMZN',
-                    fullName: 'Amazon.com Inc.',
-                    latestPrice: '$3400',
-                    chg: -2.3,
-                    percentChg: -1.1,
-                    volume: '75K',
-                    followed: false
-                }
-            ],
-            friends: [
-                {
-                    userName: 'John Doe',
-                    bio: 'Hello, I\'m John, a passionate software engineer with over 5 years of experience in developing web and mobile applications. I specialize in full-stack development, particularly using JavaScript, React, and Node.js. My goal is to create efficient and scalable solutions that enhance user experiences.',
-                    followed: true
-                },
-                {
-                    userName: 'Jane Smith',
-                    bio: 'Hi, I\'m Jane, a dedicated marketing specialist with a knack for crafting compelling campaigns that drive engagement and growth. With a background in digital marketing and social media strategy, I excel at connecting brands with their target audiences and delivering measurable results.',
-                    followed: true
-                },
-                {
-                    userName: 'Michael Johnson',
-                    bio: 'Greetings, I\'m Micheal, a creative graphic designer with a strong background in visual storytelling. I have a passion for creating stunning visuals that communicate messages effectively, using tools like Adobe Creative Suite. My expertise spans branding, illustration, and user interface design, aimed at making lasting impressions.',
-                    followed: true
-                }
-            ]
+            content: JSON.parse('{{content|tojson}}'),
+                        sortKey: '',
+            sortOrder: 1 // 1 for ascending, -1 for descending
+        },
+        mounted(){
+                                        if(this.accountsList.length === 0){
+                                this.accountHasNoData = 1;
+                            }
+                            axios.post(`/searchSymbol/${this.content}`)
+                    .then(response => {
+                         this.stockList = response.data
+                        if (this.stockList.length === 0){
+                            this.stockHasNoData = 1;
+                        }
+                    });
+
+
         },
         methods: {
+            sortStockList(key) {
+                if (this.sortKey === key) {
+                    this.sortOrder = -this.sortOrder;
+                } else {
+                    this.sortKey = key;
+                    this.sortOrder = 1;
+                }
+                this.stockList.sort((a, b) => {
+                    let aValue = a[key];
+                    let bValue = b[key];
+                    if (key === 'volume') {
+                        aValue = parseFloat(aValue);
+                        bValue = parseFloat(bValue);
+                    }
+                    if (typeof aValue === 'string') {
+                        return this.sortOrder * aValue.localeCompare(bValue);
+                    }
+                    return this.sortOrder * (aValue - bValue);
+                });
+            },
+            doSearch(){
+                window.location.href = `/search/${this.search}`;
+            },
+            navigateToStock(symbol) {
+              window.location.href = `/symbol/${symbol}`;
+            },
             showStockTable() {
                 this.showStock = true;
                 this.title = 'Searching Result';
@@ -275,11 +315,41 @@
                 this.showStock = false;
                 this.title = 'User List';
             },
-            toggleFollow(index) {
-                this.stocks[index].followed = !this.stocks[index].followed;
+            toggleFollow(symbol) {
+                const index = this.stockWatchList.indexOf(symbol);
+                if (index > -1) {
+                    this.stockWatchList.splice(index, 1);
+                    console.log(symbol)
+                        //todo follow
+                } else {
+                    this.stockWatchList.push(symbol);
+                    console.log(symbol)
+                }
+                // 发送更新请求
+                axios.post('/update_watchList', {watchList:this.stockWatchList})
+                    .then(response => {
+                        console.log('Stock watch list updated:', response.data);
+                    })
+                    .catch(error => {
+                        console.error('Error updating stock watch list:', error);
+                    });
             },
-            toggleFriendFollow(index) {
-                this.friends[index].followed = !this.friends[index].followed;
+            toggleFriendFollow(accountId) {
+                const index = this.accountFavoList.indexOf(accountId);
+                if (index > -1) {
+                    this.accountFavoList.splice(index, 1);
+                    axios.post(`/remove_follower_in_followList/${accountId}`)
+                    .then(response => {
+                         this.stockList = response.data
+                    });
+
+                } else {
+                    this.accountFavoList.push(accountId);
+                    axios.post(`/insert_followList/${accountId}`)
+                    .then(response => {
+                         this.stockList = response.data
+                    });
+                }
             },
             getSymbol() {
                 axios.get('/get_notification')

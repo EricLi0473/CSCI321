@@ -56,12 +56,13 @@ class Account:
         sql = "select * from account"
         return self.fetchAll(sql,"")
 
-    def get_accounts_by_userName(self,userName) -> list[dict]:
+    def get_accounts_by_userName(self, userName, accountId) -> list[dict]:
         if not userName:
             return []
-        sql = "select * from account where userName like %s"
+        sql = "SELECT * FROM account WHERE userName LIKE %s AND accountId != %s"
 
-        val = (f"{userName}%",)
-        return self.fetchAll(sql,val)
+        results = self.fetchAll(sql, (f"{userName}%",accountId))
+        return results
+
 if __name__ == '__main__':
     print(Account().get_accounts_by_userName("w"))
