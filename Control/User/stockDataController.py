@@ -1,38 +1,78 @@
 import yfinance as yf
 import requests
 from datetime import datetime, timedelta
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import concurrent.futures
 class StockDataController:
     def __init__(self):
         pass
 
     def search_stock(self, content):
-        url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey=1TI3ZQ9MXCZ08O3M"
+        api_key = '1TI3ZQ9MXCZ08O3M'
+        url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey={api_key}"
         response = requests.get(url).json()
-        list = []
-        for stock in response["bestMatches"]:
+        best_matches = response.get("bestMatches", [])
+        results = []
+
+        def fetch_stock_data(stock):
             try:
-                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={stock['1. symbol']}&apikey=1TI3ZQ9MXCZ08O3M"
+                symbol = stock['1. symbol']
+
+                url = f"https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey={api_key}"
                 response = requests.get(url).json()
-                global_quote = response['Global Quote']
+                global_quote = response.get('Global Quote', {})
                 key_mapping = {
                     "absolute_change": "09. change",
                     "price": "05. price",
                     "relative_change": "10. change percent",
                     "symbol": "01. symbol",
-                    "upsAndDowns": "09. change"
+                    "upsAndDowns": "09. change",
+                    "volume": "06. volume"
                 }
+
+                if global_quote.get(key_mapping["volume"]) == "0":
+                    return None
+
                 new_data = {
                     "absolute_change": float(global_quote[key_mapping["absolute_change"]]),
                     "price": float(global_quote[key_mapping["price"]]),
                     "relative_change": float(global_quote[key_mapping["relative_change"]].replace('%', '')),
                     "symbol": global_quote[key_mapping["symbol"]],
                     "upsAndDowns": 1 if float(global_quote[key_mapping["upsAndDowns"]]) > 1 else 0,
-                    "longName":stock['2. name']
+                    "longName": stock['2. name'],
+                    "volume": global_quote[key_mapping["volume"]]
                 }
-                list.append(new_data)
-            except Exception:
-                continue
-        return list
+
+                # 修改符号，替换 .LON 为 .L
+                if '.' in new_data['symbol']:
+                    if '.LON' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.LON', '.L')
+                    if '.DEX' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.DEX', '.DE')
+                    if '.SAO' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.SAO', '.SA')
+                    if '.SHH' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.SHH', '.SS')
+                    if '.FRK' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.FRK', '.F')
+                    if '.AMS' in new_data['symbol']:
+                        new_data['symbol'] = new_data['symbol'].replace('.AMS', '.AS')
+
+                return new_data
+            except Exception as e:
+                print(f"Error fetching data for {stock['1. symbol']}: {e}")
+                return None
+
+        # 使用并发来处理每个股票数据的获取
+        with ThreadPoolExecutor() as executor:
+            future_to_stock = {executor.submit(fetch_stock_data, stock): stock for stock in best_matches}
+
+            for future in as_completed(future_to_stock):
+                stock_data = future.result()
+                if stock_data:
+                    results.append(stock_data)
+
+        return results
 
 
     def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
@@ -222,8 +262,8 @@ class StockDataController:
         return data_dict
 
 if __name__ == '__main__':
-    list = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
+    alist = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
     # print(StockDataController().get_stock_info_medium(list))
-    StockDataController().search_stock("boeing")
+    print(StockDataController().get_stock_info_medium("NVDA"))
 
 

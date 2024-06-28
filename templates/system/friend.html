@@ -94,8 +94,8 @@
       <tr class="text-xl">
           <th>*</th>
         <th>User Name</th>
-        <th>subscribe</th>
-          <th>status</th>
+        <th>subscribe Threshold</th>
+          <th></th>
       </tr>
     </thead>
     <tbody v-for="(follower,index) in followList" :key="follower.followId">
@@ -103,8 +103,8 @@
           <tr>
               <td class="ml-4 h-fit w-fit text-2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
-        <td><button class="btn btn-outline btn-sm">followStock</button></td>
-        <td><button class="btn btn-outline btn-sm">cancel</button></td>
+        <td><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
+        <td><button class="btn btn-outline btn-sm" @click.stop="confirmUnfollow(follower.accountAccountId, index)">UnFollow</button></td>
       </tr>
 
     </tbody>
@@ -190,24 +190,34 @@ function showContent(type) {
           }
         },
         methods: {
-          login() {
-            axios.post('/login', {
-              username: this.username,
-              password: this.password
-            })
-            .then(response => {
-              if (response.data.success) {
-                // Handle successful login, e.g., redirect to another page
-                window.location.href = '/redirectToUserPage';
-                console.log('Login successful:', response.data);
-              } else {
-                // Handle login error
-                this.exception = response.data.error;
-                document.getElementById('loginFailed').showModal();
-                console.error('Login failed:', response.data.error);
-              }
-            })
-          }
+    confirmUnfollow(followId, index) {
+      if (confirm("Are you sure you want to unfollow this user?")) {
+        this.unfollow(followId, index);
+      }
+    },
+    unfollow(followId, index) {
+      // 从followList中移除该follower
+      this.followList.splice(index, 1);
+
+      // 发送axios请求更新后台数据
+      axios.post(`/remove_follower_in_followList/${followId}`)
+        .then(response => {
+          console.log('Unfollowed successfully:', response.data);
+        })
+        .catch(error => {
+          console.error('Error unfollowing:', error);
+        });
+    },
+                toggleNotification(followId, notifyMe) {
+      // 发送axios请求更新通知状态
+      axios.post('/toggle-notification', { followId: followId, notifyMe: notifyMe })
+        .then(response => {
+          console.log('Notification status updated:', response.data);
+        })
+        .catch(error => {
+          console.error('Error updating notification status:', error);
+        });
+    }
         }
       });
         // Scroll to the top when the button is clicked
