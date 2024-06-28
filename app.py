@@ -42,6 +42,7 @@ from Control.User.get_who_follows_me_by_accountID import *
 from Control.premiumUser.update_threshold_settings import *
 from Control.User.remove_follower_in_followList_by_id import *
 from Control.User.insert_followList_by_id import *
+from Control.premiumUser.update_follower_in_followList_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -81,7 +82,11 @@ def insert_followList(followedId):
 def remove_follower_in_followList(followedId):
     RemoveFollowerInFollowListById().remove_follower_in_followList_by_id("1",followedId)
     return jsonify({'success': True})
-
+@app.route('/toggle-notification',methods=['GET','POST'])
+def toggle_notification():
+    data = request.json
+    UpdateFollowerInFollowListById().update_follower_in_followList_by_id("1",data["followId"],data["notifyMe"])
+    return jsonify({'success': True})
 @app.route('/search/<string:content>')
 def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content,"1")
