@@ -40,6 +40,8 @@ from Control.premiumUser.update_watchlist import *
 from Control.premiumUser.get_watchlist_by_accountID import *
 from Control.User.get_who_follows_me_by_accountID import *
 from Control.premiumUser.update_threshold_settings import *
+from Control.User.remove_follower_in_followList_by_id import *
+from Control.User.insert_followList_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -69,12 +71,24 @@ def ratingComment():
         data = request.json
         Insert_review_by_id().insert_review_by_id("1",data.get("rating"),data.get("comment"))
         return jsonify({'success': True})
+
+@app.route('/insert_followList/<string:followedId>', methods=['GET', 'POST'])
+def insert_followList(followedId):
+    InsertFollowListById().insert_followList_by_id("1",followedId)
+    return jsonify({'success': True})
+
+@app.route('/remove_follower_in_followList/<string:followedId>', methods=['GET', 'POST'])
+def remove_follower_in_followList(followedId):
+    RemoveFollowerInFollowListById().remove_follower_in_followList_by_id("1",followedId)
+    return jsonify({'success': True})
+
 @app.route('/search/<string:content>')
 def search(content):
-    accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
+    accountsList = GetAccountsByUserName().get_accounts_by_userName(content,"1")
+    accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List("1")
     stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList)
-
+    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
+@app.route('/searchSymbol/')
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     account = GetAccountByAccountId().get_account_by_accountId("1")
@@ -122,7 +136,8 @@ def symbol_news(symbol,page):
 
 @app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
 def searchSymbol(symbol):
-    return jsonify(StockDataController().search_stock(symbol))
+    if request.method == 'POST':
+        return jsonify(StockDataController().search_stock(symbol))
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):

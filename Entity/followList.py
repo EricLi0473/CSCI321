@@ -34,8 +34,15 @@ class FollowList():
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def insert_account(self):
-        pass
+    def insert_followList_by_id(self,accountId,followedId):
+        sql = "INSERT INTO followList (accountId,followedId,notifyMe) VALUES (%s,%s,0)"
+        val = (accountId,followedId)
+        self.commit(sql,val)
+
+    def remove_follower_in_followList_by_id(self,accountId,followedId):
+        sql = "DELETE FROM followList WHERE accountId=%s AND followedId=%s"
+        val = (accountId,followedId)
+        self.commit(sql,val)
 
     def get_account(self):
         pass
@@ -87,4 +94,4 @@ class FollowList():
         return self.fetchOne(sql, val)["notifyMe"]
 
 if __name__ == "__main__":
-    print(FollowList().get_who_follows_me_by_accountID('1'))
+    FollowList().remove_follower_in_followList_by_id("1","3")

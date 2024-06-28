@@ -14,6 +14,7 @@ class RecommendationListController:
         for stock in stockList:
             try:
                 result.append(StockDataController().get_stock_info_medium(stock))
+
             except Exception:
                 continue
         return result
@@ -28,4 +29,4 @@ class RecommendationListController:
 
 if __name__ == '__main__':
     # print(RecommendationListController().get_recommendationList_by_accountId(1))
-    RecommendationListController().get_recommendationList_by_accountId("1")
+    print(RecommendationListController().get_recommendationList_by_accountId("1"))
