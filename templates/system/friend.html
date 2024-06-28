@@ -75,54 +75,62 @@
             </div>
                 <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
               <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
-            </div>
+
+        </div>
+
             <!-- Content Start! -->
-          <div class="overflow-y-scroll p-8 bg-white border mt-16" v-if="">
-              <div class="overflow-x-auto" v-for="follower in who_follow_me_list" :key="follower.followId">
-  <table class="table">
-    <!-- head -->
-      <div class="flex">
-          <h1 class=" text-4xl">Follow List</h1>
-          <button class="btn btn-outline btn-sm ml-5 mt-1 h-fit  " value="follows">Fans</button>
+<div class="overflow-y-scroll pl-8 pt-3 pb-3 bg-white border mt-16 h-fit text-center">
+    <button id="stockBtn" class="w-24 px-4 py-2 bg-white text-blue-500 shadow-sm focus:outline-none" onclick="showContent('stock')">Follow</button>
+            <button id="userBtn" class="w-24 px-4 py-2 bg-gray-200 focus:outline-none" onclick="showContent('user')">Fans</button>
+</div>
+          <div id="stockContent" class="overflow-y-scroll p-8 bg-white border">
+              <div class="flex">
+          <h1 class=" text-4xl"><b>Follow List</b></h1>
+
       </div>
+              <div class="overflow-x-auto" >
+  <table class="table">
     <thead>
       <tr class="text-xl">
+          <th>*</th>
         <th>User Name</th>
         <th>subscribe</th>
-        <th>stocks</th>
           <th>status</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-for="(follower,index) in followList" :key="follower.followId">
       <!-- row 1 -->
-      <tr>
+          <tr>
+              <td class="ml-4 h-fit w-fit text-2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
-        <td>YES</td>
-        <td>20%</td>
+        <td><button class="btn btn-outline btn-sm">followStock</button></td>
         <td><button class="btn btn-outline btn-sm">cancel</button></td>
       </tr>
+
     </tbody>
   </table>
 </div>
 
          </div>
-          <div class="overflow-y-scroll p-8 bg-white border mt-16">
-              <div class="overflow-x-auto" v-for="follower in who_follow_me_list" :key="follower.followId">
+
+          <div id="userContent" class="hidden overflow-y-scroll p-8 bg-white border">
+              <div class="overflow-x-auto">
   <table class="table">
     <!-- head -->
       <div class="flex">
-          <h1 class=" text-4xl">Fans</h1>
-          <button class="btn btn-outline btn-sm ml-5 mt-1 h-fit">Follow</button>
+          <h1 class=" text-4xl"><b>Fans</b></h1>
       </div>
     <thead>
       <tr class="text-xl">
+          <th>*</th>
         <th>User Name</th>
           <th>follow time</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-for="(follower,index) in who_follow_me_list" :key="follower.followId">
       <!-- row 1 -->
       <tr>
+          <td class="2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
         <td>[[ new Date(follower.followDate).toLocaleDateString() ]]</td>
       </tr>
@@ -132,29 +140,39 @@
 
          </div>
           <!-- Content END! -->
+
     <!-- To The Top Button -->
     <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
       </svg>
   </button>
-<!--          谁关注了我-->
-<!--        <h1 class="text-2xl font-bold mb-4">Followers List</h1>-->
-<!--        <div v-for="follower in who_follow_me_list" :key="follower.followId" class="mb-4 p-4 bg-gray-100 rounded shadow">-->
-<!--            <h2 class="text-xl font-semibold">Username: [[ follower.userName ]]</h2>-->
-<!--            <p>Bio: [[ follower.bio ]]</p>-->
-<!--            <p>Followed On: [[ new Date(follower.followDate).toLocaleDateString() ]]</p>-->
-<!--        </div>-->
-<!--     我关注了谁     -->
-<!--                  <h1 class="text-2xl font-bold mb-4">Followers List</h1>-->
-<!--        <div v-for="follower in followList" :key="follower.followId" class="mb-4 p-4 bg-gray-100 rounded shadow">-->
-<!--            <h2 class="text-xl font-semibold">Username: [[ follower.userName ]]</h2>-->
-<!--            <p>Bio: [[ follower.bio ]]</p>-->
-        </div>
-        </div>
 
         </div>
+    </div>
     <script>
+function showContent(type) {
+            var stockBtn = document.getElementById('stockBtn');
+            var userBtn = document.getElementById('userBtn');
+            var stockContent = document.getElementById('stockContent');
+            var userContent = document.getElementById('userContent');
+
+            if (type === 'stock') {
+                stockBtn.classList.add('text-blue-500', 'bg-white');
+                stockBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                userBtn.classList.add('bg-gray-200', 'text-gray-700');
+                userBtn.classList.remove('bg-blue-500', 'text-white');
+                stockContent.classList.remove('hidden');
+                userContent.classList.add('hidden');
+            } else {
+                userBtn.classList.add('text-blue-500', 'bg-gray-200');
+                userBtn.classList.remove('bg-gray-200', 'text-gray-700');
+                stockBtn.classList.add('bg-gray-200', 'text-gray-700');
+                stockBtn.classList.remove('bg-white', 'text-blue-500');
+                userContent.classList.remove('hidden');
+                stockContent.classList.add('hidden');
+            }
+        }
 
           new Vue({
         el: '#app',
@@ -206,6 +224,5 @@
             }
         });
     </script>
-
 </body>
 </html>
