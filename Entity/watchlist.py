@@ -42,3 +42,30 @@ class Watchlist():
         sql = "UPDATE watchlist SET stockSymbol=%s WHERE accountId=%s"
         val = (stockSymbol,accountId)
         self.commit(sql, val)
+
+    def is_stock_in_watchlist(self, accountId, stockSymbol):
+        try:
+            cursor = self.mydb.cursor(dictionary=True)
+            sql = "SELECT * FROM watchlist WHERE accountId = %s AND stockSymbol = %s"
+            cursor.execute(sql, (accountId, stockSymbol))
+            result = cursor.fetchone()
+            cursor.close()
+            return result is not None
+        except mysql.connector.Error as e:
+            print("Database error:", e)
+            return False
+
+    def add_to_watchlist(self, accountId, stockSymbol):
+        if not self.is_stock_in_watchlist(accountId, stockSymbol):
+            try:
+                cursor = self.mydb.cursor()
+                sql = "INSERT INTO watchlist (accountId, stockSymbol) VALUES (%s, %s)"
+                cursor.execute(sql, (accountId, stockSymbol))
+                self.mydb.commit()
+                cursor.close()
+                return True
+            except mysql.connector.Error as e:
+                print("Database error:", e)
+                return False
+        else:
+            return False

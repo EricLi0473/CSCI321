@@ -10,32 +10,23 @@ from werkzeug.exceptions import InternalServerError,BadRequest
 #slow start when loadin ML functions, normal turn off
 # from Control.User.requestForPrediction import RequestForPrediction
 #
-import pandas as pd
-import json
+
 from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
 from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
-from Control.User.stockDataController import *
 from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
 from Control.User.commentController import *
 from Control.premiumUser.recommendationListController import *
 from Control.User.notificationController import *
-from Control.premiumUser.getPremiumUsersController import *
-from Control.premiumUser.get_threshold_setting_by_id import *
-from Control.premiumUser.get_notifyMe_value_from_accountAndFollowId import *
 from Control.premiumUser.get_followList_by_accountId import *
-from Control.premiumUser.get_accountList_by_followedId import *
 from Control.premiumUser.get_threshold_by_symbol_and_id import *
 from Control.User.get_accounts_by_userName import *
 from Control.User.get_account_by_accountId import *
 from Control.premiumUser.remove_notification_by_id import *
 from Control.premiumUser.remove_threshold_settings_by_thresholdId import *
 from Control.User.insert_review_by_id import *
-from Control.Admin.headline_review_by_id import *
-from Control.Admin.get_all_reviews import *
-from Control.Admin.delete_review_by_id import *
 from Control.premiumUser.update_watchlist import *
 from Control.premiumUser.get_watchlist_by_accountID import *
 from Control.User.get_who_follows_me_by_accountID import *
@@ -43,6 +34,7 @@ from Control.premiumUser.update_threshold_settings import *
 from Control.User.remove_follower_in_followList_by_id import *
 from Control.User.insert_followList_by_id import *
 from Control.premiumUser.update_follower_in_followList_by_id import *
+from Control.User.addWatchListController import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -55,6 +47,25 @@ from datetime import datetime, timedelta
 import threading
 import time
 app = Flask(__name__)
+
+@app.route('/add_watchlist', methods=['POST'])
+def add_watchlist():
+    try:
+        data = request.json
+        stockSymbol = data.get('symbol')
+        #accountId = session.get('user')['accountId']
+        # Hard Code for test
+        accountId = 1
+        print(f"Account ID: {accountId}, Stock Symbol: {stockSymbol}")
+
+        if Watchlist().is_stock_in_watchlist(accountId, stockSymbol):
+            return jsonify({'success': False, 'message': 'Already in Watchlist'})
+
+        AddWatchListController().add_to_watchlist(accountId, stockSymbol)
+        return jsonify({'success': True})
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'success': False, 'error': str(e)})
 
 
 @app.route('/friend',methods=['GET','POST'])
@@ -134,6 +145,7 @@ def get_notification():
     # hard code for test, userId in session['user']
     accountId = 1
     return jsonify(NotificationController().get_notifications_by_accountId(accountId))
+
 
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
