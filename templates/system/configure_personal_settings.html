@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading Screen</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <style>
+        .spinner {
+            border: 8px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #3498db;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .fading-title {
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div id="app" class="w-full h-full flex flex-col items-center justify-center">
+        <div class="spinner mb-4"></div>
+        <h1 class="text-xl font-bold text-center mb-2 fading-title">[[ currentTitle ]]</h1>
+        <span class="text-gray-500 text-center">Loading, please wait...</span>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                titles: [
+                    "We're in the process of configuring it to your liking.",
+                    "Please wait.",
+                    "You can also change the configuration later",
+                    "stockForecast4me Probably the best stock prediction site in the world"
+                ],
+                currentTitleIndex: 0
+            },
+            computed: {
+                currentTitle() {
+                    return this.titles[this.currentTitleIndex];
+                }
+            },
+            mounted() {
+                this.changeTitle();
+            },
+            methods: {
+                changeTitle() {
+                    setInterval(() => {
+                        this.currentTitleIndex = (this.currentTitleIndex + 1) % this.titles.length;
+                    }, 4000); // 每2秒切换一次标题
+                }
+            }
+        });
+    </script>
+</body>
+</html>

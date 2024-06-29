@@ -54,8 +54,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 import threading
 import time
-app = Flask(__name__)
-
 
 @app.route('/friend',methods=['GET','POST'])
 def friend_list():
@@ -410,7 +408,27 @@ def documentation():
 def contact():
     return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
-# Dynamically checking that user-selected stocks have not exceeded thresholds
+@app.route('/industry_Setting',methods=['GET','POST'])
+def industry_Setting():
+    if request.method == 'GET':
+        return render_template("/system/industry.html")
+    data = request.json
+    session['industry'] = data.get("selectedIndustries")
+    return jsonify({'success': True})
+
+@app.route('/country_Setting',methods=['GET','POST'])
+def country_Setting():
+    if request.method == 'GET':
+        return render_template("/system/country.html")
+    data = request.json
+    session['country'] = data.get("selectedCountry")
+    return jsonify({'success': True})# Dynamically checking that user-selected stocks have not exceeded thresholds
+
+@app.route('/configure_personal_setting',methods=['GET','POST'])
+def configure_personal_setting():
+    if request.method == 'GET':
+        return render_template("/system/configure_personal_settings.html")
+
 # Define a cache to store recent notifications
 notification_cache = {}
 
