@@ -43,4 +43,4 @@ class Comment:
 
 if __name__ == '__main__':
     print(Comment().get_comments_by_symbol("aapl"))
-    Comment().insert_comment("1","aapl","bad")
+    Comment().get_comments_by_symbol("aapl")

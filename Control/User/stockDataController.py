@@ -264,6 +264,6 @@ class StockDataController:
 if __name__ == '__main__':
     alist = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
     # print(StockDataController().get_stock_info_medium(list))
-    print(StockDataController().get_stock_info_medium("NVDA"))
+    print(StockDataController().get_update_stock_data("NVDA","1mo"))
 
 

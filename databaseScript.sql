@@ -132,6 +132,7 @@ CREATE TABLE notification(
     notification VARCHAR(255) NOT NULL DEFAULT 'Welcome to Stock Forecast4.me',
     notificationType VARCHAR(255) NOT NULL,
     referenceId INT NULL ,
+    symbol TEXT NULL ,
     notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
