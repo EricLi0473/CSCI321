@@ -380,7 +380,7 @@ def predict():
     #
 @app.route('/',methods=['GET'])
 def officialWeb():
-    return render_template("system/OfficialWeb.html")
+    return render_template("system/template.html")
 
 @app.route('/history',methods=['GET'])
 def history():
