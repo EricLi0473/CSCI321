@@ -1,138 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+<head>
+    <meta charset="UTF-8">
+    <title>StockPage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <title>login</title>
-  </head>
-  <header>
-      <div class="navbar bg-neutral text-neutral-content">
-  <div class="navbar-start">
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
+</head>
+<body>
+
+    <div class="h-screen" id="app">
+
+
+<!--   Banner End! -->
+<!--
+  Heads up! 👋
+
+  Plugins:
+    - @tailwindcss/forms
+-->
+
+<section class="relative flex flex-wrap lg:h-screen lg:items-center">
+  <div class="w-full px-4 py-12 sm:px-6 sm:py-16 lg:w-1/2 lg:px-8 lg:py-24">
+    <div class="mx-auto max-w-lg text-center">
+      <h1 class="text-2xl font-bold sm:text-3xl">Get started today!</h1>
+
+      <p class="mt-4 text-gray-500">
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Et libero nulla eaque error neque
+        ipsa culpa autem, at itaque nostrum!
+      </p>
+    </div>
+
+    <form action="#" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
+      <div>
+        <label for="email" class="sr-only">Email</label>
+
+        <div class="relative">
+          <input
+            type="email"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+            placeholder="Enter email"
+          />
+
+          <span class="absolute inset-y-0 end-0 grid place-content-center px-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-4 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+              />
+            </svg>
+          </span>
+        </div>
       </div>
-      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        <li><a>Item 1</a></li>
-        <li>
-          <a>Parent</a>
-          <ul class="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </li>
-        <li><a>Item 3</a></li>
-      </ul>
-    </div>
-    <a class="btn btn-ghost text-xl" href="/">Stock Forecast4.me</a>
-  </div>
-  <div class="navbar-center hidden lg:flex">
-    <ul class="menu menu-horizontal px-1 text-lg">
-      <li><a href="/">Main</a></li>
-      <li><a>Plan</a></li>
-      <li><a>ContactUs</a></li>
-      <li><a>Documentation</a></li>
-    </ul>
-  </div>
-  <div class="navbar-end">
-  </div>
-</div>
-  </header>
-  <body>
 
-  <div class="card w-96 bg-base-100 shadow-xl card-compact mx-auto" id="app" style="margin-top: 10%" >
-<div class="card-body items-center space-y-2">
-  <h2 class="card-title">Login</h2>
-  <p>If you have an account,  please log in here.</p>
-  <p class="text-slate-500">Don't have an account? <a class="text-cyan-700" href="/signup">Sign up</a></p>
-  <label class="input input-bordered flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
-    <input type="text" class="grow w-max" placeholder="Username" v-model="username" />
-  </label>
-  <label class="input input-bordered flex items-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clip-rule="evenodd" /></svg>
-    <input type="password" class="grow" placeholder="Password" v-model="password" />
-  </label>
-  <button class="btn btn-primary btn-wide w-40" @click="login">Login</button>
-</div>
-  <dialog id="loginFailed" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box bg-red-400">
-    <h3 class="font-bold text-lg">Failed</h3>
-    <p class="py-4">[[exception]]</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn bg-red-200">Enter Again</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-            <dialog id="SignupSuccess" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box bg-sky-300">
-    <h3 class="font-bold text-lg">Success</h3>
-    <p class="py-4">[[exception]]</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn bg-sky-100">OK</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-</div>
+      <div>
+        <label for="password" class="sr-only">Password</label>
 
-<style>
-  body,html{
-    height:100%;
-    margin:0;
-  }
-  body{
-    background: url("static/resource/bck_city.jpg") no-repeat center center fixed;
-    background-size:cover;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
+        <div class="relative">
+          <input
+            type="password"
+            class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
+            placeholder="Enter password"
+          />
 
-<script>
-      new Vue({
+          <span class="absolute inset-y-0 end-0 grid place-content-center px-4">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="size-4 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <p class="text-sm text-gray-500">
+          No account?
+          <a class="underline" href="#">Sign up</a>
+        </p>
+
+        <button
+          type="submit"
+          class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+        >
+          Sign in
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
+    <img
+      alt=""
+      src="../../static/resource/bck_city.jpg"
+      class="absolute inset-0 h-full w-full object-cover"
+    />
+  </div>
+</section>
+    <!-- To The Top Button -->
+    <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+  </button>
+        </div>
+
+      <script>
+            new Vue({
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
-          username: null,
-          password: null,
-          exception : null
-        },
-        created() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('message') && urlParams.get('message') === 'signup-success') {
-          this.exception = 'Sign up successful! Please log in.';
-          document.getElementById('SignupSuccess').showModal();
-          }
+          },
+        mounted(){
+
         },
         methods: {
-          login() {
-            axios.post('/login', {
-              username: this.username,
-              password: this.password
-            })
-            .then(response => {
-              if (response.data.success) {
-                // Handle successful login, e.g., redirect to another page
-                window.location.href = '/redirectToUserPage';
-                console.log('Login successful:', response.data);
-              } else {
-                // Handle login error
-                this.exception = response.data.error;
-                document.getElementById('loginFailed').showModal();
-                console.error('Login failed:', response.data.error);
-              }
-            })
-          }
-        }
-      });
-    </script>
-  </body>
+           
+        }});
+</body>
 </html>

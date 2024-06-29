@@ -1,173 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+<head>
+    <meta charset="UTF-8">
+    <title>StockPage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <title>login</title>
-  </head>
-  <header>
-      <div class="navbar bg-neutral text-neutral-content">
-  <div class="navbar-start">
-    <div class="dropdown">
-      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h8m-8 6h16" /></svg>
+</head>
+<body>
+
+    <div class="h-screen" id="app">
+
+<!--
+  Heads up! 👋
+
+  Plugins:
+    - @tailwindcss/forms
+-->
+
+<section class="bg-white">
+  <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
+    <section class="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6">
+      <img
+        alt=""
+        src="../../static/resource/bck_sky.jpg"
+        class="absolute inset-0 h-full w-full object-cover opacity-80"
+      />
+
+      <div class="hidden lg:relative lg:block lg:p-12">
+        <a class="block text-white" href="#">
+          <span class="sr-only">Home</span>
+          <img src="../../static/resource/LOGOS/WhiteLogo.png" class="h-8 sm:h-10">
+        </a>
+
+        <h2 class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl">
+          Welcome StockForecast4.me
+        </h2>
+
+        <p class="mt-4 leading-relaxed text-white/90">
+          Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eligendi nam dolorum aliquam,
+          quibusdam aperiam voluptatum.
+        </p>
       </div>
-      <ul tabindex="0" class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
-        <li><a>Item 1</a></li>
-        <li>
-          <a>Parent</a>
-          <ul class="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </li>
-        <li><a>Item 3</a></li>
-      </ul>
-    </div>
-    <a class="btn btn-ghost text-xl" href="/">Stock Forecast4.me</a>
+    </section>
+
+    <main
+      class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6"
+    >
+      <div class="max-w-xl lg:max-w-3xl">
+        <div class="relative -mt-16 block lg:hidden">
+          <a
+            class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
+            href="#"
+          >
+            <span class="sr-only">Home</span>
+            <svg
+              class="h-8 sm:h-10"
+              viewBox="0 0 28 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M0.41 10.3847C1.14777 7.4194 2.85643 4.7861 5.2639 2.90424C7.6714 1.02234 10.6393 0 13.695 0C16.7507 0 19.7186 1.02234 22.1261 2.90424C24.5336 4.7861 26.2422 7.4194 26.98 10.3847H25.78C23.7557 10.3549 21.7729 10.9599 20.11 12.1147C20.014 12.1842 19.9138 12.2477 19.81 12.3047H19.67C19.5662 12.2477 19.466 12.1842 19.37 12.1147C17.6924 10.9866 15.7166 10.3841 13.695 10.3841C11.6734 10.3841 9.6976 10.9866 8.02 12.1147C7.924 12.1842 7.8238 12.2477 7.72 12.3047H7.58C7.4762 12.2477 7.376 12.1842 7.28 12.1147C5.6171 10.9599 3.6343 10.3549 1.61 10.3847H0.41ZM23.62 16.6547C24.236 16.175 24.9995 15.924 25.78 15.9447H27.39V12.7347H25.78C24.4052 12.7181 23.0619 13.146 21.95 13.9547C21.3243 14.416 20.5674 14.6649 19.79 14.6649C19.0126 14.6649 18.2557 14.416 17.63 13.9547C16.4899 13.1611 15.1341 12.7356 13.745 12.7356C12.3559 12.7356 11.0001 13.1611 9.86 13.9547C9.2343 14.416 8.4774 14.6649 7.7 14.6649C6.9226 14.6649 6.1657 14.416 5.54 13.9547C4.4144 13.1356 3.0518 12.7072 1.66 12.7347H0V15.9447H1.61C2.39051 15.924 3.154 16.175 3.77 16.6547C4.908 17.4489 6.2623 17.8747 7.65 17.8747C9.0377 17.8747 10.392 17.4489 11.53 16.6547C12.1468 16.1765 12.9097 15.9257 13.69 15.9447C14.4708 15.9223 15.2348 16.1735 15.85 16.6547C16.9901 17.4484 18.3459 17.8738 19.735 17.8738C21.1241 17.8738 22.4799 17.4484 23.62 16.6547ZM23.62 22.3947C24.236 21.915 24.9995 21.664 25.78 21.6847H27.39V18.4747H25.78C24.4052 18.4581 23.0619 18.886 21.95 19.6947C21.3243 20.156 20.5674 20.4049 19.79 20.4049C19.0126 20.4049 18.2557 20.156 17.63 19.6947C16.4899 18.9011 15.1341 18.4757 13.745 18.4757C12.3559 18.4757 11.0001 18.9011 9.86 19.6947C9.2343 20.156 8.4774 20.4049 7.7 20.4049C6.9226 20.4049 6.1657 20.156 5.54 19.6947C4.4144 18.8757 3.0518 18.4472 1.66 18.4747H0V21.6847H1.61C2.39051 21.664 3.154 21.915 3.77 22.3947C4.908 23.1889 6.2623 23.6147 7.65 23.6147C9.0377 23.6147 10.392 23.1889 11.53 22.3947C12.1468 21.9165 12.9097 21.6657 13.69 21.6847C14.4708 21.6623 15.2348 21.9135 15.85 22.3947C16.9901 23.1884 18.3459 23.6138 19.735 23.6138C21.1241 23.6138 22.4799 23.1884 23.62 22.3947Z"
+                fill="currentColor"
+              />
+            </svg>
+          </a>
+
+          <h1 class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl">
+            Welcome to Squid 🦑
+          </h1>
+
+          <p class="mt-4 leading-relaxed text-gray-500">
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eligendi nam dolorum aliquam,
+            quibusdam aperiam voluptatum.
+          </p>
+        </div>
+
+        <form action="#" class="mt-8 grid grid-cols-6 gap-6">
+          <div class="col-span-6 sm:col-span-3">
+            <label for="FirstName" class="block text-sm font-medium text-gray-700">
+              First Name
+            </label>
+
+            <input
+              type="text"
+              id="FirstName"
+              name="first_name"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <label for="LastName" class="block text-sm font-medium text-gray-700">
+              Last Name
+            </label>
+
+            <input
+              type="text"
+              id="LastName"
+              name="last_name"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6">
+            <label for="Email" class="block text-sm font-medium text-gray-700"> Email </label>
+
+            <input
+              type="email"
+              id="Email"
+              name="email"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <label for="Password" class="block text-sm font-medium text-gray-700"> Password </label>
+
+            <input
+              type="password"
+              id="Password"
+              name="password"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <label for="PasswordConfirmation" class="block text-sm font-medium text-gray-700">
+              Password Confirmation
+            </label>
+
+            <input
+              type="password"
+              id="PasswordConfirmation"
+              name="password_confirmation"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <label for="PasswordConfirmation" class="block text-sm font-medium text-gray-700">
+              Password Confirmation
+            </label>
+
+            <input
+              type="password"
+              id="PasswordConfirmation"
+              name="password_confirmation"
+              class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-sm h-8"
+            />
+          </div>
+
+          <div class="col-span-6 sm:col-span-3">
+            <label for="PasswordConfirmation" class="block text-sm font-medium text-gray-700">
+              Password Confirmation
+            </label>
+
+            <label>
+  <select
+    name="HeadlineAct"
+    id="HeadlineAct"
+    class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+  >
+    <option value="">Please select</option>
+    <option value="JM">John Mayer</option>
+    <option value="SRV">Stevie Ray Vaughn</option>
+    <option value="JH">Jimi Hendrix</option>
+    <option value="BBK">B.B King</option>
+    <option value="AK">Albert King</option>
+    <option value="BG">Buddy Guy</option>
+    <option value="EC">Eric Clapton</option>
+  </select>
+            </label>
+          </div>
+
+
+          <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
+            <button
+              class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+            >
+              Create an account
+            </button>
+
+            <p class="mt-4 text-sm text-gray-500 sm:mt-0">
+              Already have an account?
+              <a href="#" class="text-gray-700 underline">Log in</a>.
+            </p>
+          </div>
+        </form>
+      </div>
+    </main>
   </div>
-  <div class="navbar-center hidden lg:flex">
-    <ul class="menu menu-horizontal px-1 text-lg">
-      <li><a href="/">Main</a></li>
-      <li><a>Plan</a></li>
-      <li><a>ContactUs</a></li>
-      <li><a>Documentation</a></li>
-    </ul>
-  </div>
-  <div class="navbar-end">
-  </div>
+</section>
 </div>
-
-  </header>
-  <body>
-
-  <div class="card w-96 bg-base-100 shadow-xl card-compact mx-auto mt-8" id="app" style="margin-top: 3%" >
-<div class="card-body items-center space-y-1">
-  <h2 class="card-title">Sign Up</h2>
-  <p>If you have an account, <a class="text-cyan-700" href="login">login here</a></p>
-  <p class="text-slate-500">For Business, <a class="text-cyan-700" href="businessSignup">sign up here</a></p>
-  <select class="select select-bordered select-sm w-60 max-w-xs h-12" v-model="profile" :disabled="isPremiumLocked">
-  <option disabled selected value="default">Choose your profile</option>
-  <option value="Free">Free</option>
-  <option value="Premium">Premium</option>
-</select>
-  <label class="input input-bordered flex items-center gap-2 w-60">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M2.5 3A1.5 1.5 0 0 0 1 4.5v.793c.026.009.051.02.076.032L7.674 8.51c.206.1.446.1.652 0l6.598-3.185A.755.755 0 0 1 15 5.293V4.5A1.5 1.5 0 0 0 13.5 3h-11Z" /><path d="M15 6.954 8.978 9.86a2.25 2.25 0 0 1-1.956 0L1 6.954V11.5A1.5 1.5 0 0 0 2.5 13h11a1.5 1.5 0 0 0 1.5-1.5V6.954Z" /></svg>
-  <input type="text" class="grow" placeholder="Email" v-model="email"/>
-</label>
-  <label class="input input-bordered flex items-center gap-2 w-60">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" /></svg>
-    <input type="text" class="grow w-max" placeholder="Username" v-model="username" />
-  </label>
-  <label class="input input-bordered flex items-center gap-2 w-60">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clip-rule="evenodd" /></svg>
-    <input type="password" class="grow" placeholder="Password" v-model="password" />
-
-  </label> <p class="text-slate-500">at least 8 characters with 1 upper</p>
-  <label class="input input-bordered flex items-center gap-2 w-60">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path fill-rule="evenodd" d="M14 6a4 4 0 0 1-4.899 3.899l-1.955 1.955a.5.5 0 0 1-.353.146H5v1.5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1-.5-.5v-2.293a.5.5 0 0 1 .146-.353l3.955-3.955A4 4 0 1 1 14 6Zm-4-2a.75.75 0 0 0 0 1.5.5.5 0 0 1 .5.5.75.75 0 0 0 1.5 0 2 2 0 0 0-2-2Z" clip-rule="evenodd" /></svg>
-    <input type="password" class="grow" placeholder="Reenter password" v-model="repassword" />
-
-  </label>
-  <div class="border-t-4"> </div>
-  <div class="indicator">
-  <span class="indicator-item indicator-top indicator-center badge badge-secondary">invitation code</span>
-    <label>
-      <input type="text" placeholder="only for business user" class="input input-bordered w-60" v-model="invitationCode" @input="checkInvitationCode" />
-    </label>
-  </div>
-    <div class="border-t-4"> </div>
-  <button class="btn btn-primary btn-wide w-40" @click="signup">Sign up</button>
-</div>
-    <dialog id="SignupFailed" class="modal modal-bottom sm:modal-middle">
-  <div class="modal-box bg-red-400">
-    <h3 class="font-bold text-lg">Failed</h3>
-    <p class="py-4">[[exception]]</p>
-    <div class="modal-action">
-      <form method="dialog">
-        <button class="btn bg-red-200">Enter Again</button>
-      </form>
-    </div>
-  </div>
-</dialog>
-</div>
-
-<style>
-  body,html{
-    height:100%;
-    margin:0;
-  }
-  body{
-    background: url("static/resource/bck_city.jpg") no-repeat center center fixed;
-    background-size:cover;
-    justify-content: center;
-    align-items: center;
-  }
-</style>
-
-<script>
-
-      new Vue({
+      <script>
+            new Vue({
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
-          email:null,
-          username: null,
-          password: null,
-          repassword: null,
-          invitationCode: null,
-          profile:'default',
-          exception : null,
-          isPremiumLocked: false
-        },
-        created() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('profile') && urlParams.get('profile') === 'free') {
-          this.profile = 'Free'
-          }else if (urlParams.has('profile') && urlParams.get('profile') === 'premium'){
-          this.profile = 'Premium'
-        }
+          },
+        mounted(){
+
         },
         methods: {
-          signup() {
-            axios.post('/signup', {
-              email: this.email,
-              username: this.username,
-              password: this.password,
-              repassword: this.repassword,
-              invitationCode: this.invitationCode,
-              profile: this.profile
-            })
-            .then(response => {
-              if (response.data.success) {
-                // Handle successful login, e.g., redirect to another page
-                window.location.href = '/login?message=signup-success';
-                console.log('Sign up successful:');
-              } else {
-                // Handle login error
-                this.exception = response.data.error;
-                document.getElementById('SignupFailed').showModal();
-                this.repassword = null;
-                this.password = null;
-                console.error('Signup failed:', response.data.error);
-              }
-            })
-          },
-          checkInvitationCode() {
-        if (this.invitationCode) {
-          this.profile = 'Premium';
-          this.isPremiumLocked = true
-        } else {
-          this.profile = 'default';
-          this.isPremiumLocked = false
-        }
-      }
-    }
-      });
-    </script>
-  </body>
+           
+        }});
+        </script>
+</body>
 </html>

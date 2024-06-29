@@ -155,6 +155,8 @@ def symbol(symbol):
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>',methods=['POST'])
 def request_for_prediction(symbol,days,model):
+    # pass in (symbol,days,accountId) to backend, use 'model' to determine which model to use
+    #  symbol and accountId only use to create notification
     print(symbol,days,model)
     return jsonify({'success': True})
 
