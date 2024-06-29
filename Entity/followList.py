@@ -43,6 +43,10 @@ class FollowList():
         sql = "DELETE FROM followList WHERE accountId=%s AND followedId=%s"
         val = (accountId,followedId)
         self.commit(sql,val)
+    def update_follower_in_followList_by_id(self,accountId,followedId,notifyMe):
+        sql = "UPDATE followList SET accountId=%s,followedId=%s,notifyMe=%s WHERE accountId=%s AND followedId =%s"
+        val = (accountId,followedId,notifyMe,accountId,followedId)
+        self.commit(sql,val)
 
     def get_account(self):
         pass
@@ -94,4 +98,4 @@ class FollowList():
         return self.fetchOne(sql, val)["notifyMe"]
 
 if __name__ == "__main__":
-    FollowList().remove_follower_in_followList_by_id("1","3")
+    FollowList().update_follower_in_followList_by_id("1","2",1)

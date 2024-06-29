@@ -38,9 +38,9 @@ class Notification:
         val = (accountId,)
         return self.fetchAll(sql, val)
 
-    def set_notification(self,accountId,notification,notificationType,referenceId):
-        sql = "INSERT INTO notification(accountId,notification,notificationType,referenceId) VALUES (%s,%s,%s,%s)"
-        val = (accountId,notification,notificationType,referenceId)
+    def set_notification(self,accountId,notification,notificationType,referenceId,symbol):
+        sql = "INSERT INTO notification(accountId,notification,notificationType,referenceId,symbol) VALUES (%s,%s,%s,%s,%s)"
+        val = (accountId,notification,notificationType,referenceId,symbol)
         self.commit(sql, val)
         sql = '''
               DELETE n1
@@ -65,4 +65,4 @@ AND n1.notificationId > n2.notificationId;
 
 
 if __name__ == "__main__":
-    pass
+    Notification().set_notification("3","Text","threshold",114,"AAPL")

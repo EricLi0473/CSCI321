@@ -44,4 +44,4 @@ class PredictionData:
 
 if __name__ == "__main__":
     # PredictionData().insert_predictionData("aapl","10.5","10.5","10.5","10.5","10.5","10.5")
-    print(PredictionData().get_predictionData_by_symbol("BILI"))
+    print(PredictionData().get_predictionData_by_symbol("aapl"))

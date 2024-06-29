@@ -42,6 +42,7 @@ from Control.User.get_who_follows_me_by_accountID import *
 from Control.premiumUser.update_threshold_settings import *
 from Control.User.remove_follower_in_followList_by_id import *
 from Control.User.insert_followList_by_id import *
+from Control.premiumUser.update_follower_in_followList_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -81,7 +82,11 @@ def insert_followList(followedId):
 def remove_follower_in_followList(followedId):
     RemoveFollowerInFollowListById().remove_follower_in_followList_by_id("1",followedId)
     return jsonify({'success': True})
-
+@app.route('/toggle-notification',methods=['GET','POST'])
+def toggle_notification():
+    data = request.json
+    UpdateFollowerInFollowListById().update_follower_in_followList_by_id("1",data["followId"],data["notifyMe"])
+    return jsonify({'success': True})
 @app.route('/search/<string:content>')
 def search(content):
     accountsList = GetAccountsByUserName().get_accounts_by_userName(content,"1")
@@ -142,7 +147,7 @@ def searchSymbol(symbol):
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
     user = GetAccountByAccountId().get_account_by_accountId("1")
-    stockData = StockDataController().get_update_stock_data(symbol,"1y")
+    stockData = StockDataController().get_update_stock_data(symbol,"1mo")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
@@ -150,6 +155,8 @@ def symbol(symbol):
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>',methods=['POST'])
 def request_for_prediction(symbol,days,model):
+    # pass in (symbol,days,accountId) to backend, use 'model' to determine which model to use
+    #  symbol and accountId only use to create notification
     print(symbol,days,model)
     return jsonify({'success': True})
 
@@ -375,7 +382,7 @@ def predict():
     #
 @app.route('/',methods=['GET'])
 def officialWeb():
-    return render_template("system/OfficialWeb.html")
+    return render_template("system/template.html")
 
 @app.route('/history',methods=['GET'])
 def history():
@@ -421,7 +428,7 @@ notification_cache = {}
 #                     # Checking for recent notifications
 #                     if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
 #                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'])
+#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
 #                         notification_cache[cache_key] = current_time
 #                         Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
 #                         if Personal_who_follow_user_List:
@@ -429,7 +436,7 @@ notification_cache = {}
 #                                 if userFollow['notifyMe'] == 1:
 #                                     notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
 #                                     hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol)
+#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
 
 # def run_schedule():
 #     schedule.every(2).seconds.do(threshold_notification)
