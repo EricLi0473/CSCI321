@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industry Selector</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .bubble {
+            background-color: rgba(0, 123, 255, 0.1);
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+        .bubble:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .bubble.selected {
+            opacity: 1;
+            border: 4px solid #4299e1;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div id="app" class="w-full h-full flex flex-col items-center justify-center">
+        <h1 class="text-center text-2xl font-bold mb-4">Select the industries you are interested in</h1>
+        <span class="text-center text-sm font-bold mb-4 text-gray-500">Will be used to make personalised stock recommendations for you</span>
+        <div class="flex flex-wrap justify-center">
+            <div v-for="(industry, index) in industries" :key="index" @click="toggleSelection(industry)"
+                 :class="['bubble', 'text-center rounded-full h-36 w-36 flex items-center justify-center cursor-pointer m-2', isSelected(industry) ? 'selected' : '']">
+                <span class="text-blue-800 text-xl font-bold">[[ industry ]]</span>
+            </div>
+        </div>
+        <button @click="submitSelections" class="mt-5 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Finish
+        </button>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                industries: [
+                    "Technology",
+                    "Industrials",
+                    "Healthcare",
+                    "Energy",
+                    "Utilities",
+                    "Financial",
+                    "Services"
+                ],
+                selectedIndustries: []
+            },
+            methods: {
+                toggleSelection(industry) {
+                    const index = this.selectedIndustries.indexOf(industry);
+                    if (index === -1) {
+                        this.selectedIndustries.push(industry);
+                    } else {
+                        this.selectedIndustries.splice(index, 1);
+                    }
+                },
+                isSelected(industry) {
+                    return this.selectedIndustries.includes(industry);
+                },
+                submitSelections() {
+                    if (this.selectedIndustries.length === 0) {
+                        alert('We will set up your account with the default configuration');
+                        this.selectedIndustries.push("Technology")
+                        axios.post('/industry_Setting', {
+                        selectedIndustries: this.selectedIndustries,
+                    }).then(response => {
+                            console.log(response.data.message);
+                            window.location.href = '/configure_personal_setting'; // Redirect to industry.html after successful submission
+                        })
+
+                    } else {
+                        axios.post('/industry_Setting', {
+                            selectedIndustries: this.selectedIndustries,
+                        })
+                        .then(response => {
+                            console.log(response.data.message);
+                            window.location.href = '/configure_personal_setting'; // Redirect to industry.html after successful submission
+                        })
+                        .catch(error => {
+                            console.error('There was an error!', error);
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -82,7 +82,7 @@ CREATE TABLE recommendationList
 (
     recommendationId INT AUTO_INCREMENT PRIMARY KEY,
     accountId        INT NOT NULL,
-    recommendedStock TEXT NOT NULL,
+    recommendedStock LONGTEXT NOT NULL,
     recommendationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
