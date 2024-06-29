@@ -68,7 +68,7 @@
         </div>
       </div>
       <!-- Right Content Area -->
-      <div class="flex-1 bg-gray-100 ml-16" id="app">
+      <div class="flex-1 bg-gray-100 ml-16">
         <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
             <div class="">
               <a class="btn btn-ghost text-xl">Stock4Me</a>
@@ -103,43 +103,23 @@
 </div>
           </div>
       </div>
+</div>
 <script>
 
 
-              new Vue({
+  new Vue({
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
             history:JSON.parse('[{"stockSymbol":"AAPL","searchDate":"2024-10-20"},{"stockSymbol":"BILI","searchDate":"2024-12-20"}]')
         },
         created() {
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('message') && urlParams.get('message') === 'signup-success') {
-          this.exception = 'Sign up successful! Please log in.';
-          document.getElementById('SignupSuccess').showModal();
-          }
+
         },
         methods: {
-          login() {
-            axios.post('/login', {
-              username: this.username,
-              password: this.password
-            })
-            .then(response => {
-              if (response.data.success) {
-                // Handle successful login, e.g., redirect to another page
-                window.location.href = '/redirectToUserPage';
-                console.log('Login successful:', response.data);
-              } else {
-                // Handle login error
-                this.exception = response.data.error;
-                document.getElementById('loginFailed').showModal();
-                console.error('Login failed:', response.data.error);
-              }
-            })
-          }
         }
       });
+
         // Scroll to the top when the button is clicked
         document.getElementById('toTopButton').addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -151,8 +131,8 @@
                 document.getElementById('toTopButton').classList.remove('hidden');
             } else {
                 document.getElementById('toTopButton').classList.add('hidden');
-            }
-        });
+            }})
+
 </script>
 </body>
 </html>

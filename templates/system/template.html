@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="h-screen" id="app">
-<header class="bg-white">
+    <header class="bg-white">
         <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
           <a class="block text-teal-600" href="#">
             <span class="sr-only">Home</span>
@@ -89,7 +89,7 @@
       </header>
 <!-- Banner Start! -->
 <section
-  class="relative bg-[url(https://images.unsplash.com/photo-1604014237800-1c9102c219da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80)] bg-cover bg-center bg-no-repeat"
+  class="relative bg-[url(../../static/resource/bck_city.jpg)] bg-cover bg-center bg-no-repeat"
 >
   <div
     class="absolute inset-0 bg-gray-900/75 sm:bg-transparent sm:from-gray-900/95 sm:to-gray-900/25 ltr:sm:bg-gradient-to-r rtl:sm:bg-gradient-to-l"
@@ -528,7 +528,7 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
       </svg>
   </button>
-{# foot area start #}
+<!--{# foot area start #}-->
 <footer class="bg-gray-100 ">
   <div class="mx-auto  px-4 py-16 sm:px-6 lg:px-8" >
     <div class="flex justify-center text-teal-600">
@@ -666,8 +666,8 @@
         data: {
             stat:JSON.parse('{"premiumAccount":100,"prediction":1000,"symbol":250}'),
             symbolData:JSON.parse('[{"timestamp": 1716940800000, "open": 113.05, "close": 114.82, "high": 115.49, "low": 110.9, "volume": 557442000}, {"timestamp": 1717027200000, "open": 114.65, "close": 110.5, "high": 115.82, "low": 109.66, "volume": 487350000}, {"timestamp": 1717113600000, "open": 112.52, "close": 109.63, "high": 112.72, "low": 106.94, "volume": 613263000}, {"timestamp": 1717372800000, "open": 113.62, "close": 115.0, "high": 115.0, "low": 112.0, "volume": 438392000}, {"timestamp": 1717459200000, "open": 115.72, "close": 116.44, "high": 116.6, "low": 114.04, "volume": 403324000}, {"timestamp": 1717545600000, "open": 118.37, "close": 122.44, "high": 122.45, "low": 117.47, "volume": 528402000}, {"timestamp": 1717632000000, "open": 124.05, "close": 121.0, "high": 125.59, "low": 118.32, "volume": 664696000}, {"timestamp": 1717718400000, "open": 119.77, "close": 120.89, "high": 121.69, "low": 118.02, "volume": 412386000}, {"timestamp": 1717977600000, "open": 120.37, "close": 121.79, "high": 123.1, "low": 117.01, "volume": 314162700}, {"timestamp": 1718064000000, "open": 121.77, "close": 120.91, "high": 122.87, "low": 118.74, "volume": 222551200}, {"timestamp": 1718150400000, "open": 123.06, "close": 125.2, "high": 126.88, "low": 122.57, "volume": 299595000}, {"timestamp": 1718236800000, "open": 129.39, "close": 129.61, "high": 129.8, "low": 127.16, "volume": 260704500}, {"timestamp": 1718323200000, "open": 129.96, "close": 131.88, "high": 132.84, "low": 128.32, "volume": 309320400}, {"timestamp": 1718582400000, "open": 132.99, "close": 130.98, "high": 133.73, "low": 129.58, "volume": 288504400}, {"timestamp": 1718668800000, "open": 131.14, "close": 135.58, "high": 136.33, "low": 130.69, "volume": 294335100}, {"timestamp": 1718841600000, "open": 139.8, "close": 130.78, "high": 140.76, "low": 129.52, "volume": 517768400}, {"timestamp": 1718928000000, "open": 127.12, "close": 126.57, "high": 130.63, "low": 124.3, "volume": 655484700}, {"timestamp": 1719187200000, "open": 123.24, "close": 118.11, "high": 124.46, "low": 118.04, "volume": 476060900}, {"timestamp": 1719273600000, "open": 121.2, "close": 126.09, "high": 126.5, "low": 119.32, "volume": 425787500}, {"timestamp": 1719360000000, "open": 126.13, "close": 126.4, "high": 128.12, "low": 122.6, "volume": 362975900}, {"timestamp": 1719446400000, "open": 124.1, "close": 123.99, "high": 126.41, "low": 122.92, "volume": 252571700}, {"timestamp": 1719532800000, "open": 124.58, "close": 123.54, "high": 127.71, "low": 122.75, "volume": 314945500}]'),
-            predictionData:JSON.parse('{"predictionId": 1, "stockSymbol": "aapl", "requestDate": datetime.datetime(2024, 6, 26, 13, 10, 26), "minPredictedPrice": 100.11, "avgPredictedPrice": 150.11, "maxPredictedPrice": 300.11, "buyPercentage": 0.5, "holdPercentage": 0.3, "sellPercentage": 0.2, "timeRange": 30, "target": "Buy"}'),
-            comment:JSON.parse('[{"accountId": 1, "userName": "li", "commentText": "Good", "commentDate": datetime.datetime(2024, 6, 24, 22, 57, 35)}, {"accountId": 1, "userName": "li", "commentText": "Well", "commentDate": datetime.datetime(2024, 6, 24, 22, 57, 35)}, {"accountId": 1, "userName": "li", "commentText": "bad", "commentDate": datetime.datetime(2024, 6, 24, 23, 5, 53)}, {"accountId": 2, "userName": "woody", "commentText": "When can rich to 300?", "commentDate": datetime.datetime(2024, 6, 27, 15, 38, 10)}, {"accountId": 1, "userName": "li", "commentText": "Test for coding", "commentDate": datetime.datetime(2024, 6, 28, 0, 13, 48)}, {"accountId": 1, "userName": "li", "commentText": "ghhgh", "commentDate": datetime.datetime(2024, 6, 28, 12, 55, 8)}, {"accountId": 1, "userName": "li", "commentText": "I only depend this to earn money, please rich to 500", "commentDate": datetime.datetime(2024, 6, 28, 16, 1, 24)}]'),
+            predictionData:JSON.parse('{"predictionId": 1, "stockSymbol": "aapl", "requestDate": "datetime.datetime(2024, 6, 26, 13, 10, 26)", "minPredictedPrice": 100.11, "avgPredictedPrice": 150.11, "maxPredictedPrice": 300.11, "buyPercentage": 0.5, "holdPercentage": 0.3, "sellPercentage": 0.2, "timeRange": 30, "target": "Buy"}'),
+            comment:JSON.parse('[{"accountId": 1, "userName": "li", "commentText": "Good", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "Well", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "bad", "commentDate": "datetime.datetime(2024, 6, 24, 23, 5, 53)"}, {"accountId": 2, "userName": "woody", "commentText": "When can rich to 300?", "commentDate": "datetime.datetime(2024, 6, 27, 15, 38, 10)"}, {"accountId": 1, "userName": "li", "commentText": "Test for coding", "commentDate": "datetime.datetime(2024, 6, 28, 0, 13, 48)"}]'),
           },
         mounted(){
 
