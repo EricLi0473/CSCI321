@@ -40,6 +40,9 @@ from Control.premiumUser.update_watchlist import *
 from Control.premiumUser.get_watchlist_by_accountID import *
 from Control.User.get_who_follows_me_by_accountID import *
 from Control.premiumUser.update_threshold_settings import *
+from Control.User.remove_follower_in_followList_by_id import *
+from Control.User.insert_followList_by_id import *
+from Control.premiumUser.update_follower_in_followList_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -69,12 +72,28 @@ def ratingComment():
         data = request.json
         Insert_review_by_id().insert_review_by_id("1",data.get("rating"),data.get("comment"))
         return jsonify({'success': True})
+
+@app.route('/insert_followList/<string:followedId>', methods=['GET', 'POST'])
+def insert_followList(followedId):
+    InsertFollowListById().insert_followList_by_id("1",followedId)
+    return jsonify({'success': True})
+
+@app.route('/remove_follower_in_followList/<string:followedId>', methods=['GET', 'POST'])
+def remove_follower_in_followList(followedId):
+    RemoveFollowerInFollowListById().remove_follower_in_followList_by_id("1",followedId)
+    return jsonify({'success': True})
+@app.route('/toggle-notification',methods=['GET','POST'])
+def toggle_notification():
+    data = request.json
+    UpdateFollowerInFollowListById().update_follower_in_followList_by_id("1",data["followId"],data["notifyMe"])
+    return jsonify({'success': True})
 @app.route('/search/<string:content>')
 def search(content):
-    accountsList = GetAccountsByUserName().get_accounts_by_userName(content)
+    accountsList = GetAccountsByUserName().get_accounts_by_userName(content,"1")
+    accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List("1")
     stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList)
-
+    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
+@app.route('/searchSymbol/')
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     account = GetAccountByAccountId().get_account_by_accountId("1")
@@ -122,12 +141,13 @@ def symbol_news(symbol,page):
 
 @app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
 def searchSymbol(symbol):
-    return jsonify(StockDataController().search_stock(symbol))
+    if request.method == 'POST':
+        return jsonify(StockDataController().search_stock(symbol))
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
     user = GetAccountByAccountId().get_account_by_accountId("1")
-    stockData = StockDataController().get_update_stock_data(symbol,"1y")
+    stockData = StockDataController().get_update_stock_data(symbol,"1mo")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
@@ -406,7 +426,7 @@ notification_cache = {}
 #                     # Checking for recent notifications
 #                     if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
 #                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'])
+#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
 #                         notification_cache[cache_key] = current_time
 #                         Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
 #                         if Personal_who_follow_user_List:
@@ -414,7 +434,7 @@ notification_cache = {}
 #                                 if userFollow['notifyMe'] == 1:
 #                                     notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
 #                                     hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol)
+#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
 
 # def run_schedule():
 #     schedule.every(2).seconds.do(threshold_notification)
