@@ -49,6 +49,14 @@ import time
 
 app = Flask(__name__)
 
+@app.route('/space/<string:accountId>',methods=['GET','POST'])
+def space(accountId):
+    if request.method == 'GET':
+        # hard code, assume session["user"] has 1
+        if int(accountId) == 1:
+            return render_template("/User/mySpace.html")
+
+# bacause we store list in watchlist DB, so this function table can not use
 @app.route('/add_watchlist', methods=['POST'])
 def add_watchlist():
     try:
@@ -105,11 +113,11 @@ def search(content):
     accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List("1")
     stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
     return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
-@app.route('/searchSymbol/')
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     account = GetAccountByAccountId().get_account_by_accountId("1")
-    return render_template('mainPage.html',account=account)
+    watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
+    return render_template('mainPage.html',account=account,watchList=watchList)
 
 #remove notification
 @app.route('/remove_notification', methods=['POST'])

@@ -69,3 +69,6 @@ class Watchlist():
                 return False
         else:
             return False
+
+if __name__ == "__main__":
+    Watchlist().get_watchlist_by_accountID("1")

@@ -75,27 +75,29 @@
                 <div class="">
                     <a class="btn btn-ghost text-xl">Stock4Me</a>
                 </div>
-                <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
-                <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
+                <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
+                <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
             </div>
             <!-- Content Start! -->
             <div class="overflow-y-scroll p-8 bg-white mt-16">
                 <h2 class="text-lg font-bold mb-4">Notifications</h2>
                 <div class="overflow-y-scroll p-8 bg-white mt-4 h-40">
-                    <div v-for="notification in notifications" :key="notification.notificationId" class="mb-4">
+                    <div v-for="notification in notifications" :key="notification.notificationId" class="mb-4" @click="navigateToSymbol(notification.symbol)">
                         <div class="bg-green-100 p-2 rounded-md flex items-center justify-between">
                             <div>
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button @click="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
+                            <button @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
                         </div>
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 mt-16">
+
                     <div>
+
                         <h2 class="text-lg font-bold mb-4">Recommended News For You</h2>
-                        <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md">
+                        <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                             <h3 class="font-bold">
                                 <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
                             </h3>
@@ -106,24 +108,50 @@
                              class="w-full h-32 object-cover mt-2 rounded-md">
                             <p class = "text-gray-500 mt-2">Published on: [[news.published_at]]</p>
                         </div>
-                        <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4">Load More</button>
+                        <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4" v-if="isLoadingNews === 0">Load More</button>
+                                                                    <div class="flex w-full flex-col gap-4" v-if="isLoadingNews === 1">
+  <div class="skeleton h-32 w-full" v-if="isLoadingNews === 1"></div>
+  <div class="skeleton h-4 w-28" v-if="isLoadingNews === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isLoadingNews === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isLoadingNews === 1"></div>
+</div>
                     </div>
                     <div>
                         <h2 class="text-lg font-bold mb-4">Recommended Stocks For You</h2>
-                            <div v-for="(stock, index) in visibleRecommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg shadow-md relative">
-                                <button @click="toggleWatchlist(stock.symbol)" class="absolute top-2 right-2 text-red-500 text-2xl">&#9829;</button>
+                                                                    <div class="flex w-full flex-col gap-4" v-if="isLoadingSymbol === 1">
+  <div class="skeleton h-32 w-full" v-if="isLoadingSymbol === 1"></div>
+  <div class="skeleton h-4 w-28" v-if="isLoadingSymbol === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
+</div>
+                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300" @click="navigateToSymbol(stock.symbol)">
                                 <div>
+                                    <div class="join">
                                     <h1 class="text-xl font-bold mb-1">[[stock.longName]]</h1>
-                                    <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]] $</p>
+                                                                            <button @click.stop="toggleWatchlist(stock.symbol)" class="ml-4 text-2xl">
+                              <span v-if="watchList.includes(stock.symbol)" class="text-red-500">&#9829;</span>
+                              <span v-else class="text-gray-500"><img src="https://www.svgrepo.com/show/487539/love.svg" class="w-7"></span>
+                            </button>
+                                        </div>
+                                    <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]]</p>
                                     <p :class="{'text-green-500': stock.relative_change >= 0, 'text-red-500': stock.relative_change < 0}" class="text-md font-semibold">Change: [[stock.relative_change + "%"]] ([[stock.absolute_change]])</p>
                                 </div>
                                 <canvas :id="'myChart' + index" height="80px" class="ml-4"></canvas>
                             </div>
-                            <button v-if="visibleRecommendationSymbols.length < recommendationSymbols.length" @click="loadMoreStocks" class="btn btn-sm btn-primary mt-4">Load More</button>
-
                     </div>
                 </div>
             </div>
+                        <dialog id="information" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[information]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
             <!-- Content END! -->
             <!-- To The Top Button -->
             <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
@@ -158,12 +186,13 @@
                 recommendationNews: [],
                 recommendationSymbols: [],
                 newsPage: 0,
-                visibleCount: 5
+                watchList:JSON.parse('{{watchList|tojson}}'),
+                search:"",
+                information:"",
+                isLoadingNews:1,
+                isLoadingSymbol:1
             },
             computed: {
-                visibleRecommendationSymbols() {
-                    return this.recommendationSymbols.slice(0, this.visibleCount);
-                }
             },
             mounted() {
                 this.getNotifications();
@@ -171,6 +200,12 @@
                 this.getRecommendationNews();
             },
             methods: {
+                            doSearch(){
+                window.location.href = `/search/${this.search}`;
+            },
+                    navigateToSymbol(symbol) {
+      window.location.href = `/symbol/${symbol}`;
+    },
                 getNotifications() {
                     axios.get('/get_notification')
                         .then(response => {
@@ -180,6 +215,7 @@
                 getRecommendationSymbols() {
                     axios.get('/recommendation_symbol')
                         .then(response => {
+                            this.isLoadingSymbol = 0;
                             this.recommendationSymbols = response.data;
                             this.$nextTick(() => {
                                 this.render_graph();
@@ -187,10 +223,12 @@
                         });
                 },
                 getRecommendationNews() {
+                                this.isLoadingNews = 1;
                     this.newsPage += 1;
                     axios.get('/recommendation_news/' + this.newsPage)
                         .then(response => {
                             this.recommendationNews.push(...response.data);
+                            this.isLoadingNews = 0;
                         });
                 },
                 loadMoreNews() {
@@ -205,20 +243,29 @@
                         });
                 },
                 toggleWatchlist(symbol) {
-                    axios.post('/add_watchlist', { symbol: symbol })
-                        .then(response => {
-                            if (response.data.success) {
-                                alert('Added to Watchlist');
-                            } else if (response.data.message === 'Already in Watchlist') {
-                                alert('Stock is already in your Watchlist');
-                            } else {
-                                alert('Failed to add to Watchlist');
-                            }
-                        })
-                        .catch(error => {
-                            console.error("There was an error adding the stock to the watchlist!", error);
-                            alert('An error occurred while adding to Watchlist');
-                        });
+                          if (this.watchList.includes(symbol)) {
+                                                      this.information ='Successful remove this stock from watchList'
+                        document.getElementById('information').showModal();
+        this.watchList = this.watchList.filter(item => item !== symbol);
+      } else {
+                              this.information ='Successful add this stock from watchList'
+                        document.getElementById('information').showModal();
+        this.watchList.push(symbol);
+      }
+      // 向后端发送请求更新 watchList
+      axios.post('/update_watchList', {
+        watchList: this.watchList
+      })
+      .then(response => {
+        if (response.data.success) {
+          console.log('Watchlist updated successfully');
+        } else {
+          console.error('Failed to update watchlist');
+        }
+      })
+      .catch(error => {
+        console.error('Error updating watchlist:', error);
+      });
                 },
                 onImageError(event) {
                     event.target.src = '../../static/resource/altNewsIMG.jpg';

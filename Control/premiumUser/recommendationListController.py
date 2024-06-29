@@ -36,4 +36,4 @@ class RecommendationListController:
 
 if __name__ == '__main__':
     # print(RecommendationListController().get_recommendationList_by_accountId(1))
-    print(type(RecommendationListController().get_recommendationList_by_accountId("2")))
+    print(type(RecommendationListController().update_recommendation_by_accountId("1","us","Technology")))

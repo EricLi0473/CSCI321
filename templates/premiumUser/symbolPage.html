@@ -571,9 +571,16 @@
   </div>
 </article>
     </div>
+
+</div>
+                      <div class="flex w-full flex-col gap-4 mt-4" v-if="isNewsLoading === 1">
+  <div class="skeleton h-32 w-full" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-28" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
 </div>
         <div class="w-fit mx-auto mt-6">
-              <button class="btn btn-outline" @click="get_symbol_news">Load more</button>
+              <button class="btn btn-outline" @click="get_symbol_news" v-if="isNewsLoading === 0">Load more</button>
           </div>
 
 
@@ -738,7 +745,6 @@
   </div>
 </footer>
         <!--right side content area /div-->
-        </dialog>
             <dialog id="information" class="modal modal-bottom sm:modal-middle">
   <div class="modal-box">
     <h3 class="font-bold text-lg">Success</h3>
@@ -786,7 +792,8 @@
             information:"",
             comment:"",
             isCoolingDown: false,
-            buttonText: 'Submit'
+            buttonText: 'Submit',
+            isNewsLoading :1
         },
                 created() {
             this.checkButtonStatus();
@@ -941,9 +948,12 @@
                     });
             },
             get_symbol_news() {
+                      this.isNewsLoading =1;
                 this.newsPage += 1;
                 axios.get(`/symbol_news/${this.stockInfo.symbol}/${this.newsPage}`)
                     .then(response => {
+                        this.isNewsLoading =0;
+
                         if (Array.isArray(response.data)) {
                             this.news.push(...response.data);
                         } else {
