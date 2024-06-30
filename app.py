@@ -35,6 +35,7 @@ from Control.User.remove_follower_in_followList_by_id import *
 from Control.User.insert_followList_by_id import *
 from Control.premiumUser.update_follower_in_followList_by_id import *
 from Control.User.addWatchListController import *
+from Control.premiumUser.get_threshold_setting_by_id import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -54,9 +55,22 @@ def space(accountId):
     if request.method == 'GET':
         # hard code, assume session["user"] has 1
         if int(accountId) == 1:
-            return render_template("/User/mySpace.html")
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
+            account = GetAccountByAccountId().get_account_by_accountId("1")
+            thresholdList = GetThresholdSettingById().get_threshold_settings_by_id("1")
+            return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
+        else:
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
+            account = GetAccountByAccountId().get_account_by_accountId(accountId)
+            thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
+            return render_template("/User/otherUserSpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
 
-# bacause we store list in watchlist DB, so this function table can not use
+@app.route('/remove_symbol_from_threshold/<string:thresholdId>',methods=['POST'])
+def remove_symbol_from_threshold(thresholdId):
+    Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(thresholdId)
+    return jsonify({"success": True})
+
+# because we store list in watchlist DB, so this function table can not use
 @app.route('/add_watchlist', methods=['POST'])
 def add_watchlist():
     try:
@@ -295,112 +309,49 @@ def accountInfo():
         elif session['user']['accountType'] == 'business':
             pass
 
-#handle personal info. update(name,bio,email), business update(name,bio,email,companyName)
+#handle personal info
 @app.route('/updatePersonalInfo', methods=['POST'])
-def updatePersonalInfo_FreeUser():
-    # if 'user' not in session:
-    #     print("user not in session")
-    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+def updatePersonalInfo():
+    account = request.json.get('userAccount')
+    #  from here
+    userName = account["userName"]
+    email = account['email']
+    bio = account['bio']
+    age = account['age']
+    sex  = account['sex']
+    occupation = account['occupation']
+    incomeLevel = account['incomeLevel']
+    netWorth = account['netWorth']
+    investmentExperience = account['investmentExperience']
+    riskTolerance = account['riskTolerance']
+    investmentGoals = account['investmentGoals']
+    profile = account['profile']
+    #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
+    if profile != "admin":
+        # Refine the following method
+        UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
 
-    accountType = request.json.get('accountType')
-    accountId = request.json.get('accountId')
-    bio = request.json.get('bio')
-    userName = request.json.get('userName')
-    email = request.json.get('email')
-    if accountType == 'individual':
-        success = UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
-    elif accountType == 'business':
-        #company, updateBusinessInfo()
-        pass
-
-    if success:
-        session['user']['bio'] = bio
-        session['user']['userName'] = userName
-        session['user']['email'] = email
+        #update session['user']
         return jsonify({'success': True})
     else:
         return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
-    # if 'user' not in session:
-    #     return jsonify({'success': False, 'error': 'Unauthorized'}), 401
     try:
+        session['user'] = GetAccountByAccountId().get_account_by_accountId("1")
         old_password = request.json.get('oldPassword')
         new_password = request.json.get('newPassword')
         userName = session['user']['userName']
+        # Determine whether the user's entered previous password is correct or not
         if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
             raise Exception('Invalid old password')
-        if session['user']['accountType'] == 'individual':
-            session['user']['hashedPassword'] = ChangePasswordController().changeIndividualPassword(userName,old_password,new_password)
-        elif session['user']['accountType'] == 'business':
-            pass
+        # if it is correct, then change current password
+        session['user']['hashedPassword'] = ChangePasswordController().changeIndividualPassword(userName,old_password,new_password)
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False,'error':str(e)})
 
-
-
-@app.route('/predictionResult',methods=['POST','GET'])
-def predictionresult():
-    if request.method == 'GET':
-        #hard code for test
-        #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
-        # session['user'] = GetAccountInfo().getAccountInfo("1")
-        # predictionResult = GetRequestRecord().getRequestRecord(session['user']['apikey'])
-        # print(predictionResult)
-        if session['user']['accountType'] == 'individual':
-            if session['user']['profile'] == 'free':
-                return render_template("individualFreeUser/predictionResult.html")
-            elif session['user']['profile'] == 'premium':
-                pass
-        elif session['user']['accountType'] == 'business':
-            pass
-
-@app.route('/updatePredictionResult',methods=['GET'])
-def updatePredictionResult():
-    # session['user'] = GetAccountInfo().getAccountInfo("1")
-    return
-
-@app.route('/deletePrediction/<int:requestId>', methods=['DELETE'])
-def deletePrediction(requestId):
-
-    return jsonify({'success':True})
-@app.route('/verifyInput',methods=['POST'])
-def verifyInput():
-    if request.method == 'POST':
-        try:
-            apikey = session['user']['apikey']
-            tickerSymbol = request.json.get('tickerSymbol')
-            timeRange = request.json.get('timeRange')
-            model = request.json.get('model')
-            layers = request.json.get('layers')
-            neurons = request.json.get('neurons')
-
-            return jsonify({'success':True})
-        except Exception as e:
-            return jsonify({'success':False,'error':str(e)})
-@app.route('/predict', methods=['GET','POST'])
-def predict():
-    if request.method == 'GET':
-        #todo hard code for test
-        # session['user'] = GetAccountInfo().getAccountInfo("1")
-        return render_template("individualFreeUser/RequestPrediction.html")
-    if request.method == 'POST':
-        try:
-            apikey = session['user']['apikey']
-            tickerSymbol = request.json.get('tickerSymbol')
-            timeRange = request.json.get('timeRange')
-            model = request.json.get('model')
-            layers = request.json.get('layers')
-            neurons = request.json.get('neurons')
-
-            return jsonify({'success':True})
-        except Exception as e:
-            return jsonify({'success':False,'error':str(e)})
-    # print(apikey,tickerSymbol,timeRange,model,layers,neurons)
-    # print(type(apikey),type(tickerSymbol),type(timeRange),type(model),type(layers),type(neurons))
-    #
 @app.route('/',methods=['GET'])
 def officialWeb():
     return render_template("system/template.html")
@@ -422,14 +373,6 @@ def redirectToUserPage():
 def logout():
     session.pop('user', None)
     return redirect(url_for('login'))
-
-@app.route('/documentation',methods=['GET'])
-def documentation():
-    return render_template("system/documentation.html")
-
-@app.route('/contact',methods=['GET'])
-def contact():
-    return redirect("https://csit321fyp24s2g27.wixsite.com/group27")
 
 @app.route('/industry_Setting',methods=['GET','POST'])
 def industry_Setting():

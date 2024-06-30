@@ -79,15 +79,13 @@
             <!-- Content Start! -->
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
               <div class="mt-8">
-              <span class="text-sm ">Welcome, </span>
                   <div class="avatar indicator  mb-8">
                       <span class="indicator-item badge badge-secondary" v-if="myAccount.profile === 'premium'">Premium User</span>
                   <span class="text-4xl">[[myAccount.userName]]</span>
                       </div>
                 <div>
                     <label class="block">
-                        <span class="block text-sm mb-2 text-slate-500">Check and edit your Bio Here...</span>
-                        <textarea class="textarea textarea-bordered w-96" placeholder="Bio" v-model="myAccount.bio"></textarea>
+                        <span class="block text-sm mb-2 text-slate-500">[[myAccount.bio]]</span>
                     </label>
                     <div class="join my-2 mt-4">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
@@ -108,10 +106,6 @@
   class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.userName"/>
               </div>
 
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Password</dt>
-                <dd class="text-gray-700 sm:col-span-2">********</dd>
-              </div>
 
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Email</dt>
@@ -148,73 +142,8 @@
 </select>
               </div>
 
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Occupation</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.occupation]]</dd>
-                  <input
-  type="text"
-  placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.occupation"/>
-              </div>
 
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Income Level</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">$ [[myAccount.incomeLevel]] +</dd>
-                                    <input
-  type="text"
-  placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.incomeLevel" @input="validateNumber"/>
-              </div>
-
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Net Worth</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">$ [[myAccount.netWorth]] +</dd>
-                                                      <input
-  type="text"
-  placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.netWorth" @input="validateNumber"/>
-
-              </div>
-
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Investment Experience</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.investmentExperience]]</dd>
-                                <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.investmentExperience">
-  <option disabled selected>Choose your sex</option>
-  <option value="novice">novice</option>
-  <option value="intermediate">intermediate</option>
-  <option value="expert">expert</option>
-</select>
-
-              </div>
-
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Risk Tolerance</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.riskTolerance]]</dd>
-                                                  <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.riskTolerance">
-  <option disabled selected>Choose your sex</option>
-  <option value="low">low</option>
-  <option value="medium">medium</option>
-  <option value="high">high</option>
-</select>
-              </div>
-
-              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
-                <dt class="font-medium text-gray-900">Investment Goals</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.investmentGoals]]</dd>
-                                                                        <input
-  type="text"
-  placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.investmentGoals"/>
-
-              </div>
-            </dl>
           </div>
-                  <div class="flex flex-row gap-4 mt-8">
-                  <button class="btn btn-outline btn-info" @click="toggleInfoEdit()">Edit</button>
-                  <button class="btn btn-outline btn-warning" @click="updateUser">Confirm</button>
-                      <button class="btn btn-outline btn-warning" @click="togglePasswordModal">Change Password</button>
-                  </div>
               </div>
                 </div>
 <!--                 2 -->
@@ -225,7 +154,6 @@
                       <tr>
                         <th class="text-black">#</th>
                         <th class="text-black text-xl">Symbol</th>
-                        <th class="text-black text-xl"></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -233,14 +161,6 @@
                       <tr v-for="(item, index) in watchList" :key="index"  @click="navigateToStock(item)" class="hover:bg-gray-200 cursor-pointer">
                         <th class="text-black text-xl">[[ index + 1 ]]</th>
                         <td class="text-black text-xl">[[ item ]]</td>
-                        <td class="text-xl">
-                          <button
-                            class="w-40 btn btn-sm btn-outline btn-error"
-                            @click.stop="toggleFollow(item)"
-                            >
-                              Cancel favourites
-                          </button>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -254,9 +174,6 @@
         <th class="text-black">#</th>
         <th class="text-black text-xl">Symbol</th>
         <th class="text-black text-xl">Percentage</th>
-        <th class="text-black text-xl">Add time</th>
-        <th class="text-black text-xl"></th>
-        <th class="text-black text-xl"></th>
       </tr>
     </thead>
     <tbody>
@@ -271,17 +188,6 @@
           <div v-else>
             [[ item.changePercentage ]]
           </div>
-        </td>
-        <td class="text-black text-xl">[[ item.notifyDateTime ]]</td>
-        <td class="text-xl">
-          <button class="w-40 btn btn-sm btn-outline btn-info" @click.stop="toggleEdit(item)">
-            [[ item.isEditing ? 'Save' : 'Change Threshold' ]]
-          </button>
-        </td>
-        <td class="text-xl">
-          <button class="w-40 btn btn-sm btn-outline btn-error" @click.stop="removeThreshold(item)">
-            Cancel threshold
-          </button>
         </td>
       </tr>
     </tbody>

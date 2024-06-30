@@ -6,7 +6,7 @@ CREATE TABLE account
     hashedPassword       VARCHAR(255) NULL,
     email                VARCHAR(255) NULL,
     bio                  VARCHAR(255) DEFAULT 'Welcome to stock4me!' NULL,
-    profile              ENUM ('free', 'premium') NULL,
+    profile              VARCHAR(255),
     status               ENUM ('valid', 'invalid') DEFAULT 'valid' NULL,
     createDateTime       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     age                  INT NULL,
