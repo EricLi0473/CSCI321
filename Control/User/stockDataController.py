@@ -3,10 +3,19 @@ import requests
 from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import concurrent.futures
+import random
 class StockDataController:
     def __init__(self):
         pass
 
+    def fetch_stock_data(self,country:str, industry:str):
+        API_TOKEN = "ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        url = f"https://api.marketaux.com/v1/entity/stats/aggregation?countries={country}&industries={industry}&api_token={API_TOKEN}"
+        response = requests.get(url)
+        if response.status_code == 200:
+            return response.json().get("data", [])
+        else:
+            return []
     def search_stock(self, content):
         api_key = '1TI3ZQ9MXCZ08O3M'
         url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey={api_key}"
@@ -75,14 +84,26 @@ class StockDataController:
         return results
 
 
-    def get_recommendation_stock_by_preference(self, countries='us',industries='Technology') -> list:
-        url = f"https://api.marketaux.com/v1/entity/stats/intraday?interval=year&industries={industries}&countries={countries}&published_after=2024-01-01&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
-        response = requests.get(url).json()
-        recommendation_stock_list = []
-        for stock in response['data'][0]['data']:
-            recommendation_stock_list.append(stock['key'])
+    def get_recommendation_stock_by_preference(self, countries:list,industries:list) -> list:
+        stock_data = []
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            futures = []
+            for country in countries:
+                for industry in industries:
+                    futures.append(executor.submit(self.fetch_stock_data, country, industry))
 
-        return recommendation_stock_list
+            for future in concurrent.futures.as_completed(futures):
+                stock_data.extend(future.result())
+
+        # Get unique stock symbols
+        stock_symbols = list(set([item['key'] for item in stock_data]))
+
+        # Ensure we have at least 20 symbols, repeating if necessary
+        while len(stock_symbols) < 20:
+            stock_symbols.extend(stock_symbols[:20 - len(stock_symbols)])
+
+        return random.sample(stock_symbols, 20)
+
     def convert_market_cap(self,value):
         if value >= 1e12:
             return f"{value / 1e12:.2f}T"
@@ -264,6 +285,8 @@ class StockDataController:
 if __name__ == '__main__':
     alist = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
     # print(StockDataController().get_stock_info_medium(list))
-    print(StockDataController().get_update_stock_data("NVDA","1mo"))
+    countries = ["us", "kr"]
+    industries = ["Technology", "Healthcare"]
+    print(StockDataController().get_recommendation_stock_by_preference(countries, industries))
 
 
