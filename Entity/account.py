@@ -65,4 +65,4 @@ class Account:
         return results
 
 if __name__ == '__main__':
-    print(Account().get_accounts_by_userName("w"))
+    print(Account().get_all_account())

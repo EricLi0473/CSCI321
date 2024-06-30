@@ -36,6 +36,7 @@ from Control.User.insert_followList_by_id import *
 from Control.premiumUser.update_follower_in_followList_by_id import *
 from Control.User.addWatchListController import *
 from Control.premiumUser.get_threshold_setting_by_id import *
+from Control.premiumUser.update_preference_by_accountId import *
 import hashlib
 from flask import Flask, redirect
 app = Flask(__name__)
@@ -47,8 +48,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 import threading
 import time
-
-app = Flask(__name__)
 
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
 def space(accountId):
@@ -387,13 +386,16 @@ def country_Setting():
     if request.method == 'GET':
         return render_template("/system/country.html")
     data = request.json
-    session['country'] = data.get("selectedCountry")
+    session['country'] = data.get("selectedCountries")
     return jsonify({'success': True})# Dynamically checking that user-selected stocks have not exceeded thresholds
 
 @app.route('/configure_personal_setting',methods=['GET','POST'])
 def configure_personal_setting():
     if request.method == 'GET':
         return render_template("/system/configure_personal_settings.html")
+    if request.method == 'POST':
+        UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['country'],session['industry'])
+        return jsonify({'success': True})
 
 # Define a cache to store recent notifications
 notification_cache = {}

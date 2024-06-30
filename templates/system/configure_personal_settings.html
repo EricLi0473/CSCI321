@@ -6,6 +6,8 @@
     <title>Loading Screen</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <style>
         .spinner {
             border: 8px solid rgba(0, 0, 0, 0.1);
@@ -66,6 +68,12 @@
             },
             mounted() {
                 this.changeTitle();
+                                    axios.post('/configure_personal_setting')
+                        .then(response => {
+                            if (response.data.success) {
+                                window.location.href = '/mainPage';
+                            }
+                        });
             },
             methods: {
                 changeTitle() {

@@ -10,7 +10,7 @@ class RecommendationListController:
     def get_recommendationList_by_accountId(self, id) -> list[dict]:
         return json.loads(RecommendationList().get_recommendations_by_id(id)['recommendedStock'])
 
-    def insert_recommendation_by_accountId(self,id, countries,industry):
+    def insert_recommendation_by_accountId(self,id, countries:list,industry:list):
         stock_list = StockDataController().get_recommendation_stock_by_preference(countries,industry)
         result = []
 
@@ -22,7 +22,7 @@ class RecommendationListController:
 
         RecommendationList().insert_recommendation_by_accountId(id, json.dumps(result))
 
-    def update_recommendation_by_accountId(self,id, countries,industry):
+    def update_recommendation_by_accountId(self,id, countries:list,industry:list):
         stock_list = StockDataController().get_recommendation_stock_by_preference(countries,industry)
         result = []
 
@@ -31,9 +31,7 @@ class RecommendationListController:
                 result.append(StockDataController().get_stock_info_medium(stock))
             except Exception:
                 continue
-
         RecommendationList().update_recommendation_by_accountId(id, json.dumps(result))
 
 if __name__ == '__main__':
-    # print(RecommendationListController().get_recommendationList_by_accountId(1))
-    print(type(RecommendationListController().update_recommendation_by_accountId("1","us","Technology")))
+    print(RecommendationListController().get_recommendationList_by_accountId(1))
