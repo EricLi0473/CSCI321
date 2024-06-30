@@ -100,7 +100,7 @@
     </thead>
     <tbody v-for="(follower,index) in followList" :key="follower.followId">
       <!-- row 1 -->
-          <tr>
+          <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
               <td class="ml-4 h-fit w-fit text-2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
         <td><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
@@ -129,7 +129,7 @@
     </thead>
     <tbody v-for="(follower,index) in who_follow_me_list" :key="follower.followId">
       <!-- row 1 -->
-      <tr>
+      <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
           <td class="2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
         <td>[[ new Date(follower.followDate).toLocaleDateString() ]]</td>
@@ -190,6 +190,9 @@ function showContent(type) {
           }
         },
         methods: {
+                        gotoSpace(id){
+                window.location.href = `/space/${id}`;
+            },
     confirmUnfollow(followId, index) {
       if (confirm("Are you sure you want to unfollow this user?")) {
         this.unfollow(followId, index);

@@ -198,14 +198,14 @@
                     </thead>
                     <tbody>
                       <!-- row 1 -->
-                      <tr v-for="(account, index) in accountsList" :key="index">
+                      <tr v-for="(account, index) in accountsList" :key="index" class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(account.accountId)">
                         <th class="text-black text-lg">[[ index + 1 ]]</th>
                         <td class="text-black text-lg" style="width: 15%;">[[ account.userName ]]</td>
                         <td class="text-black text-md break-words">[[ account.bio ]]</td>
                         <td class="text-lg">
                           <button
                             class="btn btn-outline btn-sm w-40"
-                            @click="toggleFriendFollow(account.accountId)"
+                            @click.stop="toggleFriendFollow(account.accountId)"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -281,6 +281,9 @@
 
         },
         methods: {
+            gotoSpace(id){
+                window.location.href = `/space/${id}`;
+            },
             sortStockList(key) {
                 if (this.sortKey === key) {
                     this.sortOrder = -this.sortOrder;
