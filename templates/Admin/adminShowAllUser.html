@@ -85,7 +85,7 @@
                 <th class="text-black text-center w-1/12">#</th>
                 <th class="text-black text-center w-2/12 text-xl">Username</th>
                 <th class="text-black text-center w-2/12 text-xl">Profile</th>
-                <th class="text-black text-center w-2/12 text-xl">Status</th>
+                <th class="text-black text-center w-2/12 text-xl">Gender</th>
                 <th class="text-black text-center w-2/12 text-xl">Creation Date</th>
                 <th class="text-black text-center w-3/12 text-xl">Operation</th>
               </tr>
@@ -95,8 +95,8 @@
                 <th class="text-black text-center text-xl w-1/12">[[ index + 1 ]]</th>
                 <td class="text-black text-center text-xl w-2/12">[[ account.userName ]]</td>
                 <td class="text-black text-center text-xl w-2/12">[[ account.profile ]]</td>
-                <td class="text-black text-center text-xl w-2/12">[[ account.status ]]</td>
-                <td class="text-black text-center text-xl w-2/12">[[ account.createDateTime ]]</td>
+                <td class="text-black text-center text-xl w-2/12">[[ account.sex ]]</td>
+                <td class="text-black text-center text-xl w-2/12">[[ formatDate(account.createDateTime) ]]</td>
                 <td class="text-black text-center text-xl w-3/12">
                   <label class="flex items-center justify-center space-x-2">
                     <span>Invalid</span>
@@ -157,12 +157,16 @@
       el: '#app',
       delimiters: ['[[', ']]'],
       data: {
-        allAccounts: JSON.parse('[{"accountId": 1, "userName": "LI_jiarui", "profile": "premium", "status": "valid", "createDateTime": "2024-06-24T22:57:01"}, {"accountId": 2, "userName": "woody", "profile": "premium", "status": "valid", "createDateTime": "2024-06-25T21:41:20"}, {"accountId": 3, "userName": "eirfan", "profile": "free", "status": "invalid", "createDateTime": "2024-06-27T18:40:34"}]')
+        allAccounts:JSON.parse('[{"accountId": 1, "userName": "LI_jiarui", "hashedPassword": "c4ca4238a0b923820dcc509a6f75849b", "email": "li.gmail", "bio": "Welcome to stock4me!", "profile": "premium", "status": "valid", "createDateTime": "datetime.datetime(2024, 6, 24, 22, 57, 1)", "age": 19, "sex": "male", "occupation": "student", "incomeLevel": 10000.0, "netWorth": 10000.0, "investmentExperience": "novice", "riskTolerance": "low", "investmentGoals": "rich"}, {"accountId": 2, "userName": "woody", "hashedPassword": "c4ca4238a0b923820dcc509a6f75849b", "email": "woody.gmail", "bio": "Welcome to stock4me!", "profile": "premium", "status": "valid", "createDateTime": "datetime.datetime(2024, 6, 25, 21, 41, 20)", "age": 20, "sex": "male", "occupation": "student", "incomeLevel": 100000.0, "netWorth": 100000.0, "investmentExperience": "novice", "riskTolerance": "low", "investmentGoals": "rich"}, {"accountId": 3, "userName": "eirfan", "hashedPassword": "c4ca4238a0b923820dcc509a6f75849b", "email": "eirfan@gmail", "bio": "Welcome to stock4me!", "profile": "free", "status": "invalid", "createDateTime": "datetime.datetime(2024, 6, 27, 18, 40, 34)", "age": 21, "sex": "male", "occupation": "teachure", "incomeLevel": 300000.0, "netWorth": 130000.0, "investmentExperience": "novice", "riskTolerance": "high", "investmentGoals": "rich"}]')
       },
       mounted(){
 
       },
       methods: {
+        formatDate(dateString) {
+          const parts = dateString.match(/\d+/g);
+          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')} ${parts[3].padStart(2, '0')}:${parts[4].padStart(2, '0')}:${parts[5].padStart(2, '0')}`;
+        },
         toggleStatus(account) {
           account.status = account.status === 'valid' ? 'invalid' : 'valid';
         }
