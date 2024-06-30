@@ -118,23 +118,24 @@
                     </div>
                     <div>
                         <h2 class="text-lg font-bold mb-4">Recommended Stocks For You</h2>
-                                                                    <div class="flex w-full flex-col gap-4" v-if="isLoadingSymbol === 1">
-  <div class="skeleton h-32 w-full" v-if="isLoadingSymbol === 1"></div>
-  <div class="skeleton h-4 w-28" v-if="isLoadingSymbol === 1"></div>
-  <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
-  <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
-</div>
-                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300" @click="navigateToSymbol(stock.symbol)">
+                        <div class="flex w-full flex-col gap-4" v-if="isLoadingSymbol === 1">
+                        <div class="skeleton h-32 w-full" v-if="isLoadingSymbol === 1"></div>
+                        <div class="skeleton h-4 w-28" v-if="isLoadingSymbol === 1"></div>
+                        <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
+                        <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
+                    </div>
+                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300 relative" @click="navigateToSymbol(stock.symbol)">
                                 <div>
                                     <div class="join">
-                                    <h1 class="text-xl font-bold mb-1">[[stock.longName]]</h1>
-                                                                            <button @click.stop="toggleWatchlist(stock.symbol)" class="ml-4 text-2xl">
-                              <span v-if="watchList.includes(stock.symbol)" class="text-red-500">&#9829;</span>
-                              <span v-else class="text-gray-500"><img src="https://www.svgrepo.com/show/487539/love.svg" class="w-7"></span>
-                            </button>
-                                        </div>
-                                    <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]]</p>
-                                    <p :class="{'text-green-500': stock.relative_change >= 0, 'text-red-500': stock.relative_change < 0}" class="text-md font-semibold">Change: [[stock.relative_change + "%"]] ([[stock.absolute_change]])</p>
+                                        <a :href="'/symbol/' + stock.symbol" target="_blank" class="text-blue-500 hover:underline">[[stock.longName]]</a>
+<!--                                        <h1 class="text-xl font-bold mb-1">[[stock.longName]]</h1>-->
+                                        <button @click.stop="toggleWatchlist(stock.symbol)" class="absolute top-2 right-2 ml-4 text-2xl">
+                                        <span v-if="watchList.includes(stock.symbol)" class="text-red-500">&#9829;</span>
+                                        <span v-else class="text-gray-500"><img src="https://www.svgrepo.com/show/487539/love.svg" class="w-7"></span>
+                                        </button>
+                                    </div>
+                                        <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]]</p>
+                                        <p :class="{'text-green-500': stock.relative_change >= 0, 'text-red-500': stock.relative_change < 0}" class="text-md font-semibold">Change: [[stock.relative_change + "%"]] ([[stock.absolute_change]])</p>
                                 </div>
                                 <canvas :id="'myChart' + index" height="80px" class="ml-4"></canvas>
                             </div>
@@ -200,12 +201,12 @@
                 this.getRecommendationNews();
             },
             methods: {
-                            doSearch(){
-                window.location.href = `/search/${this.search}`;
-            },
-                    navigateToSymbol(symbol) {
-      window.location.href = `/symbol/${symbol}`;
-    },
+                doSearch(){
+                    window.location.href = `/search/${this.search}`;
+                },
+                navigateToSymbol(symbol) {
+                    window.open(`/symbol/${symbol}`, '_blank');
+                },
                 getNotifications() {
                     axios.get('/get_notification')
                         .then(response => {
@@ -245,27 +246,27 @@
                 toggleWatchlist(symbol) {
                           if (this.watchList.includes(symbol)) {
                                                       this.information ='Successful remove this stock from watchList'
-                        document.getElementById('information').showModal();
-        this.watchList = this.watchList.filter(item => item !== symbol);
-      } else {
-                              this.information ='Successful add this stock from watchList'
-                        document.getElementById('information').showModal();
-        this.watchList.push(symbol);
-      }
-      // 向后端发送请求更新 watchList
-      axios.post('/update_watchList', {
-        watchList: this.watchList
-      })
-      .then(response => {
-        if (response.data.success) {
-          console.log('Watchlist updated successfully');
-        } else {
-          console.error('Failed to update watchlist');
-        }
-      })
-      .catch(error => {
-        console.error('Error updating watchlist:', error);
-      });
+                                            document.getElementById('information').showModal();
+                            this.watchList = this.watchList.filter(item => item !== symbol);
+                          } else {
+                                                  this.information ='Successful add this stock from watchList'
+                                            document.getElementById('information').showModal();
+                            this.watchList.push(symbol);
+                          }
+                          // 向后端发送请求更新 watchList
+                          axios.post('/update_watchList', {
+                            watchList: this.watchList
+                          })
+                          .then(response => {
+                            if (response.data.success) {
+                              console.log('Watchlist updated successfully');
+                            } else {
+                              console.error('Failed to update watchlist');
+                            }
+                          })
+                          .catch(error => {
+                            console.error('Error updating watchlist:', error);
+                          });
                 },
                 onImageError(event) {
                     event.target.src = '../../static/resource/altNewsIMG.jpg';
