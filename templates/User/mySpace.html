@@ -367,6 +367,12 @@
                   information:"",
                   thresholdList:JSON.parse('{{thresholdList|tojson}}')
           },
+                  created(){
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page');
+                if (page) {
+                  this.activeDiv = page;
+                  }},
               mounted(){
                       this.thresholdList = this.initializeList(this.thresholdList);
     this.thresholdList = this.thresholdList.map(item => ({

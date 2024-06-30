@@ -39,6 +39,8 @@ from Control.premiumUser.get_threshold_setting_by_id import *
 from Control.premiumUser.update_preference_by_accountId import *
 from Control.premiumUser.getPremiumUsersController import *
 from Control.premiumUser.get_accountList_by_followedId import *
+from Control.User.get_searchHistory_by_id import *
+from Control.User.remove_searchHistory_by_id import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -184,7 +186,7 @@ def searchSymbol(symbol):
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
     user = GetAccountByAccountId().get_account_by_accountId("1")
-    stockData = StockDataController().get_update_stock_data(symbol,"1mo")
+    stockData = StockDataController().get_update_stock_data(symbol,"1y")
     stockInfo = StockDataController().get_stock_info_full(symbol)
     predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
@@ -360,8 +362,13 @@ def officialWeb():
 
 @app.route('/history',methods=['GET'])
 def history():
-    return render_template("system/history.html")
+    history = Get_searchHistory_by_id().get_searchHistory_by_id("1")
+    return render_template("system/history.html",history=history)
 
+@app.route('/remove_searchHistory/<string:id>',methods=['POST'])
+def remove_searchHistory(id):
+    RemoveSearchHistory().remove_searchHistory_by_id(id)
+    return jsonify({'success':True})
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
