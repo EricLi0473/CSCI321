@@ -6,8 +6,8 @@ class NotificationController:
     def get_notifications_by_accountId(self,accountId):
         return Notification().get_notifications_by_accountId(accountId)
 
-    def set_notification(self,accountId,notification,notificationType,referenceId):
-        Notification().set_notification(accountId,notification,notificationType,referenceId)
+    def set_notification(self,accountId,notification,notificationType,referenceId,symbol):
+        Notification().set_notification(accountId,notification,notificationType,referenceId,symbol)
 
     def delete_notification(self,notificationId):
         Notification().delete_notification(notificationId)

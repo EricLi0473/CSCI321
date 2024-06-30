@@ -42,5 +42,15 @@ class SearchHistory:
         val = (accountId,)
         return self.fetchAll(sql, val)
 
+    def insert_searchHistory_by_id(self,accountId,stockSymbol):
+        sql = "INSERT INTO searchHistory (accountId, stockSymbol) VALUES (%s, %s)"
+        val = (accountId, stockSymbol)
+        self.commit(sql, val)
+
+    def remove_searchHistory_by_id(self,searchId):
+        sql = "DELETE FROM searchHistory WHERE searchId = %s"
+        val = (searchId,)
+        self.commit(sql, val)
+
 if __name__ == '__main__':
     print(SearchHistory().get_searchHistory_by_id("1"))

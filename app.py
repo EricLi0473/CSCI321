@@ -37,17 +37,20 @@ from Control.premiumUser.update_follower_in_followList_by_id import *
 from Control.User.addWatchListController import *
 from Control.premiumUser.get_threshold_setting_by_id import *
 from Control.premiumUser.update_preference_by_accountId import *
+from Control.premiumUser.getPremiumUsersController import *
+from Control.premiumUser.get_accountList_by_followedId import *
 import hashlib
 from flask import Flask, redirect
-app = Flask(__name__)
-app.static_folder = 'static'
-app.secret_key = 'csci314'
-
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 import threading
 import time
+import schedule
+app = Flask(__name__)
+app.static_folder = 'static'
+app.secret_key = 'csci314'
+
 
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
 def space(accountId):
