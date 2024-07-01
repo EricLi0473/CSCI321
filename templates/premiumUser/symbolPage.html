@@ -610,12 +610,12 @@
       <div class="w-full text-right mt-6">
 <button class="btn btn-outline" @click="submit_comment" :disabled="isCoolingDown">[[ buttonText ]]</button>          </div>
 
-    <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="item in comments" :key="item.url">
+    <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="(item,index) in comments" :key="item.url">
   <div class="flex-1">
     <div class="flex justify-between items-center">
       <h4 class="text-sm font-bold">[[item.userName]]</h4>
       <span class="text-xs text-gray-500 ml-auto">[[item.commentDate]]</span>
-        <button class="ml-4 btn btn-outline btn-error btn-xs" v-if="item.userName === user.userName">Delete</button>
+        <button class="ml-4 btn btn-outline btn-error btn-xs" v-if="item.userName === user.userName" @click="deleteComment(index)">Delete</button>
     </div>
     <p class="mt-1 text-sm">
       [[item.commentText]]
@@ -833,6 +833,16 @@
                 }
         },
         methods: {
+            deleteComment(index){
+                const item = this.comments[index];
+                axios.post(`/delete_comment_by_id/${item.commentId}`)
+                    .then(response => {
+                        this.comments = this.comments.filter((_, i) => i !== index);
+                         this.information = "You have successfully Delete your comment!"
+                document.getElementById('information').showModal();
+
+                    });
+            },
                             doSearch(){
                     window.location.href = `/search/${this.search}`;
                 },

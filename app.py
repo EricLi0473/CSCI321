@@ -41,6 +41,7 @@ from Control.premiumUser.getPremiumUsersController import *
 from Control.premiumUser.get_accountList_by_followedId import *
 from Control.User.get_searchHistory_by_id import *
 from Control.User.remove_searchHistory_by_id import *
+from Control.premiumUser.get_preference_by_accountId import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -52,7 +53,10 @@ app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
 
-
+@app.route('/preference',methods=['GET','POST'])
+def preference():
+    preference = GetPreferenceByAccountId().get_preference_by_accountId("1")
+    return render_template("/premiumUser/preference.html",preference=preference)
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
 def space(accountId):
     if request.method == 'GET':
@@ -407,7 +411,7 @@ def configure_personal_setting():
     if request.method == 'GET':
         return render_template("/system/configure_personal_settings.html")
     if request.method == 'POST':
-        UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['country'],session['industry'])
+        UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['industry'],session['country'])
         return jsonify({'success': True})
 
 # Define a cache to store recent notifications
