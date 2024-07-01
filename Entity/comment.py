@@ -33,7 +33,7 @@ class Comment:
         if self.mydb.is_connected():
             self.mydb.close()
     def get_comments_by_symbol(self,symbol):
-        sql = "select account.accountId,account.userName,comment.commentText,comment.commentDate from comment left join account on comment.accountId = account.accountId where stockSymbol=%s"
+        sql = "select comment.commentId,account.accountId,account.userName,comment.commentText,comment.commentDate from comment left join account on comment.accountId = account.accountId where stockSymbol=%s"
         result = self.fetchAll(sql, (symbol,))
         return result
 
