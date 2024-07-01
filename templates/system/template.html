@@ -11,7 +11,7 @@
 </head>
 <body>
 <div class="h-screen" id="app">
-    <header class="bg-white">
+<header class="bg-white">
         <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
           <a class="block text-teal-600" href="#">
             <span class="sr-only">Home</span>
@@ -167,22 +167,110 @@
 <!-- Stat End -->
 <!-- kLine Start -->
 <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-  <div class="h-fit rounded-lg pl-8">
-      <h1 class="text-3xl text-center xl:text-4xl"><b>what is k-line?</b></h1><br>
-      <p class="text-base xl:text-3xl">The K-line chart is a financial chart that graphically presents the price changes of assets over a given time period.<br><br>
-          Users can search for any stock through our system to visually inspect the status of each stock.</p><br>
+  <div class="h-fit rounded-lg px-6">
+      <h1 class="text-4xl text-center"><b>what is K-line</b></h1><br>
+      <p class="text-2xl">It is constructed based on the opening price, highest price, lowest price, and closing price of each analysis
+          period. Taking the example of drawing a daily candlestick (K-line), first, determine the opening and closing prices.<br><br>
+          The area between them forms a rectangular body. If the closing price is higher than the opening price, the candlestick
+          is called a bullish candle, represented by a hollow body. Conversely, if the closing price is lower than the opening price,
+          it is called a bearish candle, represented by a solid black or white body.</p>
   </div>
-  <div class="h-fit pr-8 "><img src="../../static/resource/stock.png"></div>
+  <div class="h-96 rounded-lg bg-gray-200"></div>
 </div>
+      <div class="divider divider-neutral"></div>
 <!-- kLine End -->
 <!-- ML Start -->
-<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mt-16">
-  <div class="h-fit rounded-lg pl-8 pt-8"><img src="../../static/resource/predictionData.png"></div>
-  <div class="h-fit rounded-lg ">
-      <h1 class="text-3xl text-center xl:text-4xl"><b>prediction result</b></h1><br>
-      <p class="text-base xl:text-3xl"> The predicted results include: maximum value, average value, and minimum value.<br><br>
-          Through our forecasting system, users can predict these outcomes for the stocks they are interested in,
-          and we will present these easily understandable and simple data to the users. </p>
+<div class="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 h-fit">
+  <div class="h-32 rounded-lg h-fit px-6">
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Max</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.maxPredictedPrice]]</p>
+  </div>
+
+  <div class="inline-flex gap-2 rounded bg-green-100 p-1 text-green-600">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.maxPredictedPrice)).toFixed(2)]]% </span>
+  </div>
+</article>
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">AVG</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.avgPredictedPrice]]</p>
+  </div>
+
+  <div class="inline-flex gap-2 rounded bg-green-100 p-1 text-green-600">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.maxPredictedPrice)).toFixed(2)]]% </span>
+  </div>
+</article>
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Min</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.minPredictedPrice]]</p>
+  </div>
+
+  <div class="inline-flex gap-2 rounded bg-green-100 p-1 text-green-600">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.maxPredictedPrice)).toFixed(2)]]% </span>
+  </div>
+</article>
+  </div>
+  <div class="h-78 rounded-lg px-6">
+      <h1 class="text-4xl text-center"><b>Stock Prediction</b></h1><br>
+          <p class="text-2xl">
+              In the financial markets, predicting future trends in the stock market is crucial.
+              It not only affects investors' asset allocations but also influences the stability of the entire economic system.<br><br>
+              Our system provides forecasts for maximum, median, and minimum values, along with options for users to buy, hold, or sell.
+          </p>
   </div>
 </div>
 <!-- ML End -->
@@ -478,7 +566,7 @@
   </div>
 </section>
 <!-- Comment End -->
- <!-- Sign up start -->
+<!-- Sign up start -->
 <section class="bg-gray-50">
   <div class="p-8 md:p-12 lg:px-16 lg:py-24">
     <div class="mx-auto max-w-lg text-center">
@@ -679,10 +767,17 @@
             comment:JSON.parse('[{"accountId": 1, "userName": "li", "commentText": "Good", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "Well", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "bad", "commentDate": "datetime.datetime(2024, 6, 24, 23, 5, 53)"}, {"accountId": 2, "userName": "woody", "commentText": "When can rich to 300?", "commentDate": "datetime.datetime(2024, 6, 27, 15, 38, 10)"}, {"accountId": 1, "userName": "li", "commentText": "Test for coding", "commentDate": "datetime.datetime(2024, 6, 28, 0, 13, 48)"}]'),
           },
         mounted(){
-
+            this.renderStockData(); // 调用renderStockData方法
         },
         methods: {
-
+            renderStockData() {
+            if (!this.chart) {
+                    this.chart = klinecharts.init('chart');
+                    this.chart.createIndicator('MA', false, { id: 'candle_pane' });
+                    this.chart.createIndicator('VOL');
+                }
+                this.chart.applyNewData(this.stockData);
+            },
         }});
     </script>
     <script type="module">

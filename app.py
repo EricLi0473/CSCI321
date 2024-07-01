@@ -48,7 +48,6 @@ import pandas as pd
 from datetime import datetime, timedelta
 import threading
 import time
-import schedule
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
