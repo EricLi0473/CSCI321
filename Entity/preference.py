@@ -49,6 +49,4 @@ class Preference:
         self.commit(sql, val)
 
 if __name__ == "__main__":
-    Preference().set_preference_by_accountId("1","big","small")
-    print(Preference().get_preference_by_accountId("2"))
-    Preference().update_preference_by_accountId("1","small","big")
+    print(Preference().get_preference_by_accountId("1"))
