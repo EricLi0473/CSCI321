@@ -8,6 +8,8 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="h-screen" id="app">
@@ -175,9 +177,11 @@
           is called a bullish candle, represented by a hollow body. Conversely, if the closing price is lower than the opening price,
           it is called a bearish candle, represented by a solid black or white body.</p>
   </div>
-  <div class="h-96 rounded-lg bg-gray-200"></div>
+  <div class="h-fit rounded-lg bg-gray-200">
+          <div id="chart" class="mt-6 h-fit"  style="height: 400px;width: 600px"></div>
+  </div>
 </div>
-      <div class="divider divider-neutral"></div>
+      <div class="divider divider-neutral " ></div>
 <!-- kLine End -->
 <!-- ML Start -->
 <div class="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 h-fit">
@@ -765,7 +769,8 @@
             symbolData:JSON.parse('[{"timestamp": 1716940800000, "open": 113.05, "close": 114.82, "high": 115.49, "low": 110.9, "volume": 557442000}, {"timestamp": 1717027200000, "open": 114.65, "close": 110.5, "high": 115.82, "low": 109.66, "volume": 487350000}, {"timestamp": 1717113600000, "open": 112.52, "close": 109.63, "high": 112.72, "low": 106.94, "volume": 613263000}, {"timestamp": 1717372800000, "open": 113.62, "close": 115.0, "high": 115.0, "low": 112.0, "volume": 438392000}, {"timestamp": 1717459200000, "open": 115.72, "close": 116.44, "high": 116.6, "low": 114.04, "volume": 403324000}, {"timestamp": 1717545600000, "open": 118.37, "close": 122.44, "high": 122.45, "low": 117.47, "volume": 528402000}, {"timestamp": 1717632000000, "open": 124.05, "close": 121.0, "high": 125.59, "low": 118.32, "volume": 664696000}, {"timestamp": 1717718400000, "open": 119.77, "close": 120.89, "high": 121.69, "low": 118.02, "volume": 412386000}, {"timestamp": 1717977600000, "open": 120.37, "close": 121.79, "high": 123.1, "low": 117.01, "volume": 314162700}, {"timestamp": 1718064000000, "open": 121.77, "close": 120.91, "high": 122.87, "low": 118.74, "volume": 222551200}, {"timestamp": 1718150400000, "open": 123.06, "close": 125.2, "high": 126.88, "low": 122.57, "volume": 299595000}, {"timestamp": 1718236800000, "open": 129.39, "close": 129.61, "high": 129.8, "low": 127.16, "volume": 260704500}, {"timestamp": 1718323200000, "open": 129.96, "close": 131.88, "high": 132.84, "low": 128.32, "volume": 309320400}, {"timestamp": 1718582400000, "open": 132.99, "close": 130.98, "high": 133.73, "low": 129.58, "volume": 288504400}, {"timestamp": 1718668800000, "open": 131.14, "close": 135.58, "high": 136.33, "low": 130.69, "volume": 294335100}, {"timestamp": 1718841600000, "open": 139.8, "close": 130.78, "high": 140.76, "low": 129.52, "volume": 517768400}, {"timestamp": 1718928000000, "open": 127.12, "close": 126.57, "high": 130.63, "low": 124.3, "volume": 655484700}, {"timestamp": 1719187200000, "open": 123.24, "close": 118.11, "high": 124.46, "low": 118.04, "volume": 476060900}, {"timestamp": 1719273600000, "open": 121.2, "close": 126.09, "high": 126.5, "low": 119.32, "volume": 425787500}, {"timestamp": 1719360000000, "open": 126.13, "close": 126.4, "high": 128.12, "low": 122.6, "volume": 362975900}, {"timestamp": 1719446400000, "open": 124.1, "close": 123.99, "high": 126.41, "low": 122.92, "volume": 252571700}, {"timestamp": 1719532800000, "open": 124.58, "close": 123.54, "high": 127.71, "low": 122.75, "volume": 314945500}]'),
             predictionData:JSON.parse('{"predictionId": 1, "stockSymbol": "aapl", "requestDate": "datetime.datetime(2024, 6, 26, 13, 10, 26)", "minPredictedPrice": 100.11, "avgPredictedPrice": 150.11, "maxPredictedPrice": 300.11, "buyPercentage": 0.5, "holdPercentage": 0.3, "sellPercentage": 0.2, "timeRange": 30, "target": "Buy"}'),
             comment:JSON.parse('[{"accountId": 1, "userName": "li", "commentText": "Good", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "Well", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "bad", "commentDate": "datetime.datetime(2024, 6, 24, 23, 5, 53)"}, {"accountId": 2, "userName": "woody", "commentText": "When can rich to 300?", "commentDate": "datetime.datetime(2024, 6, 27, 15, 38, 10)"}, {"accountId": 1, "userName": "li", "commentText": "Test for coding", "commentDate": "datetime.datetime(2024, 6, 28, 0, 13, 48)"}]'),
-          },
+          stockInfo:JSON.parse('{{ stockInfo|tojson }}')
+        },
         mounted(){
             this.renderStockData(); // 调用renderStockData方法
         },
@@ -774,9 +779,8 @@
             if (!this.chart) {
                     this.chart = klinecharts.init('chart');
                     this.chart.createIndicator('MA', false, { id: 'candle_pane' });
-                    this.chart.createIndicator('VOL');
                 }
-                this.chart.applyNewData(this.stockData);
+                this.chart.applyNewData(this.symbolData);
             },
         }});
     </script>

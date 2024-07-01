@@ -361,7 +361,9 @@ def change_password():
 
 @app.route('/',methods=['GET'])
 def officialWeb():
-    return render_template("system/template.html")
+    stockInfo = StockDataController().get_stock_info_full("AAPL")
+    print(stockInfo)
+    return render_template("system/template.html",stockInfo=stockInfo)
 
 @app.route('/history',methods=['GET'])
 def history():
