@@ -182,6 +182,10 @@ def symbol_news(symbol,page):
 def searchSymbol(symbol):
     if request.method == 'POST':
         return jsonify(StockDataController().search_stock(symbol))
+@app.route('/delete_comment_by_id/<string:commentId>',methods=['POST'])
+def delete_comment_by_id(commentId):
+    CommentController().delete_comment_by_id(commentId)
+    return jsonify({'success': True})
 
 @app.route('/symbol/<string:symbol>')
 def symbol(symbol):
