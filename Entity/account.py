@@ -64,5 +64,18 @@ class Account:
         results = self.fetchAll(sql, (f"{userName}%",accountId))
         return results
 
+
+    def verifyAccount(self, email, HashPassword) -> dict or Exception:
+        sql = "SELECT * FROM account WHERE email = %s"
+        result = self.fetchOne(sql, (email,))
+        if result:
+            if result['status'] == 'invalid':
+                raise Exception("Your account has been banned.")
+            elif result['hashedPassword'] == HashPassword:
+                return result
+            else:
+                raise Exception("Incorrect password")
+        else:
+            raise Exception("Account does not exist")
 if __name__ == '__main__':
-    print(Account().get_all_account())
+    print(Account().verifyAccount("li.gmail","111"))

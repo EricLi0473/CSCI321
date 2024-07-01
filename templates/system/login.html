@@ -28,20 +28,20 @@
       <h1 class="text-2xl font-bold sm:text-3xl">Get started today!</h1>
 
       <p class="mt-4 text-gray-500">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Et libero nulla eaque error neque
-        ipsa culpa autem, at itaque nostrum!
+        Visit our website now!
       </p>
     </div>
 
-    <form action="#" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
+    <form @submit.prevent="login" class="mx-auto mb-0 mt-8 max-w-md space-y-4">
       <div>
-        <label for="email" class="sr-only">Email</label>
+        <label  class="sr-only" >Email</label>
 
         <div class="relative">
           <input
             type="email"
             class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
             placeholder="Enter email"
+            v-model="email"
           />
 
           <span class="absolute inset-y-0 end-0 grid place-content-center px-4">
@@ -64,13 +64,14 @@
       </div>
 
       <div>
-        <label for="password" class="sr-only">Password</label>
+        <label  class="sr-only">Password</label>
 
         <div class="relative">
           <input
             type="password"
             class="w-full rounded-lg border-gray-200 p-4 pe-12 text-sm shadow-sm"
             placeholder="Enter password"
+            v-model="password"
           />
 
           <span class="absolute inset-y-0 end-0 grid place-content-center px-4">
@@ -101,19 +102,29 @@
       <div class="flex items-center justify-between">
         <p class="text-sm text-gray-500">
           No account?
-          <a class="underline" href="#">Sign up</a>
+          <a class="underline" href="/signup">Sign up</a>
         </p>
 
         <button
-          type="submit"
           class="inline-block rounded-lg bg-blue-500 px-5 py-3 text-sm font-medium text-white"
+          @click="login"
         >
           Sign in
         </button>
       </div>
     </form>
   </div>
-
+    <dialog id="exception" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box bg-red-400">
+        <h3 class="font-bold text-lg">Failed</h3>
+        <p class="py-4">[[exception]]</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-200">OK</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   <div class="relative h-64 w-full sm:h-96 lg:h-full lg:w-1/2">
     <img
       alt=""
@@ -135,12 +146,35 @@
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
+          email:"",
+          password:"",
+          exception:""
           },
         mounted(){
 
         },
         methods: {
-           
+          login() {
+            console.log(this.email,this.password)
+              axios.post('/login', {
+                  email: this.email,
+                  password: this.password
+              }).then(response => {
+                  if (response.data.success) {
+                      console.log('Login successful');
+                      sessionStorage.setItem('account', JSON.stringify(response.data.account));
+                      window.location.href = '/emailVerification'; // Redirect to industry.html after successful submission
+                  } else {
+                      this.exception =  response.data.error
+                      document.getElementById('exception').showModal();
+                      console.error('Error:', response.data.error);
+                  }
+              }).catch(error => {
+                  console.error('Error during login request:', error);
+                  alert('An error occurred during login. Please try again later.');
+              });
+          }
         }});
+      </script>
 </body>
 </html>
