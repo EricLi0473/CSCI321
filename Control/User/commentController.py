@@ -8,3 +8,6 @@ class CommentController:
 
     def insert_comment(self,accountId,symbol,comment):
         Comment().insert_comment(accountId,symbol,comment)
+
+    def delete_comment_by_id(self,commentId):
+        Comment().delete_comment_by_id(commentId)

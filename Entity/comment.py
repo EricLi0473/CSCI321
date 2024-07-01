@@ -41,6 +41,10 @@ class Comment:
         sql = "insert into comment (accountId,stockSymbol,commentText) values (%s,%s,%s)"
         self.commit(sql, (accountId,symbol,comment))
 
+    def delete_comment_by_id(self, commentId):
+        sql = "delete from comment where commentId=%s"
+        self.commit(sql, (commentId,))
+
 if __name__ == '__main__':
     print(Comment().get_comments_by_symbol("aapl"))
     Comment().get_comments_by_symbol("aapl")
