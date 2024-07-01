@@ -42,6 +42,7 @@ from Control.premiumUser.get_accountList_by_followedId import *
 from Control.User.get_searchHistory_by_id import *
 from Control.User.remove_searchHistory_by_id import *
 from Control.premiumUser.get_preference_by_accountId import *
+from Control.User.emailVerificationController import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -225,9 +226,6 @@ def update_threshold_setting(symbol, threshold):
 def symbol_comments(symbol):
     return jsonify(CommentController().get_comments_by_symbol(symbol))
 
-@app.route('/emailVerification', methods=['GET', 'POST'])
-def emailVerification():
-    return render_template("/system/emailVerification.html")
 
 @app.route('/preferenceSetup', methods=['GET', 'POST'])
 def preferenceSetup():
@@ -272,19 +270,43 @@ def api():
     except Exception as e:
         return jsonify({"error":str(e)})
 
+@app.route('/emailVerification',methods=['GET','POST'])
+def emailVerification():
+    if request.method == "GET":
+        return render_template("/system/emailVerification.html")
+    if request.method == "POST":
+        # here to sent email, not verification
+        data = request.json
+        email = data["email"]
+        EmailVerificationController().send_verification_code(email)
+        return jsonify({"success": True})
 
+@app.route('/verifyEmailCode',methods=['POST'])
+def verifyEmailCode():
+    try:
+        data = request.json
+        email = data.get('email')
+        code = data.get('code')
+        accountId = data.get('accountId')
+        EmailVerificationController().verify_code(email,code)
+        session['user'] = GetAccountByAccountId().get_account_by_accountId(accountId)
+        return jsonify({"success": True})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'GET':
         return render_template("system/login.html")
-    try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        session['user'] = LoginController().login(username, password)
-        return jsonify({'success':True})
-    except Exception as e:
-        return jsonify({'success':False,'error':str(e)})
+    if request.method == 'POST':
+        try:
+            data = request.json
+            email = data.get('email')
+            password = data.get('password')
+            account = LoginController().login(email, password)
+            return jsonify({'success':True,'account': account})
+        except Exception as e:
+            return jsonify({'success':False,'error':str(e)})
 
 @app.route('/signup',methods=['POST','GET'])
 def signup():
@@ -381,9 +403,8 @@ def remove_searchHistory(id):
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
-        if session['user']["accountType"] == 'individual':
-            if session['user']["profile"] == "free":
-                return redirect(url_for('accountInfo'))
+        if session['user']["profile"] == 'premium':
+                return redirect(url_for('mainPage'))
     else:
         return redirect(url_for('login'))
 
