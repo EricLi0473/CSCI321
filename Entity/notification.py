@@ -43,13 +43,13 @@ class Notification:
         val = (accountId,notification,notificationType,referenceId,symbol)
         self.commit(sql, val)
         sql = '''
-              DELETE n1
-FROM notification n1
-INNER JOIN notification n2 
-ON n1.accountId = n2.accountId 
-AND n1.notificationType = n2.notificationType 
-AND n1.referenceId = n2.referenceId 
-AND n1.notificationId > n2.notificationId;
+                DELETE n1
+                FROM notification n1
+                INNER JOIN notification n2 
+                ON n1.accountId = n2.accountId 
+                AND n1.notificationType = n2.notificationType 
+                AND n1.referenceId = n2.referenceId 
+                AND n1.notificationId > n2.notificationId;
               '''
         val = ("")
         self.commit(sql, val)

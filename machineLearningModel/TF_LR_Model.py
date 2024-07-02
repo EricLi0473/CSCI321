@@ -101,7 +101,7 @@ class LinearRegression_Model:
         return result
 
 
-# Examples of use
+# # Examples of use
 # symbol = "aapl"
 # forecast_out = 30
 # layersNum = 4
@@ -109,4 +109,5 @@ class LinearRegression_Model:
 #
 # df = LinearRegression_Model.get_stock_data(symbol)
 # forecast_prices = LinearRegression_Model('aapl',df, forecast_out, layersNum, neuronsNum).predict_stock_price()
+# print("Forecast Prices FOR TF LR:")
 # print(forecast_prices)

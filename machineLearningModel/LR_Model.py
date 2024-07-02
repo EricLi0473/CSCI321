@@ -79,10 +79,12 @@ class LinearRegression_Model:
         predictions_df = pd.DataFrame({'Date': future_dates, 'Predicted Price': lr_prediction})
         predictions_df.set_index('Date', inplace=True)
         return predictions_df
+
     
 
 # lr = LinearRegression_Model()
-# result = lr.getStockPrediction(getStockByTickerSymbol("AAPL"),100)
+# result = lr.getStockPrediction(getStockByTickerSymbol("AAPL"),5)
 # # print(result)
 # ### transfer to json string
+# print("result testing")
 # print(result.to_json(date_format='iso').replace('T00:00:00.000', ''))
