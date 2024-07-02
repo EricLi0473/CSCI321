@@ -215,9 +215,6 @@
             },
             mounted() {
                 this.getNotifications();
-                if (this.notifications.length === 0){
-                    this.hasNoNotification = 1;
-                }
                 this.getRecommendationSymbols();
                 this.getRecommendationNews();
 
@@ -233,6 +230,9 @@
                     axios.get('/get_notification')
                         .then(response => {
                             this.notifications = response.data;
+                            if (this.notifications.length === 0){
+                        this.hasNoNotification = 1;
+                }
                         });
                 },
                 getRecommendationSymbols() {

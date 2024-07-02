@@ -10,9 +10,9 @@ class storePredictionResultController():
         db = PredictionData()
 
         predicted_prices = [pred['Predicted'] for pred in prediction_result]
-        min_price = min(predicted_prices)
-        avg_price = statistics.mean(predicted_prices)
-        max_price = max(predicted_prices)
+        min_price = round(min(predicted_prices),2)
+        avg_price = round(statistics.mean(predicted_prices),2)
+        max_price = round(max(predicted_prices),2)
 
         recommendations = [pred['Recommendation'] for pred in prediction_result]
         recommendation_counts = Counter(recommendations)
@@ -23,9 +23,9 @@ class storePredictionResultController():
         sell_count = recommendation_counts.get('Sell', 0)
 
         total_count = len(prediction_result)
-        buy_percentage = (buy_count / total_count) * 100
-        hold_percentage = (hold_count / total_count) * 100
-        sell_percentage = (sell_count / total_count) * 100
+        buy_percentage = round((buy_count / total_count),1)
+        hold_percentage = round((hold_count / total_count),1)
+        sell_percentage = round((sell_count / total_count),1)
         time_range = total_count
 
         prediction_id = db.insert_or_update_predictionData(

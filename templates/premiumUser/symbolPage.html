@@ -245,8 +245,8 @@
       <!--stock graphic-->
 <div>
     <div class="mt-4">
-        <button class="btn btn-outline btn-sm" @click="updatePeriod('180d')">180 days</button>
-        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('7d')">one week</button>
+        <button class="btn btn-outline btn-sm" @click="updatePeriod('3mo')">180 days</button>
+        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('5d')">one week</button>
         <button class="btn btn-outline btn-secondary btn-sm" @click="updatePeriod('1mo')">one month</button>
         <button class="btn btn-outline btn-sm" @click="updatePeriod('1y')">one year</button>
         <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('10y')">ten years</button>
@@ -400,7 +400,7 @@
       stroke-width="2"
       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
-    <span><b>congratulations🎉 This stock already has predicted results!</b>><br>This is [[predictionresult.timeRange]] future days advice, you can do forecast again!</span>
+    <span><b>congratulations🎉 This stock already has predicted results!</b>><br>This is [[predictionresult.timeRange]] future days advice predicted on [[formattedDate]], you can do forecast again!</span>
 </div>
 <div class="flex h-fit" v-if="!isEmpty(predictionresult)">
 
@@ -475,7 +475,7 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.maxPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-green-100 p-1 text-green-600">
+  <div :class="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
 <!--  up graphic  -->
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -483,6 +483,7 @@
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
     >
       <path
         stroke-linecap="round"
@@ -491,8 +492,22 @@
         d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
       />
     </svg>
-
-    <span class="text-xs font-medium"> [[((predictionresult.maxPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.maxPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -503,13 +518,14 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.minPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-red-100 p-1 text-red-600">
+  <div :class="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
     >
       <path
         stroke-linecap="round"
@@ -518,8 +534,23 @@
         d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
       />
     </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
 
-    <span class="text-xs font-medium">[[((predictionresult.minPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+    <span class="text-xs font-medium">[[((predictionresult.minPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -530,13 +561,14 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.avgPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-red-100 p-1 text-red-600">
+  <div :class="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
     >
       <path
         stroke-linecap="round"
@@ -545,8 +577,22 @@
         d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
       />
     </svg>
-
-    <span class="text-xs font-medium"> [[((predictionresult.avgPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.avgPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -810,6 +856,10 @@
             this.checkButtonStatus();
         },
               computed: {
+                    formattedDate() {
+          // 去除 GMT
+          return this.predictionresult.requestDate.replace(' GMT', '');
+        },
             firstLetter() {
                 return this.user.userName.charAt(0).toUpperCase();
             },
@@ -818,6 +868,7 @@
         }
         },
         mounted() {
+
             this.renderStockData(); // 调用renderStockData方法
             this.get_symbol_news();
             this.get_symbol_comments();
@@ -893,12 +944,10 @@
                     event.target.src = '../../static/resource/altNewsIMG.jpg';
                 },
             prediction() {
-                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
-                    .then(response => {
-                         this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
+                this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
                 document.getElementById('information').showModal();
                         this.setButtonClickTime();
-                    });
+                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
             },
             setButtonClickTime() {
                 const currentTime = Date.now();

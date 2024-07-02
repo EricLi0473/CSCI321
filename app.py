@@ -42,15 +42,17 @@ from Control.User.get_searchHistory_by_id import *
 from Control.User.remove_searchHistory_by_id import *
 from Control.premiumUser.get_preference_by_accountId import *
 from Control.User.emailVerificationController import *
+from Control.Admin.get_all_HeadLine_reviews import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.TF_LR_Model import *
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from Control.User.storePredictionResultController import *
+import schedule
+# from machineLearningModel.TF_LR_Model import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from Control.User.storePredictionResultController import *
 import threading
 import time
 app = Flask(__name__)
@@ -174,7 +176,7 @@ def delete_comment_by_id(commentId):
     CommentController().delete_comment_by_id(commentId)
     return jsonify({'success': True})
 
-@app.route('/symbol/<string:symbol>')
+@app.route('/symbol/<string:symbol>',methods=['GET','POST'])
 def symbol(symbol):
     user = GetAccountByAccountId().get_account_by_accountId("1")
     stockData = StockDataController().get_update_stock_data(symbol,"1y")
@@ -191,8 +193,8 @@ def request_for_prediction(symbol, days, model):
     days = int(days)
     # 1. Pass the parameters to the machine learning model
     prediction_result = None
-    default_layers = 2
-    default_neurons = 16
+    default_layers = 4
+    default_neurons = 32
     if model == 'GRU':
         df = GRU_Model.get_stock_data(symbol)
         prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
@@ -275,7 +277,9 @@ def stock_info_minimum(symbol):
 
 @app.route('/update_stock_data/<string:symbol>/<string:period>', methods=['GET'])
 def update_stock_data(symbol, period):
-    return jsonify(StockDataController().get_update_stock_data(symbol, period))
+    result = StockDataController().get_update_stock_data(symbol, period)
+    print(len(result))
+    return jsonify(result)
 
 @app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
 def stock_data_medium(symbol):
@@ -416,9 +420,17 @@ def change_password():
 @app.route('/',methods=['GET'])
 def officialWeb():
     stockInfo = StockDataController().get_stock_info_full("AAPL")
-    print(stockInfo)
-    return render_template("system/template.html",stockInfo=stockInfo)
+    predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
+    stockData = StockDataController().get_update_stock_data("AAPL","3mo")
+    stockData1 = StockDataController().get_update_stock_data("BILI","3mo")
+    stockData2 = StockDataController().get_update_stock_data("MSFT","3mo")
 
+    review = GetAllHeadLineReviews().get_all_headline_reviews()
+    return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
+
+@app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
+def get_predictionData_by_symbol(symbol):
+    return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
 @app.route('/history',methods=['GET'])
 def history():
     history = Get_searchHistory_by_id().get_searchHistory_by_id("1")
@@ -465,9 +477,12 @@ def configure_personal_setting():
         UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['industry'],session['country'])
         return jsonify({'success': True})
 
+#
+# DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
+#
 # Define a cache to store recent notifications
-notification_cache = {}
-
+# notification_cache = {}
+#
 # def threshold_notification():
 #     global notification_cache
 #     premiumUserList = GetPremiumUsersController().getPremiumUsers()
