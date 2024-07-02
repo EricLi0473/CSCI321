@@ -36,6 +36,9 @@ class Review:
         sql = "SELECT * FROM review"
         return self.fetchAll(sql,"")
 
+    def get_all_HeadLine_reviews(self):
+        sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE isHeadline = 1"
+        return self.fetchAll(sql,"")
     def insert_review_by_id(self, accountId,rating,reviewText):
         sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s)"
         val = (accountId,rating,reviewText)

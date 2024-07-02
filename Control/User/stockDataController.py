@@ -4,9 +4,11 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import concurrent.futures
 import random
+import logging
+from cachetools import TTLCache
 class StockDataController:
     def __init__(self):
-        pass
+        self.cache = TTLCache(maxsize=100, ttl=300)
 
     def fetch_stock_data(self,country:str, industry:str):
         API_TOKEN = "ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
@@ -213,8 +215,25 @@ class StockDataController:
                 except Exception:
                     continue
             return result_list
-    def get_update_stock_data(self,symbol, period):
-        df = yf.download(symbol, period=period)
+
+    def get_update_stock_data(self, symbol, period):
+        cache_key = f"{symbol}_{period}"
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        retries = 3
+        for i in range(retries):
+            try:
+                df = yf.download(symbol, period=period)
+                break
+            except Exception as e:
+                if i == retries - 1:
+                    return {"error": f"Failed to download data for {symbol} after {retries} retries: {e}"}
+                time.sleep(2 ** i)  # 指数退避重试
+
+        if df.empty:
+            return {"error": f"No data found for {symbol}"}
+
         df = df.reset_index()
         df["Close"] = round(df["Close"], 2)
         df["Open"] = round(df["Open"], 2)
@@ -231,17 +250,40 @@ class StockDataController:
                 'Volume': 'volume'
             }
         ).to_dict(orient='records')
+
+        self.cache[cache_key] = result  # 缓存结果
         return result
 
-    def get_stock_info_full(self,symbol):
+    def get_stock_info_full(self, symbol):
+        if symbol in self.cache:
+            return self.cache[symbol]
+
         data_dict = {}
-        df = yf.download(symbol, period="5d")
+
+        retries = 3
+        for i in range(retries):
+            try:
+                df = yf.download(symbol, period="5d")
+                break
+            except Exception as e:
+                if i == retries - 1:
+                    return {"error": f"Failed to download data for {symbol} after {retries} retries: {e}"}
+                time.sleep(2 ** i)  # 指数退避重试
+
+        if df.empty:
+            return {"error": f"No data found for {symbol}"}
+
         df = df.reset_index()
         df["Close"] = round(df["Close"], 2)
         df["Open"] = round(df["Open"], 2)
         df["High"] = round(df["High"], 2)
         df["Low"] = round(df["Low"], 2)
-        data_dict["closeDate"] = df.iloc[-1]['Date'].strftime('%b %d')
+
+        try:
+            data_dict["closeDate"] = df.iloc[-1]['Date'].strftime('%b %d')
+        except Exception as e:
+            return {"error": f"Failed to process date for {symbol}: {e}"}
+
         df['timestamp'] = df['Date'].apply(lambda x: int(x.timestamp() * 1000))  # 转换为Unix时间戳（毫秒）
 
         result = df[['timestamp', 'Open', 'Close', 'High', 'Low', 'Volume']].rename(
@@ -254,32 +296,49 @@ class StockDataController:
             }
         ).to_dict(orient='records')
 
+        if len(result) < 2:
+            return {"error": f"Not enough data to calculate changes for {symbol}"}
+
         data_dict['absolute_change'] = round(result[-1]['close'] - result[-2]['close'], 2)
-        data_dict["relative_change"] = round(((result[-1]['close'] - result[-2]['close']) / result[-2]['close'] * 100), 2)
+        data_dict["relative_change"] = round(((result[-1]['close'] - result[-2]['close']) / result[-2]['close'] * 100),
+                                             2)
         data_dict['upsAndDowns'] = 1 if data_dict['absolute_change'] >= 0 else 0
         data_dict['price'] = result[-1]['close']
 
-        info = yf.Ticker(symbol).info
+        retries = 3
+        for i in range(retries):
+            try:
+                info = yf.Ticker(symbol).info
+                break
+            except Exception as e:
+                if i == retries - 1:
+                    return {"error": f"Failed to fetch ticker info for {symbol} after {retries} retries: {e}"}
+                time.sleep(2 ** i)  # 指数退避重试
+
         data_dict['symbol'] = info.get('symbol', symbol)
         data_dict['longName'] = info.get('longName', 'N/A')
         data_dict['currency'] = info.get('currency', 'USD')
-        # data_dict["data"] = result
         data_dict["marketCap"] = self.convert_market_cap(info.get('marketCap', 0))
-        data_dict["trailingPE"] = round(info.get('trailingPE',0),2)
-        company = {}
-        company['longBusinessSummary'] = info.get('longBusinessSummary', 'N/A')
-        company['fullTimeEmployees'] = info.get('fullTimeEmployees', 'N/A')
-        company['address1'] = info.get('address1', 'N/A')
-        company['city'] = info.get('city', 'N/A')
-        company['zip'] = info.get('zip', 'N/A')
-        company['country'] = info.get('country', 'N/A')
-        company['phone'] = info.get('phone', 'N/A')
-        company['website'] = info.get('website', 'N/A')
-        company['longName'] = info.get('longName', 'N/A')
-        company['industry'] = info.get('industry', 'N/A')
-        company['sector'] = info.get('sector', 'N/A')
-        company['exchange'] = info.get('exchange', 'N/A')
+        data_dict["trailingPE"] = round(info.get('trailingPE', 0), 2)
+
+        company = {
+            'longBusinessSummary': info.get('longBusinessSummary', 'N/A'),
+            'fullTimeEmployees': info.get('fullTimeEmployees', 'N/A'),
+            'address1': info.get('address1', 'N/A'),
+            'city': info.get('city', 'N/A'),
+            'zip': info.get('zip', 'N/A'),
+            'country': info.get('country', 'N/A'),
+            'phone': info.get('phone', 'N/A'),
+            'website': info.get('website', 'N/A'),
+            'longName': info.get('longName', 'N/A'),
+            'industry': info.get('industry', 'N/A'),
+            'sector': info.get('sector', 'N/A'),
+            'exchange': info.get('exchange', 'N/A')
+        }
+
         data_dict['company'] = company
+
+        self.cache[symbol] = data_dict  # 将结果存储在缓存中
         return data_dict
 
 if __name__ == '__main__':

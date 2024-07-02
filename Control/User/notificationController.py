@@ -6,26 +6,30 @@ class NotificationController:
     def get_notifications_by_accountId(self,accountId):
         return Notification().get_notifications_by_accountId(accountId)
 
-    def set_notification(self,accountId,notification,notificationType,referenceId,symbol):
-        Notification().set_notification(accountId,notification,notificationType,referenceId,symbol)
+    def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
+        allNotifications = Notification().get_all_notifications()
+        # transfer input to str, (database allow str input as numeric)
+        accountId = str(accountId)
+        notification = str(notification)
+        notificationType = str(notificationType)
+        referenceId = str(referenceId)
+        symbol = str(symbol)
+        # if database data: str == input:str, duplicate data , false to insert
+        for notif in allNotifications:
+            if (str(notif['accountId']) == accountId and
+                    notif['notification'] == notification and
+                    notif['notificationType'] == notificationType and
+                    str(notif['referenceId']) == referenceId and
+                    notif['symbol'] == symbol):
+                return False
+        # if !=, insert
+        Notification().set_notification(accountId, notification, notificationType, referenceId, symbol)
+        return True
 
     def delete_notification(self,notificationId):
         Notification().delete_notification(notificationId)
 
 if __name__ == '__main__':
-    import hashlib
-
-
-    def string_to_int(s):
-        hash_object = hashlib.md5(s.encode())
-        hex_dig = hash_object.hexdigest()
-        return int(hex_dig, 16) % (2 ** 31 - 1)
-
-
-    # 示例字符串
-    string = "bili"
-    result = string_to_int(string)
-    print(result)  # 输出一个小于 2^31-1 的整数
-    # hashedSymbol = ''.join(str(ord(char)) for char in "1111")
-    # NotificationController().set_notification(1,"welcome","threshold",hashedSymbol)
-    # print(Notification().get_notifications_by_accountId("1"))
+    print(NotificationController().set_notification("1",
+                                                    "dsadssadsa",
+                                                    "friend_threshold", "1991720094", "AAPL"))
