@@ -83,6 +83,7 @@
                     id="FirstName"
                     name="first_name"
                     class="mt-1 w-full rounded-sm border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="firstName"
                   />
                 </div>
 
@@ -99,6 +100,7 @@
                     id="LastName"
                     name="last_name"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="lastName"
                   />
                 </div>
 
@@ -115,6 +117,7 @@
                     id="Email"
                     name="email"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                                        v-model="email"
                   />
                 </div>
 
@@ -131,6 +134,7 @@
                     id="Password"
                     name="password"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="password"
                   />
                 </div>
 
@@ -147,6 +151,7 @@
                     id="PasswordConfirmation"
                     name="password_confirmation"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="confirmPassword"
                   />
                 </div>
 
@@ -163,6 +168,7 @@
                     id="Age"
                     name="age"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="age"
                   />
                 </div>
 
@@ -179,11 +185,12 @@
                       name="Sex"
                       id="Sex"
                       class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+                      v-model="sex"
                     >
                       <option value="">Select option</option>
-                      <option value="JM">Male</option>
-                      <option value="SRV">Female</option>
-                      <option value="JH">Other</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
                     </select>
                   </label>
                 </div>
@@ -201,6 +208,7 @@
                     id="Occupation"
                     name="occupation"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="occupation"
                   />
                 </div>
 
@@ -213,10 +221,11 @@
                   </label>
 
                   <input
-                    type="text"
+                    type="number"
                     id="IncomeLevel"
                     name="income_level"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="incomeLevel"
                   />
                 </div>
 
@@ -229,10 +238,11 @@
                   </label>
 
                   <input
-                    type="text"
+                    type="number"
                     id="NetWorth"
                     name="net_worth"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="netWorth"
                   />
                 </div>
 
@@ -249,11 +259,12 @@
                       name="InvestmentExperience"
                       id="investment_experience"
                       class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+                      v-model="investmentExperience"
                     >
                       <option value="">Select option</option>
-                      <option value="NV">Novice</option>
-                      <option value="INT">Intermediate</option>
-                      <option value="EXP">Expert</option>
+                      <option value="novice">Novice</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="expert">Expert</option>
                     </select>
                   </label>
                 </div>
@@ -271,11 +282,12 @@
                       name="RiskTolerance"
                       id="risk_tolerance"
                       class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+                      v-model="riskTolerance"
                     >
                       <option value="">Select option</option>
-                      <option value="LW">Low</option>
-                      <option value="MD">Medium</option>
-                      <option value="HI">High</option>
+                      <option value="low">Low</option>
+                      <option value="medium">Medium</option>
+                      <option value="high">High</option>
                     </select>
                   </label>
                 </div>
@@ -293,6 +305,7 @@
                     id="InvestmentGoals"
                     name="investment_goals"
                     class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+                    v-model="investmentGoals"
                   />
                 </div>
 
@@ -305,7 +318,7 @@
 
                   <p class="mt-4 text-sm text-gray-500 sm:mt-0">
                     Already have an account?
-                    <a href="#" class="text-gray-700 underline">Log in</a>.
+                    <a href="/login" class="text-gray-700 underline">Log in</a>.
                   </p>
                 </div>
               </form>
@@ -318,7 +331,10 @@
       new Vue({
         el: "#app",
         delimiters: ["[[", "]]"],
-        data: {},
+        data: {
+
+
+        },
         mounted() {},
         methods: {},
       });
