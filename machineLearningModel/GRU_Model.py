@@ -168,7 +168,7 @@ class GRU_Model:
         plt.show()
 
 
-# 示例用法
+# # 示例用法
 # symbol = 'AAPL'  # 股票代码
 # df = GRU_Model.get_stock_data(symbol)
 # forecast_days = 30  # 预测天数
@@ -180,6 +180,6 @@ class GRU_Model:
 #
 # # 打印预测结果
 # print(predictions)
-
-# 绘制预测结果
+#
+# # 绘制预测结果
 # GRU_Model.plot_predictions(df, predictions)

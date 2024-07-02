@@ -34,7 +34,6 @@ from Control.premiumUser.update_threshold_settings import *
 from Control.User.remove_follower_in_followList_by_id import *
 from Control.User.insert_followList_by_id import *
 from Control.premiumUser.update_follower_in_followList_by_id import *
-from Control.User.addWatchListController import *
 from Control.premiumUser.get_threshold_setting_by_id import *
 from Control.premiumUser.update_preference_by_accountId import *
 from Control.premiumUser.getPremiumUsersController import *
@@ -48,6 +47,10 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
+from machineLearningModel.TF_LR_Model import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from Control.User.storePredictionResultController import *
 import threading
 import time
 app = Flask(__name__)
@@ -77,26 +80,6 @@ def space(accountId):
 def remove_symbol_from_threshold(thresholdId):
     Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(thresholdId)
     return jsonify({"success": True})
-
-# because we store list in watchlist DB, so this function table can not use
-@app.route('/add_watchlist', methods=['POST'])
-def add_watchlist():
-    try:
-        data = request.json
-        stockSymbol = data.get('symbol')
-        #accountId = session.get('user')['accountId']
-        # Hard Code for test
-        accountId = 1
-        print(f"Account ID: {accountId}, Stock Symbol: {stockSymbol}")
-
-        if Watchlist().is_stock_in_watchlist(accountId, stockSymbol):
-            return jsonify({'success': False, 'message': 'Already in Watchlist'})
-
-        AddWatchListController().add_to_watchlist(accountId, stockSymbol)
-        return jsonify({'success': True})
-    except Exception as e:
-        print(f"Error: {str(e)}")
-        return jsonify({'success': False, 'error': str(e)})
 
 
 @app.route('/friend',methods=['GET','POST'])
@@ -200,12 +183,57 @@ def symbol(symbol):
     threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
     watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
     return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
-@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>',methods=['POST'])
-def request_for_prediction(symbol,days,model):
-    # pass in (symbol,days,accountId) to backend, use 'model' to determine which model to use
-    #  symbol and accountId only use to create notification
-    print(symbol,days,model)
-    return jsonify({'success': True})
+@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
+def request_for_prediction(symbol, days, model):
+    # accountId = session.get('user')['accountId']
+    accountId = 1
+    print(f"Request for prediction: Symbol={symbol}, Days={days}, Model={model}, AccountId={accountId}")
+    days = int(days)
+    # 1. Pass the parameters to the machine learning model
+    prediction_result = None
+    default_layers = 2
+    default_neurons = 16
+    if model == 'GRU':
+        df = GRU_Model.get_stock_data(symbol)
+        prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
+
+        # format of GRU model result
+        # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
+
+    elif model == 'LR':
+        df = LinearRegression_Model.get_stock_data(symbol)
+        prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
+
+        # format of LR model result
+        # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
+
+    elif model == 'LSTM':
+        end_date = datetime.today().date()
+        start_date = (end_date - timedelta(days=365 * 5))
+        df = yf.download(symbol, start=start_date, end=end_date)
+        all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+        df = df.reindex(all_dates)
+        df = df.fillna(method='ffill')
+        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+        prediction_result = model.predict()
+        # format of LSTM prediction result
+        # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
+
+    else:
+        return jsonify({'success': False, 'error': 'Invalid model'}), 400
+
+    if not prediction_result:
+        return jsonify({'success': False, 'error': 'Prediction failed'}), 500
+
+    # 2. Store the prediction result in the database
+    prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
+
+    # 3. Store a notification
+    #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
+    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
+
+    return jsonify({'success': True, 'prediction_result': prediction_result})
+
 
 @app.route('/submit_comment',methods=["POST"])
 def submit_comment():
@@ -362,7 +390,7 @@ def updatePersonalInfo():
     #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
     if profile != "admin":
         # Refine the following method
-        UpdatePersonalInfo().updatePersonalInfo(accountId,userName,email,bio)
+        #UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
 
         #update session['user']
         return jsonify({'success': True})
