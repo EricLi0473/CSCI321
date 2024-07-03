@@ -567,7 +567,7 @@
     </div>
 
     <div class="mx-auto mt-8 max-w-xl">
-      <form action="#" class="sm:flex sm:gap-4">
+      <form class="sm:flex sm:gap-4">
         <div class="sm:flex-1">
           <label for="email" class="sr-only">Email</label>
 
@@ -575,12 +575,13 @@
             type="email"
             placeholder="Email address"
             class="w-full rounded-md border-gray-200 bg-white p-3 text-gray-700 shadow-sm transition focus:border-white focus:outline-none focus:ring focus:ring-yellow-400"
+            v-model="email"
           />
         </div>
 
         <button
-          type="submit"
           class="group mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-3 text-white transition focus:outline-none focus:ring focus:ring-yellow-400 sm:mt-0 sm:w-auto"
+            @click="signupProcess"
         >
           <span class="text-sm font-medium"> Sign Up </span>
 
@@ -752,12 +753,17 @@
           stockInfo:JSON.parse('{{ stockInfo|tojson }}'),
             reviews :JSON.parse('{{review|tojson}}'),
             symbolData1:JSON.parse('{{symbolData1|tojson}}'),
-            symbolData2:JSON.parse('{{symbolData2|tojson}}')
+            symbolData2:JSON.parse('{{symbolData2|tojson}}'),
+            email:''
         },
         mounted(){
             this.renderStockData("AAPL"); // 调用renderStockData方法
         },
         methods: {
+            signupProcess(){
+                sessionStorage.setItem('email', JSON.stringify(this.email));
+                window.location.href = '/pricing';
+            },
                     handleSelectChange(event) {
           const selectedSymbol = event.target.value;
           this.refreshData(selectedSymbol);

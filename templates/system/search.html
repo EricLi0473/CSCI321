@@ -323,7 +323,6 @@
                 if (index > -1) {
                     this.stockWatchList.splice(index, 1);
                     console.log(symbol)
-                        //todo follow
                 } else {
                     this.stockWatchList.push(symbol);
                     console.log(symbol)
@@ -343,14 +342,14 @@
                     this.accountFavoList.splice(index, 1);
                     axios.post(`/remove_follower_in_followList/${accountId}`)
                     .then(response => {
-                         this.stockList = response.data
+
                     });
 
                 } else {
                     this.accountFavoList.push(accountId);
                     axios.post(`/insert_followList/${accountId}`)
                     .then(response => {
-                         this.stockList = response.data
+
                     });
                 }
             },
