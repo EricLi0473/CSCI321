@@ -69,14 +69,20 @@ def space(accountId):
         # hard code, assume session["user"] has 1
         if int(accountId) == 1:
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
+            # stockMiniData = []
+            # for i in watchList:
+            #     stockMiniData.append(StockDataController().get_stock_info_minimum(i))
+            # print(stockMiniData)
             account = GetAccountByAccountId().get_account_by_accountId("1")
             thresholdList = GetThresholdSettingById().get_threshold_settings_by_id("1")
             return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
         else:
+            accountFavoList = GetFollowListByAccountId().get_followList_by_accountId("1")
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
             account = GetAccountByAccountId().get_account_by_accountId(accountId)
             thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
-            return render_template("/User/otherUserSpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
+            print(account)
+            return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList)
 
 @app.route('/remove_symbol_from_threshold/<string:thresholdId>',methods=['POST'])
 def remove_symbol_from_threshold(thresholdId):
@@ -477,6 +483,9 @@ def configure_personal_setting():
         UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['industry'],session['country'])
         return jsonify({'success': True})
 
+@app.route('/pricing',methods=['GET','POST'])
+def pricing():
+    return render_template("/system/pricing.html")
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
