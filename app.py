@@ -323,6 +323,7 @@ def emailVerification():
 def verifyEmailCode():
     try:
         data = request.json
+        # if data["accountStatus"] == 'login':
         email = data.get('email')
         code = data.get('code')
         accountId = data.get('accountId')

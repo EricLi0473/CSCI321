@@ -332,11 +332,23 @@
         el: "#app",
         delimiters: ["[[", "]]"],
         data: {
-
-
+          email:'',
+          profile:'',
         },
-        mounted() {},
-        methods: {},
+        mounted() {
+                if (sessionStorage.getItem('email')) {
+                    this.email = sessionStorage.getItem('email');
+                }
+                if (sessionStorage.getItem('profile')) {
+                    this.profile = sessionStorage.getItem('profile');
+                }
+        },
+        methods: {
+          signUp(){
+            sessionStorage.setItem('accountStatus', 'signUp');
+
+          },
+        },
       });
     </script>
   </body>
