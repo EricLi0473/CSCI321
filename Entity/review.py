@@ -33,7 +33,7 @@ class Review:
             self.mydb.close()
 
     def get_all_reviews(self):
-        sql = "SELECT * FROM review"
+        sql = "SELECT * FROM review JOIN account on review.accountId = account.accountId"
         return self.fetchAll(sql,"")
 
     def get_all_HeadLine_reviews(self):
