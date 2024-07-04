@@ -48,11 +48,10 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import schedule
-# from machineLearningModel.TF_LR_Model import *
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from Control.User.storePredictionResultController import *
+from machineLearningModel.TF_LR_Model import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from Control.User.storePredictionResultController import *
 import threading
 import time
 app = Flask(__name__)
@@ -401,7 +400,7 @@ def updatePersonalInfo():
     #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
     if profile != "admin":
         # Refine the following method
-        #UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
+        # UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
 
         #update session['user']
         return jsonify({'success': True})
