@@ -77,5 +77,36 @@ class Account:
                 raise Exception("Incorrect password")
         else:
             raise Exception("Account does not exist")
+
+    def update_Account(self, accountId, userName, email, bio, age, sex, occupation, incomeLevel, netWorth,
+                             investmentExperience, riskTolerance, investmentGoals, profile) -> bool:
+        sql = """
+        UPDATE account
+        SET userName = %s,
+            email = %s,
+            bio = %s,
+            age = %s,
+            sex = %s,
+            occupation = %s,
+            incomeLevel = %s,
+            netWorth = %s,
+            investmentExperience = %s,
+            riskTolerance = %s,
+            investmentGoals = %s,
+            profile = %s
+        WHERE accountId = %s
+        """
+        values = (
+        userName, email, bio, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance,
+        investmentGoals, profile, accountId)
+
+        try:
+            self.commit(sql, values)
+            return True
+        except Exception as e:
+            print(f"Error updating personal info: {e}")
+            return False
+
+
 if __name__ == '__main__':
     print(Account().verifyAccount("li.gmail","111"))
