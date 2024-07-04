@@ -90,17 +90,28 @@
         <th>Search Time</th>
       </tr>
     </thead>
-    <tbody v-for="(stock,index) in history" :key="stock.symbol">
+    <tbody v-for="(stock,index) in history" :key="stock.symbol" class="hover:bg-gray-200 cursor-pointer" @click="navigateToStock(stock.stockSymbol)">
       <!-- row 1 -->
       <tr>
         <th>[[index+1]]</th>
         <td>[[stock.stockSymbol]]</td>
         <td>[[stock.searchDate]]</td>
-          <td><button class="btn btn-error">delete</button></td>
+          <td><button class="btn btn-outline btn-error" @click.stop="removeHistory(index)">Delete</button></td>
       </tr>
     </tbody>
   </table>
 </div>
+                                    <dialog id="information" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[information]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
           </div>
       </div>
 </div>
@@ -111,12 +122,25 @@
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
-            history:JSON.parse('[{"stockSymbol":"AAPL","searchDate":"2024-10-20"},{"stockSymbol":"BILI","searchDate":"2024-12-20"}]')
+            history:JSON.parse('{{history|tojson}}'),
+          information:""
         },
         created() {
 
         },
         methods: {
+                      navigateToStock(symbol) {
+              window.location.href = `/symbol/${symbol}`;
+            },
+          removeHistory(index){
+                        const item = this.history[index];
+                            axios.post(`/remove_searchHistory/${item.searchId}`)
+                    .then(response => {
+                      this.history = this.history.filter((_, i) => i !== index);
+                      this.information ='Successful remove this stock from History'
+                      document.getElementById('information').showModal();
+                    });
+          }
         }
       });
 

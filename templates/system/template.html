@@ -8,17 +8,16 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
     <link href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.6/keen-slider.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="h-screen" id="app">
-    <header class="bg-white">
+<header class="bg-white">
         <div class="mx-auto flex h-16 max-w-screen-xl items-center gap-8 px-4 sm:px-6 lg:px-8">
           <a class="block text-teal-600" href="#">
             <span class="sr-only">Home</span>
-            <svg class="h-8" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M0.41 10.3847C1.14777 7.4194 2.85643 4.7861 5.2639 2.90424C7.6714 1.02234 10.6393 0 13.695 0C16.7507 0 19.7186 1.02234 22.1261 2.90424C24.5336 4.7861 26.2422 7.4194 26.98 10.3847H25.78C23.7557 10.3549 21.7729 10.9599 20.11 12.1147C20.014 12.1842 19.9138 12.2477 19.81 12.3047H19.67C19.5662 12.2477 19.466 12.1842 19.37 12.1147C17.6924 10.9866 15.7166 10.3841 13.695 10.3841C11.6734 10.3841 9.6976 10.9866 8.02 12.1147C7.924 12.1842 7.8238 12.2477 7.72 12.3047H7.58C7.4762 12.2477 7.376 12.1842 7.28 12.1147C5.6171 10.9599 3.6343 10.3549 1.61 10.3847H0.41ZM23.62 16.6547C24.236 16.175 24.9995 15.924 25.78 15.9447H27.39V12.7347H25.78C24.4052 12.7181 23.0619 13.146 21.95 13.9547C21.3243 14.416 20.5674 14.6649 19.79 14.6649C19.0126 14.6649 18.2557 14.416 17.63 13.9547C16.4899 13.1611 15.1341 12.7356 13.745 12.7356C12.3559 12.7356 11.0001 13.1611 9.86 13.9547C9.2343 14.416 8.4774 14.6649 7.7 14.6649C6.9226 14.6649 6.1657 14.416 5.54 13.9547C4.4144 13.1356 3.0518 12.7072 1.66 12.7347H0V15.9447H1.61C2.39051 15.924 3.154 16.175 3.77 16.6547C4.908 17.4489 6.2623 17.8747 7.65 17.8747C9.0377 17.8747 10.392 17.4489 11.53 16.6547C12.1468 16.1765 12.9097 15.9257 13.69 15.9447C14.4708 15.9223 15.2348 16.1735 15.85 16.6547C16.9901 17.4484 18.3459 17.8738 19.735 17.8738C21.1241 17.8738 22.4799 17.4484 23.62 16.6547ZM23.62 22.3947C24.236 21.915 24.9995 21.664 25.78 21.6847H27.39V18.4747H25.78C24.4052 18.4581 23.0619 18.886 21.95 19.6947C21.3243 20.156 20.5674 20.4049 19.79 20.4049C19.0126 20.4049 18.2557 20.156 17.63 19.6947C16.4899 18.9011 15.1341 18.4757 13.745 18.4757C12.3559 18.4757 11.0001 18.9011 9.86 19.6947C9.2343 20.156 8.4774 20.4049 7.7 20.4049C6.9226 20.4049 6.1657 20.156 5.54 19.6947C4.4144 18.8757 3.0518 18.4472 1.66 18.4747H0V21.6847H1.61C2.39051 21.664 3.154 21.915 3.77 22.3947C4.908 23.1889 6.2623 23.6147 7.65 23.6147C9.0377 23.6147 10.392 23.1889 11.53 22.3947C12.1468 21.9165 12.9097 21.6657 13.69 21.6847C14.4708 21.6623 15.2348 21.9135 15.85 22.3947C16.9901 23.1884 18.3459 23.6138 19.735 23.6138C21.1241 23.6138 22.4799 23.1884 23.62 22.3947Z"
-                fill="currentColor"></path>
+          <img src="../../static/resource/LOGOS/BlackLogo.png" class="w-8 h-8">
             </svg>
           </a>
 
@@ -28,26 +27,6 @@
                 <li>
                   <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> About </a>
                 </li>
-
-                <li>
-                  <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> Careers </a>
-                </li>
-
-                <li>
-                  <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> History </a>
-                </li>
-
-                <li>
-                  <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> Services </a>
-                </li>
-
-                <li>
-                  <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> Projects </a>
-                </li>
-
-                <li>
-                  <a class="text-gray-500 transition hover:text-gray-500/75" href="#"> Blog </a>
-                </li>
               </ul>
             </nav>
 
@@ -55,14 +34,14 @@
               <div class="sm:flex sm:gap-4">
                 <a
                   class="block rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700"
-                  href="#"
+                  href="/login"
                 >
                   Login
                 </a>
 
                 <a
                   class="hidden rounded-md bg-gray-100 px-5 py-2.5 text-sm font-medium text-teal-600 transition hover:text-teal-600/75 sm:block"
-                  href="#"
+                  href="/signup"
                 >
                   Register
                 </a>
@@ -100,26 +79,26 @@
   >
     <div class="max-w-xl ltr:sm:text-left rtl:sm:text-right">
       <h1 class="text-3xl font-extrabold text-white sm:text-5xl">
-        Let us find your
+        Your powerful investment assistant
 
-        <strong class="block font-extrabold text-rose-500"> Forever Home. </strong>
+        <strong class="block font-extrabold text-rose-500"> StockForecast4.me </strong>
       </h1>
 
       <p class="mt-4 max-w-lg text-white sm:text-xl/relaxed">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Nesciunt illo tenetur fuga ducimus
-        numquam ea!
+        Accurate Predictions, Smart Investments<br>
+—Empower Your Wealth Growth!
       </p>
 
       <div class="mt-8 flex flex-wrap gap-4 text-center">
         <a
-          href="#"
+          href="#start"
           class="block w-full rounded bg-rose-600 px-12 py-3 text-sm font-medium text-white shadow hover:bg-rose-700 focus:outline-none focus:ring active:bg-rose-500 sm:w-auto"
         >
           Get Started
         </a>
 
         <a
-          href="#"
+          href="#info"
           class="block w-full rounded bg-white px-12 py-3 text-sm font-medium text-rose-600 shadow hover:text-rose-700 focus:outline-none focus:ring active:text-rose-500 sm:w-auto"
         >
           Learn More
@@ -131,13 +110,12 @@
 <!--   Banner End! -->
 <!--   Stat Start! -->
 <section class="bg-white">
-  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8 mt-8" id="info">
     <div class="mx-auto max-w-3xl text-center">
-      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Trusted by eCommerce Businesses</h2>
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Trusted by our Customers and Business</h2>
 
       <p class="mt-4 text-gray-500 sm:text-xl">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione dolores laborum labore
-        provident impedit esse recusandae facere libero harum sequi.
+        You deserve to be trusted with our stock system
       </p>
     </div>
 
@@ -146,19 +124,19 @@
         <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
           <dt class="order-last text-lg font-medium text-gray-500">Premium User</dt>
 
-          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">213</dd>
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[stat.premiumAccount]]</dd>
         </div>
 
         <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
-          <dt class="order-last text-lg font-medium text-gray-500">prediction data</dt>
+          <dt class="order-last text-lg font-medium text-gray-500">Prediction data</dt>
 
-          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">424</dd>
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[stat.prediction]]</dd>
         </div>
 
         <div class="flex flex-col rounded-lg border border-gray-100 px-4 py-8 text-center">
-          <dt class="order-last text-lg font-medium text-gray-500">supported stock</dt>
+          <dt class="order-last text-lg font-medium text-gray-500">Supported stock</dt>
 
-          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">890</dd>
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[stat.symbol]] +</dd>
         </div>
       </dl>
     </div>
@@ -166,23 +144,317 @@
 </section>
 <!-- Stat End -->
 <!-- kLine Start -->
-<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
-  <div class="h-fit rounded-lg pl-8">
-      <h1 class="text-3xl text-center xl:text-4xl"><b>what is k-line?</b></h1><br>
-      <p class="text-base xl:text-3xl">The K-line chart is a financial chart that graphically presents the price changes of assets over a given time period.<br><br>
-          Users can search for any stock through our system to visually inspect the status of each stock.</p><br>
+    <div class="text-center text-4xl mt-8">
+        <h1><b>What service we have </b></h1><br>
+    </div>
+    <div class="grid grid-cols-1 gap-1 xl:grid-cols-2 lg:gap-6 px-10 relative">
+  <div class="h-fit rounded-lg pl-8 mt-14 mr-20">
+      <div class="flex gap-3">
+          <article
+  class="mr-8 w-1/2 h-34 bg-gray-700 shadow p-4 space-y-2 rounded-md hover:-translate-y-2 duration-300"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 7.8l-7.7 7.7-4-4-5.7 5.7"/><path d="M15 7h6v6"/></svg>
+
+  <p class="text-xl text-white">
+    Stocks in multiple countries with historical and real time data, as well as an ML prediction system
+  </p>
+</article>
+          <article
+  class=" w-1/2 h-34 bg-gray-700 shadow p-4 space-y-2 rounded-md hover:-translate-y-2 duration-300"
+>
+  <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+  <p class="text-xl w-fit text-white">
+    Friend system, you can check and follow users, share favourites
+  </p>
+</article>
+      </div>
+      <div class="mt-16 flex gap-3">
+          <article
+  class="w-1/2 mr-8 bg-gray-700 shadow p-4 space-y-2 rounded-md hover:-translate-y-2 duration-300"
+>
+    <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+  <p class="text-xl w-full text-white">
+    Bookmark and follow your favourite stocks and get news and stock data on your favourite industries and countries.
+  </p>
+</article>
+          <article
+  class="w-1/2 h-34 bg-gray-700 shadow p-4 space-y-2 rounded-md hover:-translate-y-2 duration-300"
+>
+<svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path></svg>
+  <p class="text-xl w-full text-white">
+    Alert system so you can be alerted when stocks go up or down, you decide the threshold.
+  </p>
+</article>
+      </div>
   </div>
-  <div class="h-fit pr-8 "><img src="../../static/resource/stock.png"></div>
+  <div class=" h-fit rounded-lg w-full flex">
+      <div class="mt-10 h-fit rounded-lg mr-4">
+      <div class="">
+          <div class="">
+  <label for="HeadlineAct" class="block text-sm font-medium text-gray-900"></label>
+
+  <select
+    name="HeadlineAct"
+    id="HeadlineAct"
+    class="mt-3 w-full py-6 rounded-lg border-gray-300 text-gray-700 text-center text-2xl font-bold border-2"
+    @change="handleSelectChange"
+  >
+    <option value="AAPL">Apple</option>
+    <option value="BILI">Bilibili</option>
+    <option value="MSFT">Microsoft</option>
+  </select>
+</div>
+
+  <div class="stats shadow stats-vertical">
+  <div class="stat">
+
+    <div class="stat-title">Price</div>
+    <div class="stat-value"><p :class="stockInfo.upsAndDowns === 1 ? 'text-lime-600' : 'text-rose-600'">[[stockInfo.price]]</p></div>
+
+  </div>
+
+  <div class="stat">
+    <div class="stat-figure text-secondary">
+    </div>
+    <div class="stat-title">chg.</div>
+    <div class="stat-value"><p :class="stockInfo.upsAndDowns === 1 ? 'text-lime-600' : 'text-rose-600'">[[stockInfo.absolute_change]]</p></div>
+
+  </div>
+
+  <div class="stat">
+    <div class="stat-figure text-secondary">
+    </div>
+    <div class="stat-title">chg.%</div>
+    <div class="stat-value"><p :class="stockInfo.upsAndDowns === 1 ? 'text-lime-600' : 'text-rose-600'">[[stockInfo.relative_change]]%</p></div>
+  </div>
+
+      <div class="stat">
+    <div class="stat-figure text-secondary">
+    </div>
+    <div class="stat-title">marketCap</div>
+    <div class="stat-value">[[stockInfo.marketCap]]</div>
+  </div>
+</div>
+      </div>
+
+  </div>
+
+      <div id="chart" class="mt-10 h-fit"  style="height: 510px;width: 100%"></div>
+  </div>
 </div>
 <!-- kLine End -->
 <!-- ML Start -->
-<div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mt-16">
-  <div class="h-fit rounded-lg pl-8 pt-8"><img src="../../static/resource/predictionData.png"></div>
-  <div class="h-fit rounded-lg ">
-      <h1 class="text-3xl text-center xl:text-4xl"><b>prediction result</b></h1><br>
-      <p class="text-base xl:text-3xl"> The predicted results include: maximum value, average value, and minimum value.<br><br>
-          Through our forecasting system, users can predict these outcomes for the stocks they are interested in,
-          and we will present these easily understandable and simple data to the users. </p>
+<div class="mt-16">
+        <h1 class="text-4xl text-center"><b>Stock Prediction</b></h1>
+</div>
+<div class="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 h-fit">
+    <div class="flex">
+        <div class="h-32 rounded-lg h-fit px-6 w-1/2 ml-12">
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Max</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.maxPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionData.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.maxPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.maxPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]%</span>
+  </div>
+</article>
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">AVG</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.avgPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionData.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.avgPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.avgPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
+  </div>
+</article>
+      <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Min</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionData.minPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionData.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.minPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionData.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium"> [[((predictionData.minPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
+  </div>
+</article>
+  </div>
+        <div class="">
+            <button
+      class="mx-auto mt-8 w-32 h-32 rounded-full text-black flex items-center justify-center text-lg font-bold bg-green-500"
+      :class="{
+        'bg-green-500': predictionData.target === 'Buy',
+        'bg-blue-500': predictionData.target === 'Hold',
+        'bg-red-500': predictionData.target === 'Sell'
+      }"
+    >
+              <span class="text-white">   {{ predictionData.target }} </span>
+            </button>
+            <div id="has_predict" class=" ml-8 mt-12" >
+  <div class="flex items-center mb-2">
+    <span class="text-green-500 font-semibold w-12">Buy</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-green-500 h-full" style="width: calc({{ predictionData.buyPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionData.buyPercentage*100]]%</span>
+</div>
+
+<div class="flex items-center mb-2">
+    <span class="text-blue-500 font-semibold w-12">Hold</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-blue-500 h-full" style="width: calc({{ predictionData.holdPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionData.holdPercentage*100]]%</span>
+</div>
+
+<div class="flex items-center">
+    <span class="text-red-500 font-semibold w-12">Sell</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-red-500 h-full" style="width: calc({{ predictionData.sellPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionData.sellPercentage*100]]%</span>
+</div>
+
+</div>
+
+        </div>
+    </div>
+
+  <div class="h-fit rounded-lg px-6 mt-6">
+          <article class="rounded-xl border border-gray-700 bg-gray-800 p-4">
+  <ul class=" space-y-2">
+    <li>
+      <a href="#" class="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600">
+        <strong class="font-medium text-white">Machine Learing</strong>
+
+        <p class="mt-1 text-xs font-medium text-gray-300">
+          We use advanced machine learning models as well as historical data to make future predictions
+        </p>
+      </a>
+    </li>
+
+    <li>
+      <a href="#" class="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600">
+        <strong class="font-medium text-white">Custom future days</strong>
+
+        <p class="mt-1 text-xs font-medium text-gray-300">
+          You can customise the number of days to help you know the maximum and minimum as well as the average for the next number of days
+        </p>
+      </a>
+    </li>
+
+    <li>
+      <a href="#" class="block h-full rounded-lg border border-gray-700 p-4 hover:border-pink-600">
+        <strong class="font-medium text-white">Select and Go prediction!</strong>
+
+        <p class="mt-1 text-xs font-medium text-gray-300">
+          No need you to set up models, no need to prepare data, just press a button and the system will help you predict in the background!
+        </p>
+      </a>
+    </li>
+  </ul>
+</article>
   </div>
 </div>
 <!-- ML End -->
@@ -236,58 +508,19 @@
     </div>
 
     <div class="-mx-6 mt-8 lg:col-span-2 lg:mx-0">
-      <div id="keen-slider" class="keen-slider">
-        <div class="keen-slider__slide">
+      <div id="keen-slider"  class="keen-slider">
+        <div class="keen-slider__slide" v-for="(item,index) in reviews" :key="item.reviewId">
           <blockquote
             class="flex h-full flex-col justify-between bg-white p-6 shadow-sm sm:p-8 lg:p-12"
           >
             <div>
               <div class="flex gap-0.5 text-green-500">
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
+
+
 
                 <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
+                              v-for="index in parseInt(item.rating, 10)"
+                    :key="index"
                   class="h-5 w-5"
                   fill="currentColor"
                   viewBox="0 0 20 20"
@@ -300,201 +533,41 @@
               </div>
 
               <div class="mt-4">
-                <p class="text-2xl font-bold text-rose-600 sm:text-3xl">Stayin' Alive</p>
+                <p class="text-2xl font-bold text-rose-600 sm:text-3xl">[[item.reviewText.substring(0, 10)]]...</p>
 
                 <p class="mt-4 leading-relaxed text-gray-700">
-                  No, Rose, they are not breathing. And they have no arms or legs … Where are they?
-                  You know what? If we come across somebody with no arms or legs, do we bother
-                  resuscitating them? I mean, what quality of life do we have there?
+                  [[item.reviewText]]
                 </p>
               </div>
             </div>
 
             <footer class="mt-4 text-sm font-medium text-gray-700 sm:mt-6">
-              &mdash; Michael Scott
+              &mdash; [[item.userName]]
             </footer>
           </blockquote>
         </div>
 
-        <div class="keen-slider__slide">
-          <blockquote
-            class="flex h-full flex-col justify-between bg-white p-6 shadow-sm sm:p-8 lg:p-12"
-          >
-            <div>
-              <div class="flex gap-0.5 text-green-500">
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
 
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-              </div>
-
-              <div class="mt-4">
-                <p class="text-2xl font-bold text-rose-600 sm:text-3xl">Stayin' Alive</p>
-
-                <p class="mt-4 leading-relaxed text-gray-700">
-                  No, Rose, they are not breathing. And they have no arms or legs … Where are they?
-                  You know what? If we come across somebody with no arms or legs, do we bother
-                  resuscitating them? I mean, what quality of life do we have there?
-                </p>
-              </div>
-            </div>
-
-            <footer class="mt-4 text-sm font-medium text-gray-700 sm:mt-6">
-              &mdash; Michael Scott
-            </footer>
-          </blockquote>
-        </div>
-
-        <div class="keen-slider__slide">
-          <blockquote
-            class="flex h-full flex-col justify-between bg-white p-6 shadow-sm sm:p-8 lg:p-12"
-          >
-            <div>
-              <div class="flex gap-0.5 text-green-500">
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-
-                <svg
-                  class="h-5 w-5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
-                  />
-                </svg>
-              </div>
-
-              <div class="mt-4">
-                <p class="text-2xl font-bold text-rose-600 sm:text-3xl">Stayin' Alive</p>
-
-                <p class="mt-4 leading-relaxed text-gray-700">
-                  No, Rose, they are not breathing. And they have no arms or legs … Where are they?
-                  You know what? If we come across somebody with no arms or legs, do we bother
-                  resuscitating them? I mean, what quality of life do we have there?
-                </p>
-              </div>
-            </div>
-
-            <footer class="mt-4 text-sm font-medium text-gray-700 sm:mt-6">
-              &mdash; Michael Scott
-            </footer>
-          </blockquote>
-        </div>
       </div>
     </div>
   </div>
 </section>
 <!-- Comment End -->
- <!-- Sign up start -->
+<!-- Sign up start -->
 <section class="bg-gray-50">
-  <div class="p-8 md:p-12 lg:px-16 lg:py-24">
+  <div class="p-8 md:p-12 lg:px-16 lg:py-24" id="start">
     <div class="mx-auto max-w-lg text-center">
       <h2 class="text-2xl font-bold text-gray-900 md:text-3xl">
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit
+        Register now to enjoy our services!
       </h2>
 
       <p class="hidden text-gray-500 sm:mt-4 sm:block">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quae dolor officia blanditiis
-        repellat in, vero, aperiam porro ipsum laboriosam consequuntur exercitationem incidunt
-        tempora nisi?
+        Fill in your email to enter!
       </p>
     </div>
 
     <div class="mx-auto mt-8 max-w-xl">
-      <form action="#" class="sm:flex sm:gap-4">
+      <form class="sm:flex sm:gap-4" @submit.prevent="signupProcess">
         <div class="sm:flex-1">
           <label for="email" class="sr-only">Email</label>
 
@@ -502,12 +575,14 @@
             type="email"
             placeholder="Email address"
             class="w-full rounded-md border-gray-200 bg-white p-3 text-gray-700 shadow-sm transition focus:border-white focus:outline-none focus:ring focus:ring-yellow-400"
+            v-model="email"
           />
         </div>
 
         <button
-          type="submit"
+                 type="submit"
           class="group mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-3 text-white transition focus:outline-none focus:ring focus:ring-yellow-400 sm:mt-0 sm:w-auto"
+            @click="signupProcess"
         >
           <span class="text-sm font-medium"> Sign Up </span>
 
@@ -673,16 +748,52 @@
         el: '#app',
         delimiters: ['[[', ']]'],
         data: {
-            stat:JSON.parse('{"premiumAccount":100,"prediction":1000,"symbol":250}'),
-            symbolData:JSON.parse('[{"timestamp": 1716940800000, "open": 113.05, "close": 114.82, "high": 115.49, "low": 110.9, "volume": 557442000}, {"timestamp": 1717027200000, "open": 114.65, "close": 110.5, "high": 115.82, "low": 109.66, "volume": 487350000}, {"timestamp": 1717113600000, "open": 112.52, "close": 109.63, "high": 112.72, "low": 106.94, "volume": 613263000}, {"timestamp": 1717372800000, "open": 113.62, "close": 115.0, "high": 115.0, "low": 112.0, "volume": 438392000}, {"timestamp": 1717459200000, "open": 115.72, "close": 116.44, "high": 116.6, "low": 114.04, "volume": 403324000}, {"timestamp": 1717545600000, "open": 118.37, "close": 122.44, "high": 122.45, "low": 117.47, "volume": 528402000}, {"timestamp": 1717632000000, "open": 124.05, "close": 121.0, "high": 125.59, "low": 118.32, "volume": 664696000}, {"timestamp": 1717718400000, "open": 119.77, "close": 120.89, "high": 121.69, "low": 118.02, "volume": 412386000}, {"timestamp": 1717977600000, "open": 120.37, "close": 121.79, "high": 123.1, "low": 117.01, "volume": 314162700}, {"timestamp": 1718064000000, "open": 121.77, "close": 120.91, "high": 122.87, "low": 118.74, "volume": 222551200}, {"timestamp": 1718150400000, "open": 123.06, "close": 125.2, "high": 126.88, "low": 122.57, "volume": 299595000}, {"timestamp": 1718236800000, "open": 129.39, "close": 129.61, "high": 129.8, "low": 127.16, "volume": 260704500}, {"timestamp": 1718323200000, "open": 129.96, "close": 131.88, "high": 132.84, "low": 128.32, "volume": 309320400}, {"timestamp": 1718582400000, "open": 132.99, "close": 130.98, "high": 133.73, "low": 129.58, "volume": 288504400}, {"timestamp": 1718668800000, "open": 131.14, "close": 135.58, "high": 136.33, "low": 130.69, "volume": 294335100}, {"timestamp": 1718841600000, "open": 139.8, "close": 130.78, "high": 140.76, "low": 129.52, "volume": 517768400}, {"timestamp": 1718928000000, "open": 127.12, "close": 126.57, "high": 130.63, "low": 124.3, "volume": 655484700}, {"timestamp": 1719187200000, "open": 123.24, "close": 118.11, "high": 124.46, "low": 118.04, "volume": 476060900}, {"timestamp": 1719273600000, "open": 121.2, "close": 126.09, "high": 126.5, "low": 119.32, "volume": 425787500}, {"timestamp": 1719360000000, "open": 126.13, "close": 126.4, "high": 128.12, "low": 122.6, "volume": 362975900}, {"timestamp": 1719446400000, "open": 124.1, "close": 123.99, "high": 126.41, "low": 122.92, "volume": 252571700}, {"timestamp": 1719532800000, "open": 124.58, "close": 123.54, "high": 127.71, "low": 122.75, "volume": 314945500}]'),
-            predictionData:JSON.parse('{"predictionId": 1, "stockSymbol": "aapl", "requestDate": "datetime.datetime(2024, 6, 26, 13, 10, 26)", "minPredictedPrice": 100.11, "avgPredictedPrice": 150.11, "maxPredictedPrice": 300.11, "buyPercentage": 0.5, "holdPercentage": 0.3, "sellPercentage": 0.2, "timeRange": 30, "target": "Buy"}'),
-            comment:JSON.parse('[{"accountId": 1, "userName": "li", "commentText": "Good", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "Well", "commentDate": "datetime.datetime(2024, 6, 24, 22, 57, 35)"}, {"accountId": 1, "userName": "li", "commentText": "bad", "commentDate": "datetime.datetime(2024, 6, 24, 23, 5, 53)"}, {"accountId": 2, "userName": "woody", "commentText": "When can rich to 300?", "commentDate": "datetime.datetime(2024, 6, 27, 15, 38, 10)"}, {"accountId": 1, "userName": "li", "commentText": "Test for coding", "commentDate": "datetime.datetime(2024, 6, 28, 0, 13, 48)"}]'),
-          },
+            stat:JSON.parse('{"premiumAccount":5,"prediction":10,"symbol":5000}'),
+          symbolData:JSON.parse('{{symbolData|tojson}}'),
+          predictionData:JSON.parse('{{predictionData|tojson}}'),
+          stockInfo:JSON.parse('{{ stockInfo|tojson }}'),
+            reviews :JSON.parse('{{review|tojson}}'),
+            symbolData1:JSON.parse('{{symbolData1|tojson}}'),
+            symbolData2:JSON.parse('{{symbolData2|tojson}}'),
+            email:''
+        },
         mounted(){
-
+            this.renderStockData("AAPL"); // 调用renderStockData方法
         },
         methods: {
+            signupProcess(){
+                sessionStorage.setItem('email', this.email);
+                window.location.href = '/pricing';
+            },
+                    handleSelectChange(event) {
+          const selectedSymbol = event.target.value;
+          this.refreshData(selectedSymbol);
+        },
+            refreshData(symbol){
 
+                axios.get(`/get_predictionData_by_symbol/${symbol}`)
+                    .then(response => {
+                   this.predictionData = response.data
+                    });
+                                            axios.get(`/stock_info_full/${symbol}`)
+                    .then(response => {
+                        this.stockInfo = response.data
+                    });
+                                            this.renderStockData(symbol);
+
+
+
+            },
+            renderStockData(symbol) {
+            if (!this.chart) {
+                    this.chart = klinecharts.init('chart');
+                    this.chart.createIndicator('MA', false, { id: 'candle_pane' });
+                }
+            if(symbol === 'AAPL'){this.chart.applyNewData(this.symbolData);}
+            else if (symbol === 'BILI'){this.chart.applyNewData(this.symbolData1);}
+            else if (symbol === 'MSFT'){this.chart.applyNewData(this.symbolData2);}
+
+            },
         }});
     </script>
     <script type="module">
@@ -715,6 +826,26 @@
 
   keenSliderPrevious.addEventListener('click', () => keenSlider.prev())
   keenSliderNext.addEventListener('click', () => keenSlider.next())
+          // Show or hide the button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) {
+                document.getElementById('toTopButton').classList.remove('hidden');
+            } else {
+                document.getElementById('toTopButton').classList.add('hidden');
+            }
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
 </script>
 </body>
 </html>

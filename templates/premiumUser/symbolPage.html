@@ -31,25 +31,25 @@
             </div>
             <ul class="space-y-1 border-t border-gray-100 pt-4">
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a :href="`/space/${user.accountId}`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">My Account</span>
                 </a>
               </li>
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a :href="`/space/${user.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
                 </a>
               </li>
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a href="/friend" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Friend</span>
                 </a>
               </li>
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a href="/history" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">History Search</span>
                 </a>
@@ -73,10 +73,10 @@
     <div class="flex-1 ml-16" >
       <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
         <div>
-          <a class="btn btn-ghost text-xl">Stock4Me</a>
+          <a class="btn btn-ghost text-xl" href="/mainPage">Stock4Me</a>
         </div>
-        <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
-        <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
+        <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
+        <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
       </div>
       <!-- Content Start! -->
       <div class="mt-20 pl-4">
@@ -129,13 +129,14 @@
       <div class="w-full h-fit mt-2 px-8 pt-8">
         <div id="stock_card" class="">
           <div id="stock_name" class="text-2xl flex justify-between">
-            <h1><b>[[stockInfo.longName]]</b></h1>
+            <h1 class="mr-4 "><b>[[stockInfo.longName]]</b></h1>
+              <span class="mr-auto text-slate-700">([[stockInfo.symbol]])</span>
             <div class="text-right pr-8 flex gap-5">
-<div class="text-md mt-3 ml-3">
+<div class="text-md mt-3 ml-3 tooltip" data-tip="When the stock goes up or down by a certain percentage, the system will alert you on the home page">
   <p>Notify me when..</p>
 </div>
 
- <div :class="{'bg-red-500': thresholdinputValid}" class="p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">    <div class="flex items-center justify-center fill-white" >
+ <div :class="{'bg-red-500': thresholdinputValid}"  class=" p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">    <div class="flex items-center justify-center fill-white" >
       <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
       </svg>
@@ -244,8 +245,8 @@
       <!--stock graphic-->
 <div>
     <div class="mt-4">
-        <button class="btn btn-outline btn-sm" @click="updatePeriod('180d')">180 days</button>
-        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('7d')">one week</button>
+        <button class="btn btn-outline btn-sm" @click="updatePeriod('3mo')">180 days</button>
+        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('5d')">one week</button>
         <button class="btn btn-outline btn-secondary btn-sm" @click="updatePeriod('1mo')">one month</button>
         <button class="btn btn-outline btn-sm" @click="updatePeriod('1y')">one year</button>
         <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('10y')">ten years</button>
@@ -339,7 +340,8 @@
   </div>
 </div>
 
-        <div class="mt-24 text-3xl">
+        <div class="mt-24 text-3xl indicator">
+            <span class="indicator-item badge badge-primary">advance ML feature</span>
           <b id="analysis">Analysis</b>
         </div>
 
@@ -398,13 +400,20 @@
       stroke-width="2"
       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
   </svg>
-    <span><b>congratulations🎉 This stock already has predicted results!</b>><br>This is [[predictionresult.timeRange]] days predicted data, you can do forecast again!</span>
+    <span><b>congratulations🎉 This stock already has predicted results!</b>><br>This is [[predictionresult.timeRange]] future days advice predicted on [[formattedDate]], you can do forecast again!</span>
 </div>
 <div class="flex h-fit" v-if="!isEmpty(predictionresult)">
 
-  <button class="mt-8 w-32 h-32 rounded-full bg-green-500 text-white flex items-center justify-center text-lg font-bold" >
-    [[predictionresult.target]]
-</button>
+    <button
+      class="mt-8 w-32 h-32 rounded-full text-white flex items-center justify-center text-lg font-bold"
+      :class="{
+        'bg-green-500': predictionresult.target === 'Buy',
+        'bg-blue-500': predictionresult.target === 'Hold',
+        'bg-red-500': predictionresult.target === 'Sell'
+      }"
+    >
+      {{ predictionresult.target }}
+    </button>
 
 <div id="has_predict" class=" ml-8 mt-12" >
   <div class="flex items-center mb-2">
@@ -466,7 +475,7 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.maxPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-green-100 p-1 text-green-600">
+  <div :class="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
 <!--  up graphic  -->
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -474,6 +483,7 @@
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
     >
       <path
         stroke-linecap="round"
@@ -482,8 +492,22 @@
         d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
       />
     </svg>
-
-    <span class="text-xs font-medium"> [[((predictionresult.maxPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.maxPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -494,13 +518,14 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.minPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-red-100 p-1 text-red-600">
+  <div :class="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
     >
       <path
         stroke-linecap="round"
@@ -509,8 +534,23 @@
         d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
       />
     </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
 
-    <span class="text-xs font-medium">[[((predictionresult.minPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+    <span class="text-xs font-medium">[[((predictionresult.minPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -521,13 +561,14 @@
     <p class="text-2xl font-medium text-gray-900">$[[predictionresult.avgPredictedPrice]]</p>
   </div>
 
-  <div class="inline-flex gap-2 rounded bg-red-100 p-1 text-red-600">
+  <div :class="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       class="h-4 w-4"
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
     >
       <path
         stroke-linecap="round"
@@ -536,8 +577,22 @@
         d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
       />
     </svg>
-
-    <span class="text-xs font-medium"> [[((predictionresult.avgPredictedPrice-stockInfo.price)).toFixed(2)]]% </span>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.avgPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
   </div>
 </article>
 
@@ -601,11 +656,12 @@
       <div class="w-full text-right mt-6">
 <button class="btn btn-outline" @click="submit_comment" :disabled="isCoolingDown">[[ buttonText ]]</button>          </div>
 
-    <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="item in comments" :key="item.url">
+    <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="(item,index) in comments" :key="item.url">
   <div class="flex-1">
     <div class="flex justify-between items-center">
       <h4 class="text-sm font-bold">[[item.userName]]</h4>
-      <span class="text-xs text-gray-500">[[item.commentDate]]</span>
+      <span class="text-xs text-gray-500 ml-auto">[[item.commentDate]]</span>
+        <button class="ml-4 btn btn-outline btn-error btn-xs" v-if="item.userName === user.userName" @click="deleteComment(index)">Delete</button>
     </div>
     <p class="mt-1 text-sm">
       [[item.commentText]]
@@ -793,12 +849,17 @@
             comment:"",
             isCoolingDown: false,
             buttonText: 'Submit',
-            isNewsLoading :1
+            isNewsLoading :1,
+            search:""
         },
                 created() {
             this.checkButtonStatus();
         },
               computed: {
+                    formattedDate() {
+          // 去除 GMT
+          return this.predictionresult.requestDate.replace(' GMT', '');
+        },
             firstLetter() {
                 return this.user.userName.charAt(0).toUpperCase();
             },
@@ -807,6 +868,7 @@
         }
         },
         mounted() {
+
             this.renderStockData(); // 调用renderStockData方法
             this.get_symbol_news();
             this.get_symbol_comments();
@@ -820,9 +882,21 @@
                 } else {
                     this.is_inside_watchList = 0;
                 }
-                console.log(this.is_inside_watchList)
         },
         methods: {
+            deleteComment(index){
+                const item = this.comments[index];
+                axios.post(`/delete_comment_by_id/${item.commentId}`)
+                    .then(response => {
+                        this.comments = this.comments.filter((_, i) => i !== index);
+                         this.information = "You have successfully Delete your comment!"
+                document.getElementById('information').showModal();
+
+                    });
+            },
+                            doSearch(){
+                    window.location.href = `/search/${this.search}`;
+                },
                   isEmpty: function(obj) {
             return Object.keys(obj).length === 0; // 判断对象是否为空
         },
@@ -837,6 +911,7 @@
                         comment: this.comment,
                         symbol: this.stockInfo.symbol
                     }).then(response => {
+                        this.comment = "";
                         this.information = "You have successfully sent a comment!";
                         document.getElementById('information').showModal();
                         this.get_symbol_comments();
@@ -869,12 +944,10 @@
                     event.target.src = '../../static/resource/altNewsIMG.jpg';
                 },
             prediction() {
-                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
-                    .then(response => {
-                         this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
+                this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
                 document.getElementById('information').showModal();
                         this.setButtonClickTime();
-                    });
+                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
             },
             setButtonClickTime() {
                 const currentTime = Date.now();
@@ -964,7 +1037,6 @@
             get_symbol_comments() {
                 axios.get(`/symbol_comments/${this.stockInfo.symbol}`)
                     .then(response => {
-                            console.log("Raw comments data:", response.data); // Debugging line
                             this.comments = response.data.sort((a, b) => new Date(b.commentDate) - new Date(a.commentDate));
                     })
             },

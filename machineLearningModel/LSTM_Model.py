@@ -135,7 +135,7 @@ class LSTM_Model:
         return result
 
 
-# 示例用法
+# # 示例用法
 # end_date = datetime.today().date()
 # start_date = (end_date - timedelta(days=365 * 5))
 # ticker_symbol = "AAPL"

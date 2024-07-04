@@ -117,21 +117,21 @@
                     <thead>
                       <tr>
                         <th class="text-black">#</th>
-                        <th class="text-black text-xl">Symbol</th>
-                        <th class="text-black text-xl">Full Name</th>
-                        <th class="text-black text-xl">Latest Price</th>
-                        <th class="text-black text-xl">Chg</th>
-                        <th class="text-black text-xl">%Chg</th>
-                        <th class="text-black text-xl">Volume</th>
-                        <th class="text-black text-xl">Watch List</th>
+                        <th class="text-black text-xl text-center">Symbol</th>
+                        <th class="text-black text-xl text-center">Full Name</th>
+                        <th class="text-black text-xl text-center">Latest Price</th>
+                        <th class="text-black text-xl text-center">Chg</th>
+                        <th class="text-black text-xl ">%Chg</th>
+                        <th class="text-black text-xl ">Volume</th>
+                        <th class="text-black text-xl ">Watch List</th>
                       </tr>
                     </thead>
                     <tbody>
                       <!-- row 1 -->
                       <tr v-for="(stock, index) in stockList" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
-                        <th class="text-black text-xl">[[ index + 1 ]]</th>
-                        <td class="text-black text-xl">[[ stock.symbol ]]</td>
-                        <td class="text-black text-xl">[[ stock.longName ]]</td>
+                        <th class="text-black text-xl text-center">[[ index + 1 ]]</th>
+                        <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
+                        <td class="text-black text-xl truncate max-w-xs">[[ stock.longName ]]</td>
                         <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
                         <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
                         <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
@@ -199,10 +199,10 @@
                     <tbody>
                       <!-- row 1 -->
                       <tr v-for="(account, index) in accountsList" :key="index" class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(account.accountId)">
-                        <th class="text-black text-lg">[[ index + 1 ]]</th>
-                        <td class="text-black text-lg" style="width: 15%;">[[ account.userName ]]</td>
-                        <td class="text-black text-md break-words">[[ account.bio ]]</td>
-                        <td class="text-lg">
+                        <th class="text-black text-lg text-center">[[ index + 1 ]]</th>
+                        <td class="text-black text-lg text-center" style="width: 15%;">[[ account.userName ]]</td>
+                        <td class="text-black text-md break-words text-center">[[ account.bio ]]</td>
+                        <td class="text-lg text-center">
                           <button
                             class="btn btn-outline btn-sm w-40"
                             @click.stop="toggleFriendFollow(account.accountId)"
@@ -323,7 +323,6 @@
                 if (index > -1) {
                     this.stockWatchList.splice(index, 1);
                     console.log(symbol)
-                        //todo follow
                 } else {
                     this.stockWatchList.push(symbol);
                     console.log(symbol)
@@ -343,14 +342,14 @@
                     this.accountFavoList.splice(index, 1);
                     axios.post(`/remove_follower_in_followList/${accountId}`)
                     .then(response => {
-                         this.stockList = response.data
+
                     });
 
                 } else {
                     this.accountFavoList.push(accountId);
                     axios.post(`/insert_followList/${accountId}`)
                     .then(response => {
-                         this.stockList = response.data
+
                     });
                 }
             },

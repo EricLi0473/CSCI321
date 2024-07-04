@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StockPage</title>
+    <title>Preference</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <div class="flex h-screen">
+    <div class="flex h-screen" id="app">
       <!-- Left Sidebar -->
       <div class="w-16 flex flex-col justify-between border-e bg-white h-screen fixed">
         <div>
@@ -69,84 +69,147 @@
       </div>
       <!-- Right Content Area -->
       <div class="flex-1 bg-gray-100 ml-16">
-        <div class="navbar bg-base-100 fixed top-0">
+        <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
             <div class="">
               <a class="btn btn-ghost text-xl">Stock4Me</a>
             </div>
-            <div class="flex-none ">
-              <div class="form-control">
-                <input type="text" placeholder="Search" class="ml-96  input input-bordered w-96">
-              </div>
-              <div class="dropdown dropdown-end">
-
-                <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-                  <li>
-                    <a class="justify-between">
-                      Profile
-                      <span class="badge">New</span>
-                    </a>
-                  </li>
-                  <li><a>Settings</a></li>
-                  <li><a>Logout</a></li>
-                </ul>
-              </div>
+                <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
+              <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
             </div>
+            <!-- Content Start! -->
+          <div class="overflow-y-scroll p-8 bg-white border mt-16">
+              <div class="mb-8">
+                  <span class="text-4xl">Preference Setting</span>
+              </div>
+              <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8">
+  <div class="h-fit rounded-lg">
+                        <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th class="text-black text-xl">Country</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- row 1 -->
+                      <tr v-for="(item, index) in preference.preferenceCountry" :key="index" class="hover:bg-gray-200 cursor-pointer">
+                        <td class="text-black text-xl">[[ item ]]</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  </div>
+  <div class="h-fit rounded-lg ">
+                              <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th class="text-black text-xl">Industry</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- row 1 -->
+                      <tr v-for="(item, index) in preference.preferenceIndustry" :key="index"  class="hover:bg-gray-200 cursor-pointer">
+                        <td class="text-black text-xl">[[ item ]]</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  </div>
+  <div class="h-fit rounded-lg lg:col-span-2">
+      <div role="alert" class="alert">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="stroke-info h-6 w-6 shrink-0">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+          <div>
+  <span>The recommendations on your homepage will change according to the set country and industry dynamics.
+  <br><br>
+      <b>You can click the button to reset your preferences.</b>
+  </span>
           </div>
-          <div class="overflow-y-scroll p-4 bg-white border mt-16">
-          <button class="btn">Button</button>
-          <!-- up -->
-          <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7.6c.7-.8 1.9-.8 2.6 0l7.4 8.9c.7.9.4 1.6-.7 1.6h-4v11c0 .6-.5 1-1 1H9c-.6 0-1-.5-1-1v-11H4c-1.1 0-1.4-.7-.7-1.5l7.4-9Z" fill="#01914C"/></svg>
-          <!-- down -->
-            <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7 22.5c.7.8 1.9.8 2.6 0l7.4-8.9c.7-.9.4-1.6-.7-1.6h-4V1c0-.6-.5-1-1-1H9c-.6 0-1 .5-1 1v11H4c-1.1 0-1.4.7-.7 1.5l7.4 9Z" fill="#D6263F"/></svg>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
-        <p class="text-2xl font-bold">Stock</p>
+                          <button class="btn btn-outline btn-info" @click="gotoPreference">Click here to reset your preference!</button>
+
+</div>
+
+  </div>
+</div>
+      </div>
+    </div>
+                      <dialog id="exception" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box bg-red-400">
+        <h3 class="font-bold text-lg">Failed</h3>
+        <p class="py-4">[[exception]]</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn bg-red-200">OK</button>
+          </form>
         </div>
+      </div>
+    </dialog>
+                              <dialog id="information" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[information]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+          <!-- Content END! -->
+    <!-- To The Top Button -->
+    <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+      </svg>
+  </button>
+        </div>
+
         </div>
 
       </div>
+    </div>
 
-    <script>
-    </script>
+      <script>
+
+              new Vue({
+              el: '#app',
+              delimiters: ['[[', ']]'],
+              data: {
+                preference:JSON.parse('{{preference|tojson}}')
+          },
+                  created() {
+                  },
+              mounted(){
+
+          },
+              methods: {
+        gotoPreference(){
+            window.location.href = `/country_Setting`;
+        }
+              }});
+
+        // Scroll to the top when the button is clicked
+        document.getElementById('toTopButton').addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Show or hide the button based on scroll position
+        window.addEventListener('scroll', () => {
+        if (window.scrollY > 200) {
+        document.getElementById('toTopButton').classList.remove('hidden');
+        } else {
+        document.getElementById('toTopButton').classList.add('hidden');
+        }
+        });
+        </script>
 
 </body>
 </html>

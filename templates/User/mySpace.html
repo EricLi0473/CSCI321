@@ -93,6 +93,7 @@
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
   <button class="btn join-item" @click="showDiv('watchList')">WatchList</button>
   <button class="btn join-item" @click="showDiv('thresholdList')">Threshold</button>
+
 </div>
                     <div class="divider"></div>
 <!--                    -->
@@ -219,28 +220,37 @@
                 </div>
 <!--                 2 -->
                   <div id="watchList" v-if="activeDiv === 'watchList'">
-                  <table class="table">
+                  <table class="table" >
                     <!-- head -->
                     <thead>
                       <tr>
                         <th class="text-black">#</th>
-                        <th class="text-black text-xl">Symbol</th>
-                        <th class="text-black text-xl"></th>
+                        <th class="text-black text-xl text-center">Symbol</th>
+                        <th class="text-black text-xl text-center">Full Name</th>
+                        <th class="text-black text-xl ">Latest Price</th>
+                        <th class="text-black text-xl ">Chg</th>
+                        <th class="text-black text-xl ">%Chg</th>
+                        <th class="text-black text-xl "></th>
                       </tr>
                     </thead>
                     <tbody>
                       <!-- row 1 -->
-                      <tr v-for="(item, index) in watchList" :key="index"  @click="navigateToStock(item)" class="hover:bg-gray-200 cursor-pointer">
+                      <tr v-for="(stock, index) in routeResults" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
                         <th class="text-black text-xl">[[ index + 1 ]]</th>
-                        <td class="text-black text-xl">[[ item ]]</td>
+                        <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
+                        <td class="text-black text-xl truncate max-w-xs text-center">[[ stock.longName ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
                         <td class="text-xl">
                           <button
                             class="w-40 btn btn-sm btn-outline btn-error"
-                            @click.stop="toggleFollow(item)"
+                            @click.stop="toggleFollow(stock.symbol)"
                             >
                               Cancel favourites
                           </button>
                         </td>
+
                       </tr>
                     </tbody>
                   </table>
@@ -365,9 +375,17 @@
                   activeDiv : "accountInfo",
                   watchList: JSON.parse('{{watchList|tojson}}'),
                   information:"",
-                  thresholdList:JSON.parse('{{thresholdList|tojson}}')
+                  thresholdList:JSON.parse('{{thresholdList|tojson}}'),
+                  routeResults:[]
           },
+                  created(){
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page');
+                if (page) {
+                  this.activeDiv = page;
+                  }},
               mounted(){
+                  this.fetchRoutes()
                       this.thresholdList = this.initializeList(this.thresholdList);
     this.thresholdList = this.thresholdList.map(item => ({
       ...item,
@@ -375,6 +393,22 @@
     }));
           },
               methods: {
+                                  async fetchRoutes() {
+                    this.routeResults = []; // Clear previous results
+                    for (const item of this.watchList) {
+                        await this.fetchRoute(item);
+                    }
+
+                },
+                async fetchRoute(item) {
+                    try {
+                        const response = await axios.get(`/stock_info_minimum/${item}`);
+                        this.routeResults.push(response.data);
+                        console.log(this.routeResults)
+                    } catch (error) {
+                        console.error(`Failed to fetch route for ${item}:`, error);
+                    }
+                },
                       initializeList(list) {
       return list
         .map(item => ({
@@ -421,15 +455,12 @@
           console.error('Error:', error);
         });
     },
-    toggleFollow(item) {
-      // 处理取消阈值的逻辑
-    },
-    navigateToStock(stockSymbol) {
-      // 处理导航到股票详细信息页的逻辑
-    },
+
                               toggleFollow(symbol) {
                 const index = this.watchList.indexOf(symbol);
+                const index2 = this.routeResults.indexOf(symbol);
                     this.watchList.splice(index, 1);
+                    this.routeResults.splice(index2, 1);
                               this.information = "Successful remove " + symbol;
           document.getElementById('information').showModal();
                 // Send update request

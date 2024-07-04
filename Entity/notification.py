@@ -33,6 +33,10 @@ class Notification:
         if self.mydb.is_connected():
             self.mydb.close()
 
+    def get_all_notifications(self):
+        sql = "SELECT * FROM notification"
+        return self.fetchAll(sql, '')
+
     def get_notifications_by_accountId(self,accountId):
         sql = "select * from notification where accountId=%s"
         val = (accountId,)
@@ -41,17 +45,6 @@ class Notification:
     def set_notification(self,accountId,notification,notificationType,referenceId,symbol):
         sql = "INSERT INTO notification(accountId,notification,notificationType,referenceId,symbol) VALUES (%s,%s,%s,%s,%s)"
         val = (accountId,notification,notificationType,referenceId,symbol)
-        self.commit(sql, val)
-        sql = '''
-              DELETE n1
-FROM notification n1
-INNER JOIN notification n2 
-ON n1.accountId = n2.accountId 
-AND n1.notificationType = n2.notificationType 
-AND n1.referenceId = n2.referenceId 
-AND n1.notificationId > n2.notificationId;
-              '''
-        val = ("")
         self.commit(sql, val)
 
     def remove_notification_by_id(self,notificationId):

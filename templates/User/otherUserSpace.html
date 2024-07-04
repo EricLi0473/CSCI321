@@ -91,6 +91,27 @@
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
   <button class="btn join-item" @click="showDiv('watchList')">WatchList</button>
   <button class="btn join-item" @click="showDiv('thresholdList')">Threshold</button>
+
+                                                <button
+                            class="btn btn-outline btn-md w-40 ml-4"
+                            @click.stop="toggleFriendFollow(myAccount.accountId)"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              class="h-6 w-6 text-red-500"
+                              :fill="accountFavoList.includes(myAccount.accountId) ? 'currentColor' : 'none'"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                              />
+                            </svg>
+                            <span class="text-red-500">[[ accountFavoList.includes(myAccount.accountId) ? 'Followed' : 'Follow' ]]</span>
+                          </button>
 </div>
                     <div class="divider"></div>
 <!--                    -->
@@ -148,19 +169,29 @@
                 </div>
 <!--                 2 -->
                   <div id="watchList" v-if="activeDiv === 'watchList'">
-                  <table class="table">
+                  <table class="table" >
                     <!-- head -->
                     <thead>
                       <tr>
                         <th class="text-black">#</th>
-                        <th class="text-black text-xl">Symbol</th>
+                        <th class="text-black text-xl text-center">Symbol</th>
+                        <th class="text-black text-xl text-center">Full Name</th>
+                        <th class="text-black text-xl ">Latest Price</th>
+                        <th class="text-black text-xl ">Chg</th>
+                        <th class="text-black text-xl ">%Chg</th>
                       </tr>
                     </thead>
                     <tbody>
                       <!-- row 1 -->
-                      <tr v-for="(item, index) in watchList" :key="index"  @click="navigateToStock(item)" class="hover:bg-gray-200 cursor-pointer">
+                      <tr v-for="(stock, index) in routeResults" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
                         <th class="text-black text-xl">[[ index + 1 ]]</th>
-                        <td class="text-black text-xl">[[ item ]]</td>
+                        <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
+                        <td class="text-black text-xl truncate max-w-xs text-center">[[ stock.longName ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
+
+
                       </tr>
                     </tbody>
                   </table>
@@ -271,9 +302,13 @@
                   activeDiv : "accountInfo",
                   watchList: JSON.parse('{{watchList|tojson}}'),
                   information:"",
-                  thresholdList:JSON.parse('{{thresholdList|tojson}}')
+                  thresholdList:JSON.parse('{{thresholdList|tojson}}'),
+                  routeResults:[],
+                 accountFavoList:[]
+
           },
               mounted(){
+                this.fetchRoutes();
                       this.thresholdList = this.initializeList(this.thresholdList);
     this.thresholdList = this.thresholdList.map(item => ({
       ...item,
@@ -281,6 +316,22 @@
     }));
           },
               methods: {
+                                                  async fetchRoutes() {
+                    this.routeResults = []; // Clear previous results
+                    for (const item of this.watchList) {
+                        await this.fetchRoute(item);
+                    }
+
+                },
+                async fetchRoute(item) {
+                    try {
+                        const response = await axios.get(`/stock_info_minimum/${item}`);
+                        this.routeResults.push(response.data);
+                        console.log(this.routeResults)
+                    } catch (error) {
+                        console.error(`Failed to fetch route for ${item}:`, error);
+                    }
+                },
                       initializeList(list) {
       return list
         .map(item => ({
@@ -327,12 +378,23 @@
           console.error('Error:', error);
         });
     },
-    toggleFollow(item) {
-      // 处理取消阈值的逻辑
-    },
-    navigateToStock(stockSymbol) {
-      // 处理导航到股票详细信息页的逻辑
-    },
+            toggleFriendFollow(accountId) {
+                const index = this.accountFavoList.indexOf(accountId);
+                if (index > -1) {
+                    this.accountFavoList.splice(index, 1);
+                    axios.post(`/remove_follower_in_followList/${accountId}`)
+                    .then(response => {
+
+                    });
+
+                } else {
+                    this.accountFavoList.push(accountId);
+                    axios.post(`/insert_followList/${accountId}`)
+                    .then(response => {
+
+                    });
+                }
+            },
                               toggleFollow(symbol) {
                 const index = this.watchList.indexOf(symbol);
                     this.watchList.splice(index, 1);

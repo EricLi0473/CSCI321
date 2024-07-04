@@ -33,13 +33,17 @@ class Comment:
         if self.mydb.is_connected():
             self.mydb.close()
     def get_comments_by_symbol(self,symbol):
-        sql = "select account.accountId,account.userName,comment.commentText,comment.commentDate from comment left join account on comment.accountId = account.accountId where stockSymbol=%s"
+        sql = "select comment.commentId,account.accountId,account.userName,comment.commentText,comment.commentDate from comment left join account on comment.accountId = account.accountId where stockSymbol=%s"
         result = self.fetchAll(sql, (symbol,))
         return result
 
     def insert_comment(self, accountId, symbol,comment):
         sql = "insert into comment (accountId,stockSymbol,commentText) values (%s,%s,%s)"
         self.commit(sql, (accountId,symbol,comment))
+
+    def delete_comment_by_id(self, commentId):
+        sql = "delete from comment where commentId=%s"
+        self.commit(sql, (commentId,))
 
 if __name__ == '__main__':
     print(Comment().get_comments_by_symbol("aapl"))

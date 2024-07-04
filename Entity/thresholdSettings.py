@@ -52,3 +52,8 @@ class ThresholdSettings:
         sql = "UPDATE thresholdsettings SET changePercentage = %s WHERE accountId = %s AND stockSymbol = %s"
         val = (changePercentage, accountId, stockSymbol)
         self.commit(sql, val)
+
+    def remove_threshold_settings_by_info(self,accountId,stockSymbol):
+        sql = "DELETE FROM thresholdsettings WHERE accountId = %s AND stockSymbol = %s"
+        val = (accountId, stockSymbol)
+        self.commit(sql, val)
