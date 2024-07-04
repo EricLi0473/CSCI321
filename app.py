@@ -2,6 +2,7 @@ from flask import Flask, request, render_template, redirect, url_for
 import requests
 import os
 
+from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoController
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
@@ -381,31 +382,53 @@ def accountInfo():
             pass
 
 #handle personal info
+# @app.route('/updatePersonalInfo', methods=['POST'])
+# def updatePersonalInfo():
+#     account = request.json.get('userAccount')
+#     #  from here
+#     userName = account["userName"]
+#     email = account['email']
+#     bio = account['bio']
+#     age = account['age']
+#     sex  = account['sex']
+#     occupation = account['occupation']
+#     incomeLevel = account['incomeLevel']
+#     netWorth = account['netWorth']
+#     investmentExperience = account['investmentExperience']
+#     riskTolerance = account['riskTolerance']
+#     investmentGoals = account['investmentGoals']
+#     profile = account['profile']
+#     #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
+#     if profile != "admin":
+#         # Refine the following method
+#         # UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
+#
+#         #update session['user']
+#         return jsonify({'success': True})
+#     else:
+#         return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
+
 @app.route('/updatePersonalInfo', methods=['POST'])
 def updatePersonalInfo():
     account = request.json.get('userAccount')
-    #  from here
-    userName = account["userName"]
-    email = account['email']
-    bio = account['bio']
-    age = account['age']
-    sex  = account['sex']
-    occupation = account['occupation']
-    incomeLevel = account['incomeLevel']
-    netWorth = account['netWorth']
-    investmentExperience = account['investmentExperience']
-    riskTolerance = account['riskTolerance']
-    investmentGoals = account['investmentGoals']
-    profile = account['profile']
-    #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
-    if profile != "admin":
-        # Refine the following method
-        # UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
 
-        #update session['user']
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
+    if not account:
+        return jsonify({'success': False, 'error': 'Invalid input'}), 400
+
+    try:
+        if account['profile'] != "admin":
+            update_result = UpdatePersonalInfoController().update_personal_info(account)
+            if update_result:
+                # Update session['user']
+                session['user'].update(account)
+                return jsonify({'success': True})
+            else:
+                return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
+        else:
+            # depends on how we want to do, whether we want to allow admins to update personal info
+            return jsonify({'success': False, 'error': 'Admins cannot update personal info this way'}), 403
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
