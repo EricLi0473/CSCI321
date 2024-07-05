@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StockPage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/klinecharts/dist/umd/klinecharts.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="flex h-fit" id="app">
+    <!-- Left Sidebar -->
+    <div class="w-16 flex flex-col justify-between border-e bg-white h-screen fixed">
+      <div>
+        <div class="inline-flex size-16 items-center justify-center">
+          <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">[[user.userName.substring(0, 2)]]</span>
+        </div>
+        <div class="border-t border-gray-100">
+          <div class="px-2">
+            <div class="py-4">
+              <a href="/preference" class="t group relative flex justify-center rounded bg-blue-50 px-2 py-1.5 text-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">General</span>
+              </a>
+            </div>
+            <ul class="space-y-1 border-t border-gray-100 pt-4">
+              <li>
+                <a :href="`/space/${user.accountId}`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>
+                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">My Account</span>
+                </a>
+              </li>
+              <li>
+                <a :href="`/space/${user.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
+                </a>
+              </li>
+              <li>
+                <a href="/friend" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Friend</span>
+                </a>
+              </li>
+              <li>
+                <a href="/history" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">History Search</span>
+                </a>
+              </li>
+                                <li>
+                  <a href="/ratingComment" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                    <svg class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </svg>
+                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
+                  </a>
+                </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="sticky inset-x-0 bottom-0 border-t border-gray-100 bg-white p-2">
+        <form action="#">
+          <button type="submit" class="group relative flex w-full justify-center rounded-lg px-2 py-1.5 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+            </svg>
+            <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Logout</span>
+          </button>
+        </form>
+      </div>
+    </div>
+    <!-- Right Content Area -->
+    <div class="flex-1 ml-16" >
+      <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
+        <div>
+          <a class="btn btn-ghost text-xl" href="/mainPage">Stock4Me</a>
+        </div>
+        <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
+        <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
+      </div>
+      <!-- Content Start! -->
+      <div class="mt-20 pl-4">
+          <nav aria-label="Breadcrumb">
+  <ol class="flex items-center gap-1 text-sm text-gray-600">
+    <li>
+      <a href="/" class="block transition hover:text-gray-700">
+        <span class="sr-only"> Home </span>
+
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-4 w-4"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+          />
+        </svg>
+      </a>
+    </li>
+
+    <li class="rtl:rotate-180">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        class="h-4 w-4"
+        viewBox="0 0 20 20"
+        fill="currentColor"
+      >
+        <path
+          fill-rule="evenodd"
+          d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+          clip-rule="evenodd"
+        />
+      </svg>
+    </li>
+    <li>
+      <a href="#" class="block transition hover:text-gray-700"> stock info </a>
+    </li>
+  </ol>
+</nav>
+      </div>
+
+<!--    stock info area: name, price, type, watchlist     -->
+
+      <div class="w-full h-fit mt-2 px-8 pt-8">
+        <div id="stock_card" class="">
+          <div id="stock_name" class="text-2xl flex justify-between">
+            <h1 class="mr-4 "><b>[[stockInfo.longName]]</b></h1>
+              <span class="mr-auto text-slate-700">([[stockInfo.symbol]])</span>
+            <div class="text-right pr-8 flex gap-5">
+<div class="text-md mt-3 ml-3 tooltip" data-tip="When the stock goes up or down by a certain percentage, the system will alert you on the home page">
+  <p>Notify me when..</p>
+</div>
+
+ <div :class="{'bg-red-500': thresholdinputValid}"  class=" p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">    <div class="flex items-center justify-center fill-white" >
+      <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
+      </svg>
+    </div>
+    <input type="text" class="outline-none text-[20px] bg-transparent w-full text-white font-normal px-4"
+           placeholder="get up or down, %" v-model="percentage" @input="validateInput" @blur="submitPercentage"
+           />
+  </div>
+
+
+              <button :class="['btn', { 'bg-red-400': is_inside_watchList === 1 }]" @click="toggleWatchList">watchList
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+  </svg>
+</button>
+            </div>
+          </div>
+          <div>
+            <div id="stock_text1" class="mt-4 flex justify-between" v-if="stockInfo.upsAndDowns == 1">
+              <div id="price1" class="w-fit flex gap-1 ">
+                <p class="text-5xl text-lime-600"><b>[[stockInfo.price]]</b></p>
+                  <svg class="mt-5" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7.6c.7-.8 1.9-.8 2.6 0l7.4 8.9c.7.9.4 1.6-.7 1.6h-4v11c0 .6-.5 1-1 1H9c-.6 0-1-.5-1-1v-11H4c-1.1 0-1.4-.7-.7-1.5l7.4-9Z" fill="#01914C"/></svg>
+                    <p class="text-md text-lime-600 mt-6 mr-1">[[stockInfo.absolute_change]]</p>
+                    <p class="text-md text-lime-600 mt-6 ml-1">[[stockInfo.relative_change]]%</p>
+              </div>
+              <div id="market_Cap_data1" class="flex w-fit text-right mt-3">
+                <p class="mr-12">Market Cap:&nbsp;<b>[[stockInfo.marketCap]]</b></p>
+                <p class="mr-8">P/E (TTM):&nbsp;<b>[[stockInfo.trailingPE]]</b></p>
+              </div>
+            </div>
+            <div id="stock_text" class="mt-4 flex justify-between" v-if="stockInfo.upsAndDowns == 0">
+              <div id="price" class="w-fit flex gap-1 ">
+                <p class="text-5xl text-rose-600"><b>[[stockInfo.price]]</b></p>
+                <svg class="mt-5" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.7 22.5c.7.8 1.9.8 2.6 0l7.4-8.9c.7-.9.4-1.6-.7-1.6h-4V1c0-.6-.5-1-1-1H9c-.6 0-1 .5-1 1v11H4c-1.1 0-1.4.7-.7 1.5l7.4 9Z" fill="#D6263F"/></svg>                    <p class="text-md text-rose-600 mt-6 mr-1">[[stockInfo.absolute_change]]</p>
+                    <p class="text-md text-rose-600 mt-6 ml-1">[[stockInfo.relative_change]]%</p>
+              </div>
+              <div id="market_Cap_data" class="flex w-fit text-right mt-3">
+                <p class="mr-12">Market Cap:&nbsp;<b>[[stockInfo.marketCap]]</b></p>
+                <p class="mr-8">P/E (TTM):&nbsp;<b>[[stockInfo.trailingPE]]</b></p>
+              </div>
+            </div>
+          </div>
+          <p class="mt-2">Close&nbsp;[[stockInfo.closeDate]]</p>
+          <div id="nav-button" class="mt-10">
+<div>
+  <div class="sm:hidden">
+    <label for="Tab" class="sr-only mt-6">Tab</label>
+
+    <select id="Tab" class="w-full rounded-md border-gray-200">
+      <option>Overview</option>
+      <option>company</option>
+      <option>Analysis</option>
+      <option>News</option>
+      <option>comment</option>
+    </select>
+  </div>
+
+  <div class="hidden sm:block">
+    <div class="border-b border-gray-200">
+      <nav class="-mb-px flex gap-6" aria-label="Tabs">
+        <a
+          href="#"
+          class="text-md shrink-0 border-b-2 border-sky-500 px-1 pb-4 font-medium text-sky-600"
+        >
+          Overview
+        </a>
+
+        <a
+          href="#company"
+          class="text-md px-8 shrink-0 border-b-2 border-transparent px-1 pb-4 font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        >
+          company
+        </a>
+
+        <a
+          href="#analysis"
+          class="text-md px-8 shrink-0 border-b-2 border-transparent px-1 pb-4 font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+        >
+          Analysis
+        </a>
+
+        <a
+          href="#news"
+          class="text-md px-8 shrink-0 border-b-2 border-transparent px-1 pb-4 font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+          aria-current="page"
+        >
+          News
+        </a>
+        <a
+          href="#comment"
+          class="text-md px-8 shrink-0 border-b-2 border-transparent px-1 pb-4 font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
+          aria-current="page"
+        >
+          comment
+        </a>
+      </nav>
+      <!--stock graphic-->
+<div>
+    <div class="mt-4">
+        <button class="btn btn-outline btn-sm" @click="updatePeriod('3mo')">180 days</button>
+        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('5d')">one week</button>
+        <button class="btn btn-outline btn-secondary btn-sm" @click="updatePeriod('1mo')">one month</button>
+        <button class="btn btn-outline btn-sm" @click="updatePeriod('1y')">one year</button>
+        <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('10y')">ten years</button>
+        <button class="btn btn-outline btn-sm" @click="updatePeriod('max')">Max</button>
+    </div>
+    <div id="chart" class="mt-6"  style=" width:80%;height:600px"></div>
+</div>
+
+    </div>
+  </div>
+</div>
+          </div>
+        </div>
+
+        <div class="mt-24 text-3xl">
+          <b id="company">Company</b>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 mt-10">
+  <div class="h-fit rounded-lg">
+    <div class="flow-root">
+  <dl class="-my-3 divide-y text-sm">
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">LongBusinessSummary</dt>
+      <dd class="text-gray-700 sm:col-span-2 h-72 overflow-auto mt-1.5">[[stockInfo.company.longBusinessSummary]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">Address</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.address1]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">City</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.city]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">country</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.country]]</dd>
+    </div>
+  </dl>
+</div>
+  </div>
+  <div class="h-fit rounded-lg">
+    <div class="flow-root">
+  <dl class="-my-3 divide-y  text-sm">
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">LongName</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.longName]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">exchange</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.exchange]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4 py-6">
+      <dt class="font-medium text-gray-900">fullTimeEmployees</dt>
+      <dd class="text-gray-700 sm:col-span-2">
+        [[stockInfo.company.fullTimeEmployees]]
+      </dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">phone</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.phone]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">sector</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.sector]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">website</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.website]]</dd>
+    </div>
+
+    <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">zip</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.zip]]</dd>
+    </div>
+
+      <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
+      <dt class="font-medium text-gray-900">industry</dt>
+      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.industry]]</dd>
+    </div>
+  </dl>
+</div>
+  </div>
+</div>
+
+        <div class="mt-24 text-3xl indicator">
+            <span class="indicator-item badge badge-primary">advance ML feature</span>
+          <b id="analysis">Analysis</b>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 ">
+  <div class="h-fit rounded-lg">
+    <div class="flex">
+      <div>
+  <div>
+  <label for="HeadlineAct" class="text-center mt-2 block text-sm text-gray-900"> select model </label>
+
+  <select
+    name="HeadlineAct"
+    id="HeadlineAct"
+    class="p-1 border-2 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm  text-center"
+    v-model="model"
+  >
+    <option value="GRU">AVG</option>
+    <option value="LR">FAST</option>
+    <option value="GRU">ACCURACY</option>
+  </select>
+</div>
+
+</div>
+
+    <div class="ml-1 mt-7">
+  <select
+    name="HeadlineAct"
+    id="HeadlineAct1"
+    class="p-1 border-2 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
+    v-model="days"
+  >
+    <option value="14">14 Day</option>
+    <option value="30">30 Days</option>
+    <option value="60">60 Days</option>
+
+  </select>
+</div>
+
+    <div class="mt-7 ml-4">
+      <button class="btn btn-outline btn-sm" @click="prediction"
+              :class="{ disabled: isButtonDisabled }"
+        :disabled="isButtonDisabled"
+      >Go</button>
+        <span v-if="isButtonDisabled" class="mt-2">Please wait ([[ remainingTime ]]s to get the next prediction)</span>
+    </div>
+    </div>
+<div role="alert" class="alert alert-success bg-teal-500 mt-8" v-if="!isEmpty(predictionresult)">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 shrink-0 stroke-current"
+    fill="none"
+    viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+  </svg>
+    <span><b>congratulations🎉 This stock already has predicted results!</b>><br>This is [[predictionresult.timeRange]] future days advice predicted on [[formattedDate]], you can do forecast again!</span>
+</div>
+<div class="flex h-fit" v-if="!isEmpty(predictionresult)">
+
+    <button
+      class="mt-8 w-32 h-32 rounded-full text-white flex items-center justify-center text-lg font-bold"
+      :class="{
+        'bg-green-500': predictionresult.target === 'Buy',
+        'bg-blue-500': predictionresult.target === 'Hold',
+        'bg-red-500': predictionresult.target === 'Sell'
+      }"
+    >
+      {{ predictionresult.target }}
+    </button>
+
+<div id="has_predict" class=" ml-8 mt-12" >
+  <div class="flex items-center mb-2">
+    <span class="text-green-500 font-semibold w-12">Buy</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-green-500 h-full" style="width: calc({{ predictionresult.buyPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionresult.buyPercentage*100]]%</span>
+</div>
+
+<div class="flex items-center mb-2">
+    <span class="text-blue-500 font-semibold w-12">Hold</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-blue-500 h-full" style="width: calc({{ predictionresult.holdPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionresult.holdPercentage*100]]%</span>
+</div>
+
+<div class="flex items-center">
+    <span class="text-red-500 font-semibold w-12">Sell</span>
+    <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
+        <div class="bg-red-500 h-full" style="width: calc({{ predictionresult.sellPercentage }}% * 100);"></div>
+    </div>
+    <span class="text-gray-700 font-semibold">[[predictionresult.sellPercentage*100]]%</span>
+</div>
+
+</div>
+
+
+</div>
+  <div id="not_predict" v-if="isEmpty(predictionresult)">
+      <div role="alert" class="alert mt-4">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="stroke-info h-6 w-6 shrink-0">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+          <span><b>Ohh,It seems like our system has not storing a prediction for this stock.</b>>
+  <br><br>
+            Our System use Advanced Machine learning algorithm to predict Stock Data<br><br>
+            Choose kinds of model and the forecast day you want to predict above to be the first one predict this stock!
+  </span>
+</div>
+  </div>
+
+
+  </div>
+  <div class="h-fit rounded-lg" :class="{'blur-sm': isEmpty(predictionresult)}">
+    <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Max</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionresult.maxPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+<!--  up graphic  -->
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.maxPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.maxPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
+  </div>
+</article>
+
+    <article class="my-5 flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Min</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionresult.minPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.minPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+
+    <span class="text-xs font-medium">[[((predictionresult.minPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
+  </div>
+</article>
+
+    <article class="flex items-end justify-between rounded-lg border border-gray-100 bg-white p-6">
+  <div>
+    <p class="text-sm text-gray-500">Avg</p>
+
+    <p class="text-2xl font-medium text-gray-900">$[[predictionresult.avgPredictedPrice]]</p>
+  </div>
+
+  <div :class="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0 ? 'inline-flex gap-2 rounded bg-green-100 p-1 text-green-600' : 'inline-flex gap-2 rounded bg-red-100 p-1 text-red-600'">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) <= 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6"
+      />
+    </svg>
+          <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="h-4 w-4"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      v-if="((predictionresult.avgPredictedPrice - stockInfo.price) / stockInfo.price) > 0"
+    >
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+      />
+    </svg>
+    <span class="text-xs font-medium"> [[((predictionresult.avgPredictedPrice-stockInfo.price)/stockInfo.price).toFixed(2)]]% </span>
+  </div>
+</article>
+
+  </div>
+</div>
+
+        <div class="mt-24 text-3xl">
+          <b id="news">News</b>
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 mt-8">
+    <div class="h-fit rounded-lg bg-gray-200" v-for="item in news":key="item.url">
+      <article class="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
+  <img
+    alt=""
+    :src="item.image_url"
+    class="h-56 w-full object-cover"
+    @error="onImageError"
+  />
+
+  <div class="bg-white p-4 sm:p-6">
+    <time datetime="2022-10-10" class="block text-xs text-gray-500">[[item.published_at]]  </time>
+
+    <a :href="item.url" >
+      <h3 class="mt-0.5 text-lg text-gray-900">[[ item.title ]]</h3>
+    </a>
+
+    <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-500">
+      [[item.snippet]]
+    </p>
+  </div>
+</article>
+    </div>
+
+</div>
+                      <div class="flex w-full flex-col gap-4 mt-4" v-if="isNewsLoading === 1">
+  <div class="skeleton h-32 w-full" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-28" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
+  <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
+</div>
+        <div class="w-fit mx-auto mt-6">
+              <button class="btn btn-outline" @click="get_symbol_news" v-if="isNewsLoading === 0">Load more</button>
+          </div>
+
+
+        <div class="mt-24 text-3xl">
+          <b id="comment">comment</b>
+        </div>
+
+        <section class="bg-white">
+  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <h2 class="text-center text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
+      Read and write trusted reviews for The Ticker
+    </h2>
+<div>
+    <label class="mt-5 block text-sm text-gray-500 dark:text-gray-300"></label>
+    <textarea v-model="comment" :placeholder="commentPlaceholder" class="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-4 h-24 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"></textarea>
+
+</div>
+      <div class="w-full text-right mt-6">
+<button class="btn btn-outline" @click="submit_comment" :disabled="isCoolingDown">[[ buttonText ]]</button>          </div>
+
+    <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="(item,index) in comments" :key="item.url">
+  <div class="flex-1">
+    <div class="flex justify-between items-center">
+      <h4 class="text-sm font-bold">[[item.userName]]</h4>
+      <span class="text-xs text-gray-500 ml-auto">[[item.commentDate]]</span>
+        <button class="ml-4 btn btn-outline btn-error btn-xs" v-if="item.userName === user.userName" @click="deleteComment(index)">Delete</button>
+    </div>
+    <p class="mt-1 text-sm">
+      [[item.commentText]]
+    </p>
+  </div>
+</div>
+
+  </div>
+</section>
+
+        <footer class="bg-gray-100 -ml-24 -mr-8 ">
+  <div class="mx-auto  px-4 py-16 sm:px-6 lg:px-8" >
+    <div class="flex justify-center text-teal-600">
+      <img class="h-24" src="../../static/resource/LOGOS/BlackLogo.png">
+    </div>
+
+    <p class="mx-auto mt-6 max-w-md text-center leading-relaxed text-gray-500">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Incidunt consequuntur amet culpa cum
+      itaque neque.
+    </p>
+
+    <ul class="mt-12 flex flex-wrap justify-center gap-6 md:gap-8 lg:gap-12">
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> About </a>
+      </li>
+
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> Careers </a>
+      </li>
+
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> History </a>
+      </li>
+
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> Services </a>
+      </li>
+
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> Projects </a>
+      </li>
+
+      <li>
+        <a class="text-gray-700 transition hover:text-gray-700/75" href="#"> Blog </a>
+      </li>
+    </ul>
+
+    <ul class="mt-12 flex justify-center gap-6 md:gap-8">
+      <li>
+        <a
+          href="#"
+          rel="noreferrer"
+          target="_blank"
+          class="text-gray-700 transition hover:text-gray-700/75"
+        >
+          <span class="sr-only">Facebook</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          rel="noreferrer"
+          target="_blank"
+          class="text-gray-700 transition hover:text-gray-700/75"
+        >
+          <span class="sr-only">Instagram</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          rel="noreferrer"
+          target="_blank"
+          class="text-gray-700 transition hover:text-gray-700/75"
+        >
+          <span class="sr-only">Twitter</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"
+            />
+          </svg>
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          rel="noreferrer"
+          target="_blank"
+          class="text-gray-700 transition hover:text-gray-700/75"
+        >
+          <span class="sr-only">GitHub</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </li>
+
+      <li>
+        <a
+          href="#"
+          rel="noreferrer"
+          target="_blank"
+          class="text-gray-700 transition hover:text-gray-700/75"
+        >
+          <span class="sr-only">Dribbble</span>
+          <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              fill-rule="evenodd"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c5.51 0 10-4.48 10-10S17.51 2 12 2zm6.605 4.61a8.502 8.502 0 011.93 5.314c-.281-.054-3.101-.629-5.943-.271-.065-.141-.12-.293-.184-.445a25.416 25.416 0 00-.564-1.236c3.145-1.28 4.577-3.124 4.761-3.362zM12 3.475c2.17 0 4.154.813 5.662 2.148-.152.216-1.443 1.941-4.48 3.08-1.399-2.57-2.95-4.675-3.189-5A8.687 8.687 0 0112 3.475zm-3.633.803a53.896 53.896 0 013.167 4.935c-3.992 1.063-7.517 1.04-7.896 1.04a8.581 8.581 0 014.729-5.975zM3.453 12.01v-.26c.37.01 4.512.065 8.775-1.215.25.477.477.965.694 1.453-.109.033-.228.065-.336.098-4.404 1.42-6.747 5.303-6.942 5.629a8.522 8.522 0 01-2.19-5.705zM12 20.547a8.482 8.482 0 01-5.239-1.8c.152-.315 1.888-3.656 6.703-5.337.022-.01.033-.01.054-.022a35.318 35.318 0 011.823 6.475 8.4 8.4 0 01-3.341.684zm4.761-1.465c-.086-.52-.542-3.015-1.659-6.084 2.679-.423 5.022.271 5.314.369a8.468 8.468 0 01-3.655 5.715z"
+              clip-rule="evenodd"
+            />
+          </svg>
+        </a>
+      </li>
+    </ul>
+  </div>
+</footer>
+        <!--right side content area /div-->
+            <dialog id="information" class="modal modal-bottom sm:modal-middle">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Success</h3>
+    <p class="py-4">[[information]]</p>
+    <div class="modal-action">
+      <form method="dialog">
+        <button class="btn">OK</button>
+      </form>
+    </div>
+  </div>
+</dialog>
+      </div>
+    </div>
+  </div>
+
+  <!-- To The Top Button -->
+  <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
+
+<script>
+    new Vue({
+        el: '#app',
+        delimiters: ['[[', ']]'],
+        data: {
+            isButtonDisabled: false,
+          model:"LR",
+          days:"14",
+            user:JSON.parse('{{user|tojson}}'),
+            percentage: JSON.parse('{{ threshold|tojson}}'),
+            thresholdinputValid: false,
+            inputValid : false,
+            stockData: JSON.parse('{{ stockData|tojson }}'),
+            stockInfo: JSON.parse('{{ stockInfo|tojson }}'),
+            predictionresult:JSON.parse('{{predictionresult|tojson}}'),
+            watchList:JSON.parse('{{ watchList|tojson}}'),
+            is_inside_watchList: 0,
+            news: [],
+            comments:[],
+            newsPage: 0,
+            period: '30d', // 可以设置默认的period，或者通过其他方式获取
+            chart: null,  // 保存图表实例
+            information:"",
+            comment:"",
+            isCoolingDown: false,
+            buttonText: 'Submit',
+            isNewsLoading :1,
+            search:""
+        },
+                created() {
+            this.checkButtonStatus();
+        },
+              computed: {
+                    formattedDate() {
+          // 去除 GMT
+          return this.predictionresult.requestDate.replace(' GMT', '');
+        },
+            firstLetter() {
+                return this.user.userName.charAt(0).toUpperCase();
+            },
+                          commentPlaceholder() {
+          return `Send a comment as ${this.user.userName}`;
+        }
+        },
+        mounted() {
+
+            this.renderStockData(); // 调用renderStockData方法
+            this.get_symbol_news();
+            this.get_symbol_comments();
+                        if(this.percentage && this.percentage !== '') {
+                this.thresholdinputValid = true;
+            }
+
+                                        // 检查 stockInfo.symbol 是否在 watchList 中
+                if (this.watchList.includes(this.stockInfo.symbol)) {
+                    this.is_inside_watchList = 1;
+                } else {
+                    this.is_inside_watchList = 0;
+                }
+        },
+        methods: {
+            deleteComment(index){
+                const item = this.comments[index];
+                axios.post(`/delete_comment_by_id/${item.commentId}`)
+                    .then(response => {
+                        this.comments = this.comments.filter((_, i) => i !== index);
+                         this.information = "You have successfully Delete your comment!"
+                document.getElementById('information').showModal();
+
+                    });
+            },
+                            doSearch(){
+                    window.location.href = `/search/${this.search}`;
+                },
+                  isEmpty: function(obj) {
+            return Object.keys(obj).length === 0; // 判断对象是否为空
+        },
+                submit_comment() {
+                    if (!this.comment || this.comment.trim() === '') {
+                        this.information ='Comment cannot be empty'
+                        document.getElementById('information').showModal();
+                        return;
+                    }
+
+                    axios.post('/submit_comment', {
+                        comment: this.comment,
+                        symbol: this.stockInfo.symbol
+                    }).then(response => {
+                        this.comment = "";
+                        this.information = "You have successfully sent a comment!";
+                        document.getElementById('information').showModal();
+                        this.get_symbol_comments();
+
+                        // Start cooldown
+                        const cooldownTime = Date.now() + 10000; // 10 seconds
+                        localStorage.setItem('cooldownTime', cooldownTime);
+                        this.startCooldown();
+                    });
+                },
+                startCooldown() {
+                    const cooldownTime = localStorage.getItem('cooldownTime');
+                    if (cooldownTime && Date.now() < cooldownTime) {
+                        this.isCoolingDown = true;
+                        this.buttonText = `Please wait ${Math.ceil((cooldownTime - Date.now()) / 1000)} seconds`;
+
+                        const interval = setInterval(() => {
+                            const remainingTime = cooldownTime - Date.now();
+                            if (remainingTime <= 0) {
+                                clearInterval(interval);
+                                this.isCoolingDown = false;
+                                this.buttonText = 'Submit';
+                            } else {
+                                this.buttonText = `Please wait ${Math.ceil(remainingTime / 1000)} seconds`;
+                            }
+                        }, 1000);
+                    }
+                },
+                            onImageError(event) {
+                    event.target.src = '../../static/resource/altNewsIMG.jpg';
+                },
+            prediction() {
+                this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
+                document.getElementById('information').showModal();
+                        this.setButtonClickTime();
+                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
+            },
+            setButtonClickTime() {
+                const currentTime = Date.now();
+                localStorage.setItem('lastClickTime', currentTime);
+                this.checkButtonStatus();
+            },
+            checkButtonStatus() {
+                const lastClickTime = localStorage.getItem('lastClickTime');
+                if (lastClickTime) {
+                    const currentTime = Date.now();
+                    const timeDiff = currentTime - lastClickTime;
+                    const oneHour = 10000; // One hour in milliseconds
+                    if (timeDiff < oneHour) {
+                        this.remainingTime = Math.ceil((oneHour - timeDiff) / 1000);
+                        this.isButtonDisabled = true;
+                        this.startTimer();
+                    }
+                }
+            },
+            startTimer() {
+                const timer = setInterval(() => {
+                    if (this.remainingTime > 0) {
+                        this.remainingTime--;
+                    } else {
+                        this.isButtonDisabled = false;
+                        clearInterval(timer);
+                    }
+                }, 1000);
+            },
+              validateInput(event) {
+            // 允许输入小数点和数字
+            this.percentage = this.percentage.replace(/[^0-9.]/g, '');
+            },
+                      submitPercentage() {
+              this.thresholdinputValid = this.percentage !== '';
+              if(this.percentage !=='') {
+                this.information = "You have successfully set threshold, will be reminders you in main page!"
+                document.getElementById('information').showModal();
+
+                console.log(`Submitted percentage: ${this.percentage}%`);
+                axios.post(`/update_threshold_setting/${this.stockInfo.symbol}/${this.percentage}`)
+                        .then(response => {
+
+                        })
+              }else {
+                                axios.post(`/update_threshold_setting/${this.stockInfo.symbol}/0`)
+                        .then(response => {
+
+                        })
+              }
+
+            },
+            renderStockData() {
+                if (!this.chart) {
+                    this.chart = klinecharts.init('chart');
+                    this.chart.createIndicator('MA', false, { id: 'candle_pane' });
+                    this.chart.createIndicator('VOL');
+                }
+                this.chart.applyNewData(this.stockData);
+            },
+            updatePeriod(newPeriod) {
+                this.period = newPeriod;
+                const url = `/update_stock_data/${this.stockInfo.symbol}/${this.period}`;
+                axios.get(url)
+                    .then(response => {
+                        this.stockData = response.data;
+                        this.renderStockData();
+                    })
+                    .catch(error => {
+                        console.error("There was an error fetching the stock data!", error);
+                    });
+            },
+            get_symbol_news() {
+                      this.isNewsLoading =1;
+                this.newsPage += 1;
+                axios.get(`/symbol_news/${this.stockInfo.symbol}/${this.newsPage}`)
+                    .then(response => {
+                        this.isNewsLoading =0;
+
+                        if (Array.isArray(response.data)) {
+                            this.news.push(...response.data);
+                        } else {
+                            console.error('Unexpected response data format:', response.data);
+                        }
+                    })
+            },
+            get_symbol_comments() {
+                axios.get(`/symbol_comments/${this.stockInfo.symbol}`)
+                    .then(response => {
+                            this.comments = response.data.sort((a, b) => new Date(b.commentDate) - new Date(a.commentDate));
+                    })
+            },
+                  toggleWatchList() {
+        if (this.is_inside_watchList === 1) {
+          // 从watchList中移除
+          const index = this.watchList.indexOf(this.stockInfo.symbol);
+          if (index > -1) {
+            this.watchList.splice(index, 1);
+          }
+          this.is_inside_watchList = 0;
+        } else {
+          // 添加到watchList
+          this.watchList.push(this.stockInfo.symbol);
+          this.is_inside_watchList = 1;
+        }
+
+        // 向Flask发送update_watchList请求
+        axios.post('/update_watchList', {
+          watchList: this.watchList
+        })
+        .then(response => {
+          console.log('WatchList updated successfully');
+        })
+        .catch(error => {
+          console.error('There was an error updating the watchList!', error);
+        });
+      }
+        }
+    });
+            // Scroll to the top when the button is clicked
+        document.getElementById('toTopButton').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Show or hide the button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) {
+                document.getElementById('toTopButton').classList.remove('hidden');
+            } else {
+                document.getElementById('toTopButton').classList.add('hidden');
+            }
+        });
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+
+</script>
+</body>
+
+</html>

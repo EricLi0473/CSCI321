@@ -64,6 +64,14 @@ class Account:
         results = self.fetchAll(sql, (f"{userName}%",accountId))
         return results
 
+    def update_password_by_accountId(self, accountId, hashedPassword) -> str or Exception:
+        try:
+            sql = "UPDATE account SET hashedPassword = %s WHERE accountId = %s"
+            val = (hashedPassword, accountId)
+            self.commit(sql, val)
+            return hashedPassword
+        except Exception as e:
+            raise Exception(e)
 
     def verifyAccount(self, email, HashPassword) -> dict or Exception:
         sql = "SELECT * FROM account WHERE email = %s"
@@ -77,6 +85,10 @@ class Account:
                 raise Exception("Incorrect password")
         else:
             raise Exception("Account does not exist")
+    def update_profile_status(self,accountId,status):
+        sql = "UPDATE account SET status = %s WHERE accountId = %s"
+        val = (status,accountId)
+        return self.commit(sql,val)
 
     def update_Account(self, accountId, userName, email, bio, age, sex, occupation, incomeLevel, netWorth,
                              investmentExperience, riskTolerance, investmentGoals, profile) -> bool:
