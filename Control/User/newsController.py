@@ -37,15 +37,4 @@ class NewsController:
         return news_list
 
 if __name__ == '__main__':
-     url="https://www.alphavantage.co/query?function=NEWS_SENTIMENT&tickers=aapl&limit=50&&sort=RELEVANCE&time_from=20240101T0130&apikey=1TI3ZQ9MXCZ08O3M"
-     response = requests.get(url).json()
-     list_of_news = []
-     for news in response['feed']:
-         news_dict = {
-             'title': news['title'],
-             'url': news['url'],
-             'published_at': news['time_published'],
-             'image_url': news['banner_image'],
-             'snippet': news['summary']
-         }
-         list_of_news.append(news_dict)
+    pass

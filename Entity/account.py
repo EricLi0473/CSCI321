@@ -119,6 +119,21 @@ class Account:
             print(f"Error updating personal info: {e}")
             return False
 
+    def signUp(self, userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
+               investmentExperience, riskTolerance, investmentGoals) -> dict:
+
+        sql = """
+        INSERT INTO account 
+        (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s,  %s, %s, %s, %s)
+        """
+        val = (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
+                        investmentExperience, riskTolerance, investmentGoals)
+
+        lastId = self.commit(sql, val)
+        sql = 'SELECT * FROM account WHERE accountId = %s'
+        val = (lastId,)
+        return self.fetchOne(sql, val)
 
 if __name__ == '__main__':
-    print(Account().verifyAccount("li.gmail","111"))
+    pass

@@ -6,6 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
     <div class="h-screen" id="app">
@@ -69,259 +70,219 @@
                 </p>
               </div>
 
-              <form action="#" class="mt-8 grid grid-cols-6 gap-6">
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="FirstName"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    First Name
-                  </label>
+<form @submit.prevent="signUp" class="mt-8 grid grid-cols-6 gap-6">
+  <div class="col-span-6 sm:col-span-3">
+    <label for="FirstName" class="block text-sm font-medium text-gray-700">
+      First Name
+    </label>
+    <input
+      type="text"
+      id="FirstName"
+      name="first_name"
+      class="mt-1 w-full rounded-sm border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.firstName"
+    />
+  </div>
 
-                  <input
-                    type="text"
-                    id="FirstName"
-                    name="first_name"
-                    class="mt-1 w-full rounded-sm border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="firstName"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="LastName" class="block text-sm font-medium text-gray-700">
+      Last Name
+    </label>
+    <input
+      type="text"
+      id="LastName"
+      name="last_name"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.lastName"
+    />
+  </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="LastName"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Last Name
-                  </label>
+  <div class="col-span-6">
+    <label for="Email" class="block text-sm font-medium text-gray-700">
+      Email
+    </label>
+    <input
+      type="email"
+      id="Email"
+      name="email"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.email"
+    />
+  </div>
 
-                  <input
-                    type="text"
-                    id="LastName"
-                    name="last_name"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="lastName"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="Password" class="block text-sm font-medium text-gray-700">
+      Password
+    </label>
+    <input
+      type="password"
+      id="Password"
+      name="password"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.password"
+    />
+  </div>
 
-                <div class="col-span-6">
-                  <label
-                    for="Email"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Email
-                  </label>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="PasswordConfirmation" class="block text-sm font-medium text-gray-700">
+      Confirm Password
+    </label>
+    <input
+      type="password"
+      id="PasswordConfirmation"
+      name="password_confirmation"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.confirmPassword"
+    />
+  </div>
 
-                  <input
-                    type="email"
-                    id="Email"
-                    name="email"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                                        v-model="email"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="Age" class="block text-sm font-medium text-gray-700">
+      Age
+    </label>
+    <input
+      type="number"
+      id="Age"
+      name="age"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.age"
+    />
+  </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="Password"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Password
-                  </label>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="Sex" class="block text-sm font-medium text-gray-700">
+      Sex
+    </label>
+    <label>
+      <select
+        name="Sex"
+        id="Sex"
+        class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+        v-model="account.sex"
+      >
+        <option value="" selected>Select option</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    </label>
+  </div>
 
-                  <input
-                    type="password"
-                    id="Password"
-                    name="password"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="password"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="Occupation" class="block text-sm font-medium text-gray-700">
+      Occupation
+    </label>
+    <input
+      type="text"
+      id="Occupation"
+      name="occupation"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.occupation"
+    />
+  </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="PasswordConfirmation"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Confirm Password
-                  </label>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="IncomeLevel" class="block text-sm font-medium text-gray-700">
+      Income Level
+    </label>
+    <input
+      type="number"
+      id="IncomeLevel"
+      name="income_level"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.incomeLevel"
+    />
+  </div>
 
-                  <input
-                    type="password"
-                    id="PasswordConfirmation"
-                    name="password_confirmation"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="confirmPassword"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="NetWorth" class="block text-sm font-medium text-gray-700">
+      Net Worth
+    </label>
+    <input
+      type="number"
+      id="NetWorth"
+      name="net_worth"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.netWorth"
+    />
+  </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="Age"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Age
-                  </label>
+  <div class="col-span-6 sm:col-span-3">
+    <label class="block text-sm font-medium text-gray-700">
+      Investment Experience
+    </label>
+    <label>
+      <select
+        name="InvestmentExperience"
+        id="investment_experience"
+        class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+        v-model="account.investmentExperience"
+      >
+        <option value="" selected>Select option</option>
+        <option value="novice">Novice</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="expert">Expert</option>
+      </select>
+    </label>
+  </div>
 
-                  <input
-                    type="number"
-                    id="Age"
-                    name="age"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="age"
-                  />
-                </div>
+  <div class="col-span-6 sm:col-span-3">
+    <label class="block text-sm font-medium text-gray-700">
+      Risk Tolerance
+    </label>
+    <label>
+      <select
+        name="RiskTolerance"
+        id="risk_tolerance"
+        class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+        v-model="account.riskTolerance"
+      >
+        <option value="" >Select option</option>
+        <option value="low" selected>Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </label>
+  </div>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="PasswordConfirmation"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Sex
-                  </label>
+  <div class="col-span-6 sm:col-span-3">
+    <label for="InvestmentGoals" class="block text-sm font-medium text-gray-700">
+      Investment Goals
+    </label>
+    <input
+      type="text"
+      id="InvestmentGoals"
+      name="investment_goals"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.investmentGoals"
+    />
+  </div>
 
-                  <label>
-                    <select
-                      name="Sex"
-                      id="Sex"
-                      class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
-                      v-model="sex"
-                    >
-                      <option value="">Select option</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </label>
-                </div>
+  <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
+    <button
+      class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+      type="submit"
+    >
+      Create Account
+    </button>
 
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="Occupation"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Occupation
-                  </label>
-
-                  <input
-                    type="text"
-                    id="Occupation"
-                    name="occupation"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="occupation"
-                  />
-                </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="IncomeLevel"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Income Level
-                  </label>
-
-                  <input
-                    type="number"
-                    id="IncomeLevel"
-                    name="income_level"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="incomeLevel"
-                  />
-                </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="NetWorth"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Net Worth
-                  </label>
-
-                  <input
-                    type="number"
-                    id="NetWorth"
-                    name="net_worth"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="netWorth"
-                  />
-                </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="InvestmentExperience"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Investment Experience
-                  </label>
-
-                  <label>
-                    <select
-                      name="InvestmentExperience"
-                      id="investment_experience"
-                      class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
-                      v-model="investmentExperience"
-                    >
-                      <option value="">Select option</option>
-                      <option value="novice">Novice</option>
-                      <option value="intermediate">Intermediate</option>
-                      <option value="expert">Expert</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="RiskTolerance"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Risk Tolerance
-                  </label>
-
-                  <label>
-                    <select
-                      name="RiskTolerance"
-                      id="risk_tolerance"
-                      class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
-                      v-model="riskTolerance"
-                    >
-                      <option value="">Select option</option>
-                      <option value="low">Low</option>
-                      <option value="medium">Medium</option>
-                      <option value="high">High</option>
-                    </select>
-                  </label>
-                </div>
-
-                <div class="col-span-6 sm:col-span-3">
-                  <label
-                    for="InvestmentGoals"
-                    class="block text-sm font-medium text-gray-700"
-                  >
-                    Investment Goals
-                  </label>
-
-                  <input
-                    type="text"
-                    id="InvestmentGoals"
-                    name="investment_goals"
-                    class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
-                    v-model="investmentGoals"
-                  />
-                </div>
-
-                <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
-                  <button
-                    class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
-                  >
-                    Create Account
-                  </button>
-
-                  <p class="mt-4 text-sm text-gray-500 sm:mt-0">
-                    Already have an account?
-                    <a href="/login" class="text-gray-700 underline">Log in</a>.
-                  </p>
-                </div>
-              </form>
+    <p class="mt-4 text-sm text-gray-500 sm:mt-0">
+      Already have an account?
+      <a href="/login" class="text-gray-700 underline">Log in</a>.
+    </p>
+  </div>
+</form>
+              <dialog id="exception" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-red-400">
+      <h3 class="font-bold text-lg">Failed</h3>
+      <p class="py-4">[[exception]]</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn bg-red-200">OK</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
             </div>
           </main>
         </div>
@@ -332,21 +293,58 @@
         el: "#app",
         delimiters: ["[[", "]]"],
         data: {
-          email:'',
-          profile:'',
+          account:{
+            sex:"",
+            investmentExperience:"",
+            riskTolerance:"",
+            email:""
+          },
+          exception:''
         },
         mounted() {
                 if (sessionStorage.getItem('email')) {
-                    this.email = sessionStorage.getItem('email');
+                    this.account.email = sessionStorage.getItem('email');
                 }
                 if (sessionStorage.getItem('profile')) {
-                    this.profile = sessionStorage.getItem('profile');
+                    this.account.profile = sessionStorage.getItem('profile');
                 }
+                console.log(sessionStorage.getItem('profile'));
+          console.log(sessionStorage.getItem('email'))
         },
         methods: {
-          signUp(){
-            sessionStorage.setItem('accountStatus', 'signUp');
+          signUp() {
+            // 检查this.account是否包含13个item且每个item的value不为空
+            const accountItems = Object.entries(this.account);
+            const has13Items = accountItems.length === 14;
+            const allValuesNotEmpty = accountItems.every(([key, value]) => value !== null && value !== undefined && value !== '');
 
+            // 检查密码和确认密码是否一致
+            const passwordsMatch = this.account.password === this.account.confirmPassword;
+
+            if (!has13Items || !allValuesNotEmpty) {
+              console.log("Account dictionary must contain 13 items and none of the values should be empty.");
+              this.exception = "All fields are required！"
+              document.getElementById('exception').showModal();
+            } else if (!passwordsMatch) {
+              console.log("Password and Confirm Password do not match.");
+              this.exception = "The password and confirmation password do not match!";
+              document.getElementById('exception').showModal();
+            } else {
+                              axios.post('/detectDuplicateEmail', {
+                   email:this.account.email
+              }).then(response => {
+                  if (response.data.success) {
+                      sessionStorage.setItem('account', JSON.stringify(this.account));
+              console.log(JSON.parse(sessionStorage.getItem('account')));
+              window.location.href = '/emailVerification';
+                  } else {
+                      this.exception =  response.data.error
+                      document.getElementById('exception').showModal();
+                      console.error('Error:', response.data.error);
+                  }
+              })
+
+            }
           },
         },
       });

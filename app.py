@@ -51,10 +51,10 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.TF_LR_Model import *
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from Control.User.storePredictionResultController import *
+# from machineLearningModel.TF_LR_Model import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from Control.User.storePredictionResultController import *
 import threading
 import time
 import schedule
@@ -132,9 +132,14 @@ def search(content):
     return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
-    account = GetAccountByAccountId().get_account_by_accountId("1")
-    watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-    return render_template('mainPage.html',account=account,watchList=watchList)
+    if session.get('user'):
+        if session.get('user')['profile'] == 'premium':
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
+            return render_template('mainPage.html',account=session['user'],watchList=watchList)
+        elif session.get('user')['profile'] == 'free':
+            pass
+    else:
+        return redirect(url_for('login'))
 
 #remove notification
 @app.route('/remove_notification', methods=['POST'])
@@ -155,23 +160,27 @@ def remove_notification():
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
 def recommendation_news(page):
-    # hard code for test, countries and industries store in session['preferences']
-    countries = 'us'
-    industries = 'Technology'
-    result = NewsController().get_recommendation_news(countries,industries,str(page))
-    return jsonify(result)
+    if session.get('user'):
+        preference = GetPreferenceByAccountId().get_preference_by_accountId(session['user']['accountId'])
+        country = ','.join(preference['preferenceCountry'])
+        industry = ','.join(preference['preferenceIndustry'])
+        result = NewsController().get_recommendation_news(country,industry,str(page))
+        return jsonify(result)
+    else:
+        return redirect(url_for('login'))
 # user login main page
 @app.route('/recommendation_symbol', methods=['GET', 'POST'])
 def recommendation_symbol():
-    # hard code for test, userId in session['user']
-    accountId = 1
-    return jsonify(RecommendationListController().get_recommendationList_by_accountId(accountId))
+    if session.get('user'):
+        return jsonify(RecommendationListController().get_recommendationList_by_accountId(session.get('user')['accountId']))
+    else:
+        return redirect(url_for('login'))
 @app.route('/get_notification',methods=['GET', 'POST'])
 def get_notification():
-    # hard code for test, userId in session['user']
-    accountId = 1
-    return jsonify(NotificationController().get_notifications_by_accountId(accountId))
-
+    if session.get('user'):
+        return jsonify(NotificationController().get_notifications_by_accountId(session.get('user')['accountId']))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
@@ -322,17 +331,28 @@ def emailVerification():
         email = data["email"]
         EmailVerificationController().send_verification_code(email)
         return jsonify({"success": True})
+@app.route('/detectDuplicateEmail',methods=['GET','POST'])
+def detectDuplicateEmail():
+    data = request.json
+    email = data["email"]
+    account = GetAllAccount().get_all_account()
+    for i in account:
+        if i["email"] == email:
+            return jsonify({"success": False,'error':"Duplicate email, try to login"})
+    return jsonify({"success": True})
 
 @app.route('/verifyEmailCode',methods=['POST'])
 def verifyEmailCode():
     try:
         data = request.json
         # if data["accountStatus"] == 'login':
-        email = data.get('email')
+        email = data.get('account')['email']
         code = data.get('code')
-        accountId = data.get('accountId')
+        account = data.get('account')
         EmailVerificationController().verify_code(email,code)
-        session['user'] = GetAccountByAccountId().get_account_by_accountId(accountId)
+        # todo signup
+        session['user'] = SignupController().individualSignUp(**account)
+        print(session['user'])
         return jsonify({"success": True})
 
     except Exception as e:
@@ -346,8 +366,8 @@ def login():
             data = request.json
             email = data.get('email')
             password = data.get('password')
-            account = LoginController().login(email, password)
-            return jsonify({'success':True,'account': account})
+            session['user'] = LoginController().login(email, password)
+            return jsonify({'success':True})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
 
@@ -508,7 +528,7 @@ def configure_personal_setting():
     if request.method == 'GET':
         return render_template("/system/configure_personal_settings.html")
     if request.method == 'POST':
-        UpdatePreferenceByAccountId().update_preference_by_accountId("1",session['industry'],session['country'])
+        UpdatePreferenceByAccountId().update_preference_by_accountId(session['user']['accountId'],session['industry'],session['country'])
         return jsonify({'success': True})
 
 @app.route('/pricing',methods=['GET','POST'])
