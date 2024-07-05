@@ -44,6 +44,8 @@ from Control.User.remove_searchHistory_by_id import *
 from Control.premiumUser.get_preference_by_accountId import *
 from Control.User.emailVerificationController import *
 from Control.Admin.get_all_HeadLine_reviews import *
+from Control.Admin.update_profile_status import *
+from Control.Admin.get_all_account import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -55,6 +57,8 @@ from machineLearningModel.LSTM_Model import *
 from Control.User.storePredictionResultController import *
 import threading
 import time
+import schedule
+
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -436,12 +440,13 @@ def change_password():
         session['user'] = GetAccountByAccountId().get_account_by_accountId("1")
         old_password = request.json.get('oldPassword')
         new_password = request.json.get('newPassword')
-        userName = session['user']['userName']
+        accountId = session['user']['accountId']
         # Determine whether the user's entered previous password is correct or not
         if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
             raise Exception('Invalid old password')
         # if it is correct, then change current password
-        session['user']['hashedPassword'] = ChangePasswordController().changeIndividualPassword(userName,old_password,new_password)
+        session['user']['hashedPassword'] = ChangePasswordController().update_password_by_accountId(userName,
+                                                                                                    new_password)
         return jsonify({'success': True})
     except Exception as e:
         return jsonify({'success': False,'error':str(e)})
@@ -509,6 +514,16 @@ def configure_personal_setting():
 @app.route('/pricing',methods=['GET','POST'])
 def pricing():
     return render_template("/system/pricing.html")
+
+@app.route('/admin/allUser',methods=['GET','POST'])
+def adminAllUser():
+    if request.method == 'GET':
+        allAccounts = GetAllAccount().get_all_account()
+        return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts)
+    if request.method == 'POST':
+        data = request.json
+        UpdateProfileStatus().update_profile_status(data['Account']["accountId"],data['Account']["status"])
+        return jsonify({'success': True})
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
