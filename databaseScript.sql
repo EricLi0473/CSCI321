@@ -16,7 +16,8 @@ CREATE TABLE account
     netWorth             FLOAT NULL,
     investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
-    investmentGoals      VARCHAR(255) NULL
+    investmentGoals      VARCHAR(255) NULL,
+    isPrivateAccount BOOL default 0 not null
 );
 
 -- User Favourites List(watchList)

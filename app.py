@@ -65,71 +65,93 @@ app.secret_key = 'csci314'
 
 @app.route('/preference',methods=['GET','POST'])
 def preference():
-    preference = GetPreferenceByAccountId().get_preference_by_accountId("1")
-    return render_template("/premiumUser/preference.html",preference=preference)
+    if session.get('user'):
+        preference = GetPreferenceByAccountId().get_preference_by_accountId(session.get('user')['accountId'])
+        return render_template("/premiumUser/preference.html",preference=preference)
+    else:
+        return redirect(url_for('login'))
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
 def space(accountId):
-    if request.method == 'GET':
-        # hard code, assume session["user"] has 1
-        if int(accountId) == 1:
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-            # stockMiniData = []
-            # for i in watchList:
-            #     stockMiniData.append(StockDataController().get_stock_info_minimum(i))
-            # print(stockMiniData)
-            account = GetAccountByAccountId().get_account_by_accountId("1")
-            thresholdList = GetThresholdSettingById().get_threshold_settings_by_id("1")
-            return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
-        else:
-            accountFavoList = GetFollowListByAccountId().get_followList_by_accountId("1")
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
-            account = GetAccountByAccountId().get_account_by_accountId(accountId)
-            thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
-            print(account)
-            return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList)
+    if session.get('user'):
+        if request.method == 'GET':
+            if int(accountId) == session.get('user')['accountId']:
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+                account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+                thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(session.get('user')['accountId'])
+                return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
+            else:
+                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
+                account = GetAccountByAccountId().get_account_by_accountId(accountId)
+                thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
+                print(account)
+                return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/remove_symbol_from_threshold/<string:thresholdId>',methods=['POST'])
 def remove_symbol_from_threshold(thresholdId):
-    Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(thresholdId)
-    return jsonify({"success": True})
+    if session.get('user'):
+        Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(thresholdId)
+        return jsonify({"success": True})
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/friend',methods=['GET','POST'])
 def friend_list():
-    if request.method == 'GET':
-        followList = GetFollowListByAccountId().get_followList_by_accountId("1")
-        who_follow_me_list = Get_who_follows_me_by_accountID().get_who_follows_me_by_accountID("1")
-        account = GetAccountByAccountId().get_account_by_accountId("1")
-        return render_template("/system/friend.html",followList=followList,who_follow_me_list=who_follow_me_list,account=account)
+    if session.get('user'):
+        if request.method == 'GET':
+            followList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
+            who_follow_me_list = Get_who_follows_me_by_accountID().get_who_follows_me_by_accountID(session.get('user')['accountId'])
+            account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            return render_template("/system/friend.html",followList=followList,who_follow_me_list=who_follow_me_list,account=account)
+    else:
+        return redirect(url_for('login'))
 @app.route('/ratingComment', methods=['GET', 'POST'])
 def ratingComment():
-    if request.method == 'GET':
-        return render_template("/system/RatingComment.html")
-    if request.method == 'POST':
-        data = request.json
-        Insert_review_by_id().insert_review_by_id("1",data.get("rating"),data.get("comment"))
-        return jsonify({'success': True})
+    if session.get('user'):
+        if request.method == 'GET':
+            return render_template("/system/RatingComment.html")
+        if request.method == 'POST':
+            data = request.json
+            Insert_review_by_id().insert_review_by_id(session.get('user')['accountId'],data.get("rating"),data.get("comment"))
+            return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/insert_followList/<string:followedId>', methods=['GET', 'POST'])
 def insert_followList(followedId):
-    InsertFollowListById().insert_followList_by_id("1",followedId)
-    return jsonify({'success': True})
+    if session.get('user'):
+        InsertFollowListById().insert_followList_by_id(session.get('user')['accountId'],followedId)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/remove_follower_in_followList/<string:followedId>', methods=['GET', 'POST'])
 def remove_follower_in_followList(followedId):
-    RemoveFollowerInFollowListById().remove_follower_in_followList_by_id("1",followedId)
-    return jsonify({'success': True})
+    if session.get('user'):
+        RemoveFollowerInFollowListById().remove_follower_in_followList_by_id(session.get('user')['accountId'],followedId)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/toggle-notification',methods=['GET','POST'])
 def toggle_notification():
-    data = request.json
-    UpdateFollowerInFollowListById().update_follower_in_followList_by_id("1",data["followId"],data["notifyMe"])
-    return jsonify({'success': True})
+    if session.get('user'):
+        data = request.json
+        UpdateFollowerInFollowListById().update_follower_in_followList_by_id(session.get('user')['accountId'],data["followId"],data["notifyMe"])
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/search/<string:content>')
 def search(content):
-    accountsList = GetAccountsByUserName().get_accounts_by_userName(content,"1")
-    accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List("1")
-    stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-    return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
+    if session.get('user'):
+        accountsList = GetAccountsByUserName().get_accounts_by_userName(content,session.get('user')['accountId'])
+        accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List(session.get('user')['accountId'])
+        stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+        return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
+    return redirect(url_for('login'))
+
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     if session.get('user'):
@@ -144,18 +166,21 @@ def mainPage():
 #remove notification
 @app.route('/remove_notification', methods=['POST'])
 def remove_notification():
-    data = request.json
-    notificationId = data.get('notificationId')
-    notificationType = data.get('notificationType')
-    referenceId = data.get('referenceId')
+    if session.get('user'):
+        data = request.json
+        notificationId = data.get('notificationId')
+        notificationType = data.get('notificationType')
+        referenceId = data.get('referenceId')
 
-    if notificationType == "threshold":
-        Remove_notification_by_id().remove_notification_by_id(notificationId)
-        Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(referenceId)
+        if notificationType == "threshold":
+            Remove_notification_by_id().remove_notification_by_id(notificationId)
+            Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(referenceId)
+        else:
+            Remove_notification_by_id().remove_notification_by_id(notificationId)
+
+        return jsonify({'success': True})
     else:
-        Remove_notification_by_id().remove_notification_by_id(notificationId)
-
-    return jsonify({'success': True})
+        return redirect(url_for('login'))
 
 # user login main page
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
@@ -184,142 +209,161 @@ def get_notification():
 
 @app.route('/symbol_news/<string:symbol>/<int:page>', methods=['GET', 'POST'])
 def symbol_news(symbol,page):
-    return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
+    if session.get('user'):
+        return jsonify(NewsController().get_news_by_symbol(symbol,str(page)))
+    else:
+        return redirect(url_for('login'))
 
 @app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
 def searchSymbol(symbol):
-    if request.method == 'POST':
-        return jsonify(StockDataController().search_stock(symbol))
+    if session.get('user'):
+        if request.method == 'POST':
+            return jsonify(StockDataController().search_stock(symbol))
+    else:
+        return redirect(url_for('login'))
 @app.route('/delete_comment_by_id/<string:commentId>',methods=['POST'])
 def delete_comment_by_id(commentId):
-    CommentController().delete_comment_by_id(commentId)
-    return jsonify({'success': True})
+    if session.get('user'):
+        CommentController().delete_comment_by_id(commentId)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/symbol/<string:symbol>',methods=['GET','POST'])
 def symbol(symbol):
-    user = GetAccountByAccountId().get_account_by_accountId("1")
-    stockData = StockDataController().get_update_stock_data(symbol,"1y")
-    stockInfo = StockDataController().get_stock_info_full(symbol)
-    predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-    threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id("1",symbol)
-    watchList = GetWatchlistByAccountID().get_watchlist_by_accountID("1")
-    return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+    if session.get('user'):
+        if session.get('user')['profile'] == 'premium':
+            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            stockData = StockDataController().get_update_stock_data(symbol,"1y")
+            stockInfo = StockDataController().get_stock_info_full(symbol)
+            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+            return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+        elif session.get('user')['profile'] == 'free':
+            pass
+    else:
+        return redirect(url_for('login'))
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
 def request_for_prediction(symbol, days, model):
-    # accountId = session.get('user')['accountId']
-    accountId = 1
-    print(f"Request for prediction: Symbol={symbol}, Days={days}, Model={model}, AccountId={accountId}")
-    days = int(days)
-    # 1. Pass the parameters to the machine learning model
-    prediction_result = None
-    default_layers = 4
-    default_neurons = 32
-    if model == 'GRU':
-        df = GRU_Model.get_stock_data(symbol)
-        prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
+    if session.get('user'):
+        days = int(days)
+        # 1. Pass the parameters to the machine learning model
+        prediction_result = None
+        default_layers = 4
+        default_neurons = 32
+        if model == 'GRU':
+            df = GRU_Model.get_stock_data(symbol)
+            prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
 
-        # format of GRU model result
-        # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
+            # format of GRU model result
+            # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
-    elif model == 'LR':
-        df = LinearRegression_Model.get_stock_data(symbol)
-        prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
+        elif model == 'LR':
+            df = LinearRegression_Model.get_stock_data(symbol)
+            prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
 
-        # format of LR model result
-        # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
+            # format of LR model result
+            # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
 
-    elif model == 'LSTM':
-        end_date = datetime.today().date()
-        start_date = (end_date - timedelta(days=365 * 5))
-        df = yf.download(symbol, start=start_date, end=end_date)
-        all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
-        df = df.reindex(all_dates)
-        df = df.fillna(method='ffill')
-        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
-        prediction_result = model.predict()
-        # format of LSTM prediction result
-        # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
+        elif model == 'LSTM':
+            end_date = datetime.today().date()
+            start_date = (end_date - timedelta(days=365 * 5))
+            df = yf.download(symbol, start=start_date, end=end_date)
+            all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+            df = df.reindex(all_dates)
+            df = df.fillna(method='ffill')
+            model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+            prediction_result = model.predict()
+            # format of LSTM prediction result
+            # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
 
+        else:
+            return jsonify({'success': False, 'error': 'Invalid model'}), 400
+
+        if not prediction_result:
+            return jsonify({'success': False, 'error': 'Prediction failed'}), 500
+
+        # 2. Store the prediction result in the database
+        prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
+
+        # 3. Store a notification
+        #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
+        NotificationController().set_notification(session.get('user')['accountId'], f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
+
+        return jsonify({'success': True, 'prediction_result': prediction_result})
     else:
-        return jsonify({'success': False, 'error': 'Invalid model'}), 400
-
-    if not prediction_result:
-        return jsonify({'success': False, 'error': 'Prediction failed'}), 500
-
-    # 2. Store the prediction result in the database
-    prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
-
-    # 3. Store a notification
-    #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
-    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
-
-    return jsonify({'success': True, 'prediction_result': prediction_result})
-
+        return redirect(url_for('login'))
 
 @app.route('/submit_comment',methods=["POST"])
 def submit_comment():
-    data = request.json
-    CommentController().insert_comment("1",data["symbol"],data["comment"])
-    return jsonify({'success': True})
+    if session.get('user'):
+        data = request.json
+        CommentController().insert_comment(session.get('user')['accountId'],data["symbol"],data["comment"])
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/update_watchList',methods=['POST'])
 def update_watchList():
-    data = request.json
-    UpdateWatchlist().update_Watchlist("1",data.get("watchList"))
-    return jsonify({'success': True})
+    if session.get('user'):
+        data = request.json
+        UpdateWatchlist().update_Watchlist(session.get('user')['accountId'],data.get("watchList"))
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route("/update_threshold_setting/<string:symbol>/<string:threshold>", methods=['POST'])
 def update_threshold_setting(symbol, threshold):
-    Update_threshold_settings().update_threshold_settings("1", symbol, float(threshold))
-    return jsonify({'success': True})
+    if session.get('user'):
+        Update_threshold_settings().update_threshold_settings(session.get('user')['accountId'], symbol, float(threshold))
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/symbol_comments/<string:symbol>')
 def symbol_comments(symbol):
-    return jsonify(CommentController().get_comments_by_symbol(symbol))
+    if session.get('user'):
+        return jsonify(CommentController().get_comments_by_symbol(symbol))
+    else:
+        return redirect(url_for('login'))
 
 
 @app.route('/preferenceSetup', methods=['GET', 'POST'])
 def preferenceSetup():
-    return render_template("/system/preferenceSetUp.html")
-@app.route('/demo')
-def demo():
-    list = StockDataController().get_recommendation_stock_by_preference("us", "Energy,Technology")
-    recommendationList = []
-    for stock in list:
-        try:
-            recommendationList.append(StockDataController().get_stock_info_medium(stock))
-        except Exception as e:
-            continue
+    if session.get('user'):
+        return render_template("/system/preferenceSetUp.html")
+    else:
+        return redirect(url_for('login'))
 
-    return render_template('demo.html',recommendationList = recommendationList)
+
 @app.route('/stock_info_minimum/<string:symbol>', methods=['GET'])
 def stock_info_minimum(symbol):
-    return jsonify(StockDataController().get_stock_info_minimum(symbol))
+    if session.get('user'):
+        return jsonify(StockDataController().get_stock_info_minimum(symbol))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/update_stock_data/<string:symbol>/<string:period>', methods=['GET'])
 def update_stock_data(symbol, period):
-    result = StockDataController().get_update_stock_data(symbol, period)
-    print(len(result))
-    return jsonify(result)
+    if session.get('user'):
+        result = StockDataController().get_update_stock_data(symbol, period)
+        print(len(result))
+        return jsonify(result)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
 def stock_data_medium(symbol):
-    return jsonify(StockDataController().get_stock_info_medium(symbol))
+    if session.get('user'):
+        return jsonify(StockDataController().get_stock_info_medium(symbol))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/stock_info_full/<string:symbol>', methods=['GET'])
 def stock_info_full(symbol):
-    return jsonify(StockDataController().get_stock_info_full(symbol))
-@app.route('/api',methods=['GET'])
-def api():
-    try:
-        apikey = request.args.get('apikey')
-        symbol = request.args.get('symbol')
-        timeframe = request.args.get('timeframe')
-        model = request.args.get('model')
-        layers = request.args.get('layers')
-        neurons = request.args.get('neurons')
-
-        return
-    except Exception as e:
-        return jsonify({"error":str(e)})
+    if session.get('user'):
+        return jsonify(StockDataController().get_stock_info_full(symbol))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/emailVerification',methods=['GET','POST'])
 def emailVerification():
@@ -345,14 +389,11 @@ def detectDuplicateEmail():
 def verifyEmailCode():
     try:
         data = request.json
-        # if data["accountStatus"] == 'login':
         email = data.get('account')['email']
         code = data.get('code')
         account = data.get('account')
         EmailVerificationController().verify_code(email,code)
-        # todo signup
         session['user'] = SignupController().individualSignUp(**account)
-        print(session['user'])
         return jsonify({"success": True})
 
     except Exception as e:
@@ -371,105 +412,49 @@ def login():
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
 
-@app.route('/signup',methods=['POST','GET'])
-def signup():
-    if request.method == 'GET':
-        return render_template("system/signup.html")
-    try:
-        data = request.json
-        SignupController().individualSignUp(data['profile'],data['username'],data['email'],data['password'],data['repassword'],data['invitationCode'])
-        return jsonify({'success':True})
-    except Exception as e:
-        return jsonify({'success':False,'error':str(e)})
-@app.route('/businessSignup',methods=['POST','GET'])
-def businesssignup():
-    if request.method == 'GET':
-        return render_template("system/businessSignup.html")
-    try:
-        data = request.json
-        pass
-    except Exception as e:
-        return jsonify({'success':False,'error':str(e)})
-
-@app.route('/accountInfo',methods=['POST','GET'])
-def accountInfo():
-    if request.method == 'GET':
-        #todo hard code for test
-        #session['user']  = {'accountId': 1, 'userName': 'lixiang', 'apikey': 'abcdefg', 'hashedPassword': 'e10adc3949ba59abbe56e057f20f883e', 'email': 'lixiang@gmail.com', 'bio': 'Welcome to stock4me!', 'profile': 'free', 'status': 'valid', 'apikeyUsageCount': 0,'accountType':'individual' 'createDateTime': datetime.datetime(2024, 6, 14, 18, 8, 2)}
-        session['user'] = GetAccountInfo().getAccountInfo("1")
-        if session['user']['accountType'] == 'individual':
-            if session['user']['profile'] == 'free':
-                return render_template("individualFreeUser/accountInfo.html",user = session['user'])
-            elif session['user']['profile'] == 'premium':
-                pass
-        elif session['user']['accountType'] == 'business':
-            pass
-
-#handle personal info
-# @app.route('/updatePersonalInfo', methods=['POST'])
-# def updatePersonalInfo():
-#     account = request.json.get('userAccount')
-#     #  from here
-#     userName = account["userName"]
-#     email = account['email']
-#     bio = account['bio']
-#     age = account['age']
-#     sex  = account['sex']
-#     occupation = account['occupation']
-#     incomeLevel = account['incomeLevel']
-#     netWorth = account['netWorth']
-#     investmentExperience = account['investmentExperience']
-#     riskTolerance = account['riskTolerance']
-#     investmentGoals = account['investmentGoals']
-#     profile = account['profile']
-#     #  to here, can simplify by updatePersonalInfo(account['xxx'],account['xxx'])
-#     if profile != "admin":
-#         # Refine the following method
-#         # UpdatePersonalInfo().updatePersonalInfo(,userName,email,bio)
-#
-#         #update session['user']
-#         return jsonify({'success': True})
-#     else:
-#         return jsonify({'success': False, 'error': 'Failed to update bio in the database'}), 500
-
 @app.route('/updatePersonalInfo', methods=['POST'])
 def updatePersonalInfo():
-    account = request.json.get('userAccount')
+    if session.get('user'):
+        account = request.json.get('userAccount')
 
-    if not account:
-        return jsonify({'success': False, 'error': 'Invalid input'}), 400
+        if not account:
+            return jsonify({'success': False, 'error': 'Invalid input'}), 400
 
-    try:
-        if account['profile'] != "admin":
-            update_result = UpdatePersonalInfoController().update_personal_info(account)
-            if update_result:
-                # Update session['user']
-                session['user'].update(account)
-                return jsonify({'success': True})
+        try:
+            if account['profile'] != "admin":
+                update_result = UpdatePersonalInfoController().update_personal_info(account)
+                if update_result:
+                    # Update session['user']
+                    session['user'].update(account)
+                    return jsonify({'success': True})
+                else:
+                    return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
             else:
-                return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
-        else:
-            # depends on how we want to do, whether we want to allow admins to update personal info
-            return jsonify({'success': False, 'error': 'Admins cannot update personal info this way'}), 403
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+                # depends on how we want to do, whether we want to allow admins to update personal info
+                return jsonify({'success': False, 'error': 'Admins cannot update personal info this way'}), 403
+        except Exception as e:
+            return jsonify({'success': False, 'error': str(e)}), 500
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/changePassword', methods=['POST'])
 def change_password():
-    try:
-        session['user'] = GetAccountByAccountId().get_account_by_accountId("1")
-        old_password = request.json.get('oldPassword')
-        new_password = request.json.get('newPassword')
-        accountId = session['user']['accountId']
-        # Determine whether the user's entered previous password is correct or not
-        if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
-            raise Exception('Invalid old password')
-        # if it is correct, then change current password
-        session['user']['hashedPassword'] = ChangePasswordController().update_password_by_accountId(userName,
-                                                                                                    new_password)
-        return jsonify({'success': True})
-    except Exception as e:
-        return jsonify({'success': False,'error':str(e)})
+    if session.get('user'):
+        try:
+            old_password = request.json.get('oldPassword')
+            new_password = request.json.get('newPassword')
+            # Determine whether the user's entered previous password is correct or not
+            if hashlib.md5(old_password.encode()).hexdigest() != session['user']['hashedPassword']:
+                raise Exception('Invalid old password')
+            # if it is correct, then change current password
+            session['user']['hashedPassword'] = ChangePasswordController().update_password_by_accountId(session['user']['accountId'],
+                                                                                                  new_password)
+            session.modified = True
+            return jsonify({'success': True})
+        except Exception as e:
+            return jsonify({'success': False,'error':str(e)})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/',methods=['GET'])
 def officialWeb():
@@ -484,16 +469,25 @@ def officialWeb():
 
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
 def get_predictionData_by_symbol(symbol):
-    return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
+    if session.get('user'):
+        return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
+    else:
+        return redirect(url_for('login'))
 @app.route('/history',methods=['GET'])
 def history():
-    history = Get_searchHistory_by_id().get_searchHistory_by_id("1")
-    return render_template("system/history.html",history=history)
+    if session.get('user'):
+        history = Get_searchHistory_by_id().get_searchHistory_by_id(session.get('user')['accountId'])
+        return render_template("system/history.html",history=history)
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/remove_searchHistory/<string:id>',methods=['POST'])
 def remove_searchHistory(id):
-    RemoveSearchHistory().remove_searchHistory_by_id(id)
-    return jsonify({'success':True})
+    if session.get('user'):
+        RemoveSearchHistory().remove_searchHistory_by_id(id)
+        return jsonify({'success':True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
@@ -509,27 +503,35 @@ def logout():
 
 @app.route('/industry_Setting',methods=['GET','POST'])
 def industry_Setting():
-    if request.method == 'GET':
-        return render_template("/system/industry.html")
-    data = request.json
-    session['industry'] = data.get("selectedIndustries")
-    return jsonify({'success': True})
+    if session.get('user'):
+        if request.method == 'GET':
+            return render_template("/system/industry.html")
+        data = request.json
+        session['industry'] = data.get("selectedIndustries")
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/country_Setting',methods=['GET','POST'])
 def country_Setting():
-    if request.method == 'GET':
-        return render_template("/system/country.html")
-    data = request.json
-    session['country'] = data.get("selectedCountries")
-    return jsonify({'success': True})# Dynamically checking that user-selected stocks have not exceeded thresholds
-
+    if session.get('user'):
+        if request.method == 'GET':
+            return render_template("/system/country.html")
+        data = request.json
+        session['country'] = data.get("selectedCountries")
+        return jsonify({'success': True})# Dynamically checking that user-selected stocks have not exceeded thresholds
+    else:
+        return redirect(url_for('login'))
 @app.route('/configure_personal_setting',methods=['GET','POST'])
 def configure_personal_setting():
-    if request.method == 'GET':
-        return render_template("/system/configure_personal_settings.html")
-    if request.method == 'POST':
-        UpdatePreferenceByAccountId().update_preference_by_accountId(session['user']['accountId'],session['industry'],session['country'])
-        return jsonify({'success': True})
+    if session.get('user'):
+        if request.method == 'GET':
+            return render_template("/system/configure_personal_settings.html")
+        if request.method == 'POST':
+            UpdatePreferenceByAccountId().update_preference_by_accountId(session['user']['accountId'],session['industry'],session['country'])
+            return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/pricing',methods=['GET','POST'])
 def pricing():
@@ -537,13 +539,16 @@ def pricing():
 
 @app.route('/admin/allUser',methods=['GET','POST'])
 def adminAllUser():
-    if request.method == 'GET':
-        allAccounts = GetAllAccount().get_all_account()
-        return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts)
-    if request.method == 'POST':
-        data = request.json
-        UpdateProfileStatus().update_profile_status(data['Account']["accountId"],data['Account']["status"])
-        return jsonify({'success': True})
+    if session.get('user'):
+        if request.method == 'GET':
+            allAccounts = GetAllAccount().get_all_account()
+            return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts)
+        if request.method == 'POST':
+            data = request.json
+            UpdateProfileStatus().update_profile_status(data['Account']["accountId"],data['Account']["status"])
+            return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
