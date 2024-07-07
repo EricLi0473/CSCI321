@@ -674,6 +674,17 @@
     <p class="mt-1 text-sm">
       [[item.commentText]]
     </p>
+      <div></div> <!-- Placeholder for alignment -->
+      <div class="flex justify-end items-center mt-2"> <!-- Changed justify-between to justify-end -->
+          <button class="btn btn-outline btn-xs flex items-center" @click="likeComment(index)">
+            <img src="../../static/resource/Icons/thumbs_up.png" alt="Like" class="h-4 w-4 mr-1" />
+            [[item.likes]] Likes
+          </button>
+          <button class="btn btn-outline btn-xs flex items-center ml-2" @click="dislikeComment(index)">
+            <img src="../../static/resource/Icons/thumbs_down.png" alt="Dislike" class="h-4 w-4 mr-1" />
+            [[item.dislikes]] Dislikes
+          </button>
+      </div>
   </div>
 </div>
 
@@ -892,6 +903,45 @@
                 }
         },
         methods: {
+            // used vue.set for like & dislike, because it is faster
+            likeComment(index) {
+                const item = this.comments[index];
+                axios.post(`/like_comment/${item.commentId}`)
+                  .then(response => {
+                    if (response.data.success) {
+                      Vue.set(this.comments[index], 'likes', this.comments[index].likes + 1);
+                      this.comments.sort((a, b) => {
+                        if (b.likes !== a.likes) {
+                          return b.likes - a.likes;
+                        }
+                        return new Date(b.commentDate) - new Date(a.commentDate);
+                      });
+                    } else {
+                      this.information = "Failed to like the comment!";
+                      document.getElementById('information').showModal();
+                    }
+                  })
+                  .catch(error => {
+                    this.information = "There was an error liking the comment!";
+                    document.getElementById('information').showModal();
+                  });
+              },
+            dislikeComment(index) {
+                const item = this.comments[index];
+                axios.post(`/dislike_comment/${item.commentId}`)
+                  .then(response => {
+                    if (response.data.success) {
+                      Vue.set(this.comments[index], 'dislikes', this.comments[index].dislikes + 1);
+                    } else {
+                      this.information = "Failed to like the comment!";
+                      document.getElementById('information').showModal();
+                    }
+                  })
+                  .catch(error => {
+                    this.information = "There was an error liking the comment!";
+                    document.getElementById('information').showModal();
+                  });
+              },
             deleteComment(index){
                 const item = this.comments[index];
                 axios.post(`/delete_comment_by_id/${item.commentId}`)
@@ -1042,11 +1092,19 @@
                         }
                     })
             },
-            get_symbol_comments() {
+              get_symbol_comments() {
                 axios.get(`/symbol_comments/${this.stockInfo.symbol}`)
                     .then(response => {
-                            this.comments = response.data.sort((a, b) => new Date(b.commentDate) - new Date(a.commentDate));
+                        this.comments = response.data.sort((a, b) => {
+                            if (b.likes !== a.likes) {
+                                return b.likes - a.likes;
+                            }
+                            return new Date(b.commentDate) - new Date(a.commentDate);
+                        });
                     })
+                    .catch(error => {
+                        console.error("There was an error fetching the comments!", error);
+                    });
             },
                   toggleWatchList() {
         if (this.is_inside_watchList === 1) {
