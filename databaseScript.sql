@@ -138,3 +138,11 @@ CREATE TABLE notification(
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
 
+CREATE TABLE watchList_symbol(
+    watchList_symbol_id INT AUTO_INCREMENT PRIMARY KEY ,
+    accountId INT NOT NULL ,
+    symbol VARCHAR(255) NOT NULL ,
+    priceInWatchList FLOAT NOT NULL ,
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    unique (accountId,symbol)
+)
