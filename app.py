@@ -383,10 +383,8 @@ def stock_data_medium(symbol):
 
 @app.route('/stock_info_full/<string:symbol>', methods=['GET'])
 def stock_info_full(symbol):
-    if session.get('user'):
-        return jsonify(StockDataController().get_stock_info_full(symbol))
-    else:
-        return redirect(url_for('login'))
+    return jsonify(StockDataController().get_stock_info_full(symbol))
+
 
 @app.route('/emailVerification',methods=['GET','POST'])
 def emailVerification():
@@ -492,10 +490,8 @@ def officialWeb():
 
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
 def get_predictionData_by_symbol(symbol):
-    if session.get('user'):
-        return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
-    else:
-        return redirect(url_for('login'))
+    return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
+
 @app.route('/history',methods=['GET'])
 def history():
     if session.get('user'):
