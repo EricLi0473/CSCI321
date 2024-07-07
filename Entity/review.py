@@ -33,10 +33,11 @@ class Review:
             self.mydb.close()
 
     def get_all_reviews(self):
-        sql = "SELECT * FROM review"
+        sql = "SELECT * FROM review JOIN account on review.accountId = account.accountId"
         return self.fetchAll(sql,"")
 
     def get_all_HeadLine_reviews(self):
+        # todo filter by star
         sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE isHeadline = 1"
         return self.fetchAll(sql,"")
     def insert_review_by_id(self, accountId,rating,reviewText):

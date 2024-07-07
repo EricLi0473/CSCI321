@@ -742,7 +742,8 @@
     </div>
 
     <div class="mx-auto mt-8 max-w-xl">
-      <form action="#" class="sm:flex sm:gap-4">
+
+      <form class="sm:flex sm:gap-4" @submit.prevent="signupProcess">
         <div class="sm:flex-1">
           <label for="email" class="sr-only">Email</label>
 
@@ -754,7 +755,9 @@
         </div>
 
         <button
+
           type="submit"
+
           class="group mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-rose-600 px-5 py-3 text-white transition focus:outline-none focus:ring focus:ring-yellow-400 sm:mt-0 sm:w-auto"
         >
           <span class="text-sm font-medium"> Sign Up </span>
@@ -932,7 +935,32 @@
             this.renderStockData(); // 调用renderStockData方法
         },
         methods: {
-            renderStockData() {
+
+            signupProcess(){
+                sessionStorage.setItem('email', this.email);
+                console.log(sessionStorage.getItem('email'))
+                window.location.href = '/pricing';
+            },
+                    handleSelectChange(event) {
+          const selectedSymbol = event.target.value;
+          this.refreshData(selectedSymbol);
+        },
+            refreshData(symbol){
+
+                axios.get(`/get_predictionData_by_symbol/${symbol}`)
+                    .then(response => {
+                   this.predictionData = response.data
+                    });
+                                            axios.get(`/stock_info_full/${symbol}`)
+                    .then(response => {
+                        this.stockInfo = response.data
+                    });
+                                            this.renderStockData(symbol);
+
+
+
+            },
+            renderStockData(symbol) {
             if (!this.chart) {
                     this.chart = klinecharts.init('chart');
                     this.chart.createIndicator('MA', false, { id: 'candle_pane' });

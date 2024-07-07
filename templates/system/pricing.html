@@ -249,12 +249,16 @@
         },
         methods: {
           freeUser(){
-            sessionStorage.setItem('accountType', JSON.stringify('free'));
-            console.log(sessionStorage.getItem('accountType'))
+            sessionStorage.setItem('profile', 'free');
+            console.log(sessionStorage.getItem('profile'))
+            console.log(sessionStorage.getItem('email'))
+            window.location.href = '/signup';
           },
           premiumUser(){
-            sessionStorage.setItem('accountType', JSON.stringify('premium'));
-          console.log(sessionStorage.getItem('accountType'))}
+            sessionStorage.setItem('profile', 'premium');
+          console.log(sessionStorage.getItem('profile'));
+          console.log(sessionStorage.getItem('email'))
+          window.location.href = '/signup';}
 
 
         }});

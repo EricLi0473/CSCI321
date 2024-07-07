@@ -7,6 +7,15 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+      .checkbox-lg {
+        border-width: 2px;
+        border-color: black;
+      }
+      .rating input[type="radio"] {
+        pointer-events: none;
+      }
+    </style>
 </head>
 <body>
   <div class="flex h-screen" id="app">
@@ -78,71 +87,39 @@
           </div>
           <!-- Content Start! -->
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
-          <h2 class="text-2xl font-bold mb-4 text-black">User Management Table</h2>
+          <h2 class="text-2xl font-bold mb-4 text-black">User Comment List</h2>
           <table class="table w-full table-fixed">
             <thead>
               <tr>
-                <th class="text-black text-center w-1/12">#</th>
-                <th class="text-black text-center w-2/12 text-xl">Username</th>
-                <th class="text-black text-center w-2/12 text-xl">Profile</th>
-                <th class="text-black text-center w-2/12 text-xl">Gender</th>
-                <th class="text-black text-center w-2/12 text-xl">Creation Date</th>
-                <th class="text-black text-center w-3/12 text-xl">Operation</th>
+                <th class="text-black text-center w-1/12 text-xl">#</th>
+                <th class="text-black text-center w-1/12 text-xl">Username</th>
+                <th class="text-black text-center w-2/12 text-xl">Rating star</th>
+                <th class="text-black text-left w-5/12 text-xl">Comment</th>
+                <th class="text-black text-center w-2/12 text-xl">Show in headline</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(account, index) in allAccounts" :key="account.accountId" class="hover:bg-gray-200 cursor-pointer">
-                <th class="text-black text-center text-xl w-1/12">[[ index + 1 ]]</th>
-                <td class="text-black text-center text-xl w-2/12">[[ account.userName ]]</td>
-                <td class="text-black text-center text-xl w-2/12">[[ account.profile ]]</td>
-                <td class="text-black text-center text-xl w-2/12">[[ account.sex ]]</td>
-                <td class="text-black text-center text-xl w-2/12">[[ account.createDateTime ]]</td>
-                <td class="text-black text-center text-xl w-3/12">
-                  <label class="flex items-center justify-center space-x-2">
-                    <span>Invalid</span>
-                    <label
-                      :class="account.status === 'valid' ? 'relative inline-block h-8 w-14 cursor-pointer rounded-full bg-green-500 transition [-webkit-tap-highlight-color:_transparent]' : 'relative inline-block h-8 w-14 cursor-pointer rounded-full bg-red-500 transition [-webkit-tap-highlight-color:_transparent]'"
-                    >
-                      <input
-                        type="checkbox"
-                        class="peer sr-only [&:checked_+_span_svg[data-checked-icon]]:block [&:checked_+_span_svg[data-unchecked-icon]]:hidden"
-                        :checked="account.status === 'valid'"
-                        @change="toggleStatus(account)"
-                      />
-                      <span
-                        class="absolute inset-y-0 start-0 z-10 m-1 inline-flex size-6 items-center justify-center rounded-full bg-white text-gray-400 transition-all peer-checked:start-6 peer-checked:text-green-600"
-                        :class="account.status === 'valid' ? 'peer-checked:text-green-600' : 'peer-checked:text-red-600'"
-                      >
-                        <svg
-                          data-unchecked-icon
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-4 w-4 text-red-600"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        <svg
-                          data-checked-icon
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="hidden h-4 w-4 text-green-600"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                      </span>
-                    </label>
-                    <span>Valid</span>
-                  </label>
+              <tr v-for="(review, index) in reviews" :key="review.reviewId" class="hover:bg-gray-200 cursor-pointer">
+                <th class="text-black text-center text-xl w-1/12">[[ review.reviewId ]]</th>
+                <td class="text-black text-center text-xl w-1/12">[[ review.accountId ]]</td>
+                <td class="text-black text-center text-xl w-2/12">
+                  <div class="rating rating-md rating-half">
+                    <input type="radio" :name="'rating-' + review.reviewId" class="rating-hidden" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 0.5" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 1" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 1.5" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 2" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 2.5" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 3" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 3.5" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 4" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 4.5" />
+                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 5" />
+                  </div>
+                </td>
+                <td class="text-black text-left text-lg w-5/12">[[ review.reviewText ]]</td>
+                <td class="text-black text-center text-xl w-2/12">
+                  <input type="checkbox" :checked="review.isHeadline === 1" class="checkbox checkbox-lg" />
                 </td>
               </tr>
             </tbody>
@@ -150,34 +127,26 @@
         </div>
     </div>
   </div>
+  </div>
 
-  <script>
-    new Vue({
-      el: '#app',
-      delimiters: ['[[', ']]'],
-      data: {
-        allAccounts:JSON.parse('{{allAccounts|tojson}}')
-      },
-      mounted(){
+      <script>
+        new Vue({
+          el: '#app',
+          delimiters: ['[[', ']]'],
+          data: {
+              reviews: JSON.parse('[{"reviewId": 5, "accountId": 1, "rating": 4.5, "reviewText": "Great tool for stock analysis. It is very useful and easy to use, highly recommended for investors.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 13, 52)"}, ' +
+                      '{"reviewId": 6, "accountId": 1, "rating": 2.5, "reviewText": "Not satisfied with the predictions. It needs improvement to be more accurate and reliable.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 16, 33)"}, ' +
+                      '{"reviewId": 7, "accountId": 1, "rating": 5.0, "reviewText": "Excellent interface with good design, but the data accuracy can definitely be improved.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 17, 24)"}, ' +
+                      '{"reviewId": 8, "accountId": 1, "rating": 5.0, "reviewText": "Helpful for beginners and provides basic features, but lacks advanced functionalities for expert users.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 17, 37)"}, ' +
+                      '{"reviewId": 9, "accountId": 1, "rating": 3.5, "reviewText": "User-friendly design makes it easy to navigate, but some important functionalities are still missing.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 19, 8)"}, ' +
+                      '{"reviewId": 10, "accountId": 1, "rating": 3.0, "reviewText": "Fast and reliable performance. I recommend it for getting daily stock updates and market insights.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 19, 51)"}, ' +
+                      '{"reviewId": 11, "accountId": 1, "rating": 5.0, "reviewText": "Could use more real-time data integration, but overall, it\'s a good tool for stock market analysis.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 21, 11)"}, ' +
+                      '{"reviewId": 12, "accountId": 1, "rating": 4.5, "reviewText": "Very intuitive and easy to use. The predictions are helpful, but could be more precise for better decisions.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 22, 19)"}]')
+          },
+          methods: {
 
-      },
-      methods: {
-        formatDate(dateString) {
-          const parts = dateString.match(/\d+/g);
-          return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')} ${parts[3].padStart(2, '0')}:${parts[4].padStart(2, '0')}:${parts[5].padStart(2, '0')}`;
-        },
-  toggleStatus(account) {
-    account.status = account.status === 'valid' ? 'invalid' : 'valid';
-    axios.post('/admin/allUser', {
-      Account: account // Corrected this line
-    }).then(response => {
-      console.log('Status updated successfully');
-    }).catch(error => {
-      console.error('Error updating status', error);
-    });
-  }
-      }
-    });
-  </script>
+          }
+        });
+        </script>
 </body>
 </html>

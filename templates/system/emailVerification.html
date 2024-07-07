@@ -99,14 +99,17 @@
         methods: {
             verifyCode(){
                 axios.post('/verifyEmailCode', {
-                  email: this.account.email,
                     code:this.code,
-                    accountId:this.account.accountId
+                    account:this.account
               }).then(response => {
                   if (response.data.success) {
                       console.log('successful');
                         sessionStorage.removeItem('account');
-                      window.location.href = '/redirectToUserPage';
+                        if (this.account.profile === 'premium'){
+                        window.location.href = '/country_Setting';
+                            }else if(this.account.profile === 'free'){
+                            window.location.href = '/mainPage';
+                        }
                   } else {
                       this.exception =  response.data.error
                       document.getElementById('exception').showModal();

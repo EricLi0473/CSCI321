@@ -6,8 +6,8 @@ CREATE TABLE account
     hashedPassword       VARCHAR(255) NULL,
     email                VARCHAR(255) NULL,
     bio                  VARCHAR(255) DEFAULT 'Welcome to stock4me!' NULL,
-    profile              VARCHAR(255),
-    status               ENUM ('valid', 'invalid') DEFAULT 'valid' NULL,
+    profile              ENUM('free', 'premium', 'admin') NULL,
+    status               ENUM('valid', 'invalid') DEFAULT 'valid' NULL,
     createDateTime       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     age                  INT NULL,
     sex                  ENUM('male', 'female', 'other') NULL,
@@ -16,7 +16,8 @@ CREATE TABLE account
     netWorth             FLOAT NULL,
     investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
-    investmentGoals      VARCHAR(255) NULL
+    investmentGoals      VARCHAR(255) NULL,
+    isPrivateAccount BOOL default 0 not null
 );
 
 -- User Favourites List(watchList)

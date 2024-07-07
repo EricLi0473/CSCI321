@@ -482,6 +482,7 @@
                               axios.post('/updatePersonalInfo', {
           userAccount : this.myAccount
         })
+                      this.toggleInfoEdit()
                   },
                         changePassword() {
         if (this.passwords.new !== this.passwords.confirm) {
