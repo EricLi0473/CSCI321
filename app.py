@@ -1,25 +1,20 @@
-from flask import Flask, request, render_template, redirect, url_for
-import requests
 import os
 
 from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoController
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from flask import Flask, request, render_template, redirect, url_for,abort,jsonify,session
-from werkzeug.exceptions import InternalServerError,BadRequest
+from flask import request, render_template, url_for, jsonify,session
 #slow start when loadin ML functions, normal turn off
 # from Control.User.requestForPrediction import RequestForPrediction
 #
 
 from Control.User.SignupController import *
 from Control.IndividualUser.getAccountInfo import *
-from Control.IndividualUser.updatePersonalInfo import *
 from Control.User.changePasswordController import *
 from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
 from Control.User.commentController import *
-from Control.premiumUser.recommendationListController import *
 from Control.User.notificationController import *
 from Control.premiumUser.get_followList_by_accountId import *
 from Control.premiumUser.get_threshold_by_symbol_and_id import *
@@ -37,8 +32,6 @@ from Control.User.insert_followList_by_id import *
 from Control.premiumUser.update_follower_in_followList_by_id import *
 from Control.premiumUser.get_threshold_setting_by_id import *
 from Control.premiumUser.update_preference_by_accountId import *
-from Control.premiumUser.getPremiumUsersController import *
-from Control.premiumUser.get_accountList_by_followedId import *
 from Control.User.get_searchHistory_by_id import *
 from Control.User.remove_searchHistory_by_id import *
 from Control.premiumUser.get_preference_by_accountId import *
