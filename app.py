@@ -51,13 +51,12 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.TF_LR_Model import *
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from Control.User.storePredictionResultController import *
+from machineLearningModel.TF_LR_Model import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from Control.User.storePredictionResultController import *
 import threading
 import time
-import schedule
 
 app = Flask(__name__)
 app.static_folder = 'static'
