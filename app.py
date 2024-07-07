@@ -168,7 +168,7 @@ def mainPage():
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
-            return render_template('mainPage.html',account=session['user'],watchList=watchList)
+            return render_template('mainPage.html',user=session['user'],watchList=watchList)
         elif session.get('user')['profile'] == 'free':
             pass
     else:
