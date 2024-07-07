@@ -91,11 +91,12 @@ def space(accountId):
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(session.get('user')['accountId'])
                 return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
             else:
+                account = GetAccountByAccountId().get_account_by_accountId(accountId)
+                if int(account['isPrivateAccount']) == 1:
+                    return render_template("/User/privateUser.html",account=account)
                 accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
-                account = GetAccountByAccountId().get_account_by_accountId(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
-                print(account)
                 return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList)
     else:
         return redirect(url_for('login'))
@@ -170,7 +171,8 @@ def mainPage():
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
             return render_template('mainPage.html',user=session['user'],watchList=watchList)
         elif session.get('user')['profile'] == 'free':
-            pass
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
+            return render_template('mainPage.html', account=session['user'], watchList=watchList)
     else:
         return redirect(url_for('login'))
 
@@ -252,7 +254,17 @@ def symbol(symbol):
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
             return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            pass
+            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            stockData = StockDataController().get_update_stock_data(symbol, "1y")
+            stockInfo = StockDataController().get_stock_info_full(symbol)
+            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
+                session.get('user')['accountId'], symbol)
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockData=stockData, stockInfo=stockInfo,
+                                   predictionresult=predictionresult, threshold=threshold, watchList=watchList,
+                                   user=user)
+
     else:
         return redirect(url_for('login'))
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
@@ -502,8 +514,7 @@ def remove_searchHistory(id):
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
-        if session['user']["profile"] == 'premium':
-                return redirect(url_for('mainPage'))
+        return redirect(url_for('mainPage'))
     else:
         return redirect(url_for('login'))
 
