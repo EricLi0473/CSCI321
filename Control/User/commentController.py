@@ -13,5 +13,11 @@ class CommentController:
     def delete_comment_by_id(self,commentId):
         Comment().delete_comment_by_id(commentId)
 
+    def update_comment_likes(self,commentId):
+        Comment().update_comment_likes(commentId)
+
+    def update_comment_dislikes(self,commentId):
+        Comment().update_comment_dislikes(commentId)
+
 if __name__ == '__main__':
-    print(CommentController().get_comments_by_symbol('AAPl'))
+     print(CommentController().get_comments_by_symbol('AAPl'))

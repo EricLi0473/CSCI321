@@ -62,6 +62,25 @@ app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
 
+@app.route('/like_comment/<int:comment_id>', methods=['POST'])
+def like_comment(comment_id):
+    try:
+        # Increment the like count in the database for the comment with comment_id
+        CommentController().update_comment_likes(comment_id)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/dislike_comment/<int:comment_id>', methods=['POST'])
+def dislike_comment(comment_id):
+    try:
+        # Increment the dislike count in the database for the comment with comment_id
+        CommentController().update_comment_dislikes(comment_id)
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
 @app.route('/preference',methods=['GET','POST'])
 def preference():
     if session.get('user'):
