@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+
 from torch.utils.data import DataLoader, TensorDataset
 from datetime import datetime, timedelta
 
