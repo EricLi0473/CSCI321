@@ -481,9 +481,11 @@
                   updateUser(){
                               axios.post('/updatePersonalInfo', {
           userAccount : this.myAccount
-        })
-                      this.toggleInfoEdit()
-                  },
+        }).then(response =>{
+                this.myAccount = response.data.data
+                           this.backupAccount =  response.data.data
+                                  this.isEditingInfo = 0
+                  })},
                         changePassword() {
         if (this.passwords.new !== this.passwords.confirm) {
           this.exception = "New passwords do not match";

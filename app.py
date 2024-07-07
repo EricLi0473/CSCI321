@@ -453,7 +453,7 @@ def updatePersonalInfo():
                 if update_result:
                     # Update session['user']
                     session['user'].update(account)
-                    return jsonify({'success': True})
+                    return jsonify({'data': account})
                 else:
                     return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
             else:
