@@ -6,10 +6,26 @@ import concurrent.futures
 import random
 import logging
 from cachetools import TTLCache
+from functools import lru_cache
 class StockDataController:
     def __init__(self):
         self.cache = TTLCache(maxsize=100, ttl=300)
 
+    @lru_cache(maxsize=128)
+    def get_common_symbol_data(self):
+        url = f"https://api.marketaux.com/v1/entity/stats/aggregation?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&countries=us"
+        response = requests.get(url)
+        list = []
+        count = 0
+        for symbol in response.json().get('data'):
+            try:
+                count +=1
+                if count > 10:
+                    break
+                list.append(self.get_stock_info_medium(symbol['key']))
+            except Exception:
+                continue
+        return list
     def fetch_stock_data(self,country:str, industry:str):
         API_TOKEN = "ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
         url = f"https://api.marketaux.com/v1/entity/stats/aggregation?countries={country}&industries={industry}&api_token={API_TOKEN}"
@@ -342,10 +358,6 @@ class StockDataController:
         return data_dict
 
 if __name__ == '__main__':
-    alist = ['NVDA', 'AAPL', 'MSFT', 'SONY', 'AMD', 'AVGO', 'AVGOP', 'SMCI', 'INTC', 'CSCO', 'ORCL', 'MU', 'IBM', 'SAP', 'SAPGF', '4333.HK', 'PLTR', 'AMAT', 'SNOW', 'UBER']
-    # print(StockDataController().get_stock_info_medium(list))
-    countries = ["us", "kr"]
-    industries = ["Technology", "Healthcare"]
-    print(StockDataController().get_recommendation_stock_by_preference(countries, industries))
+    print(StockDataController().get_common_symbol_data())
 
 

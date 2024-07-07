@@ -115,7 +115,7 @@
 
                     <div>
 
-                        <h2 class="text-lg font-bold mb-4">Recommended News For You</h2>
+                        <h2 class="text-lg font-bold mb-4">News</h2>
                         <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
                             <h3 class="font-bold">
                                 <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
@@ -136,7 +136,7 @@
 </div>
                     </div>
                     <div>
-                        <h2 class="text-lg font-bold mb-4">Recommended Stocks For You</h2>
+                        <h2 class="text-lg font-bold mb-4">Stock</h2>
                         <div class="flex w-full flex-col gap-4" v-if="isLoadingSymbol === 1">
                         <div class="skeleton h-32 w-full" v-if="isLoadingSymbol === 1"></div>
                         <div class="skeleton h-4 w-28" v-if="isLoadingSymbol === 1"></div>
@@ -213,7 +213,7 @@
                 isLoadingNews:1,
                 isLoadingSymbol:1,
                 hasNoNotification:0,
-                greeting:''
+                greeting: '',
             },
             computed: {
             },
@@ -225,7 +225,7 @@
 
             },
             methods: {
-                                                updateGreeting() {
+                                updateGreeting() {
                     const currentHour = new Date().getHours();
                     if (currentHour < 12) {
                         this.greeting = 'Good Morning ☀️';
