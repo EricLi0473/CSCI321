@@ -44,10 +44,10 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.TF_LR_Model import *
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from Control.User.storePredictionResultController import *
+# from machineLearningModel.TF_LR_Model import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from Control.User.storePredictionResultController import *
 import threading
 import time
 
@@ -172,7 +172,7 @@ def mainPage():
             return render_template('mainPage.html',user=session['user'],watchList=watchList)
         elif session.get('user')['profile'] == 'free':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
-            return render_template('mainPage.html', account=session['user'], watchList=watchList)
+            return render_template('/individualFreeUser/mainPage.html', user=session['user'], watchList=watchList)
     else:
         return redirect(url_for('login'))
 
@@ -199,18 +199,24 @@ def remove_notification():
 @app.route('/recommendation_news/<int:page>', methods=['GET', 'POST'])
 def recommendation_news(page):
     if session.get('user'):
-        preference = GetPreferenceByAccountId().get_preference_by_accountId(session['user']['accountId'])
-        country = ','.join(preference['preferenceCountry'])
-        industry = ','.join(preference['preferenceIndustry'])
-        result = NewsController().get_recommendation_news(country,industry,str(page))
-        return jsonify(result)
+        if session.get('user')['profile'] == 'premium':
+            preference = GetPreferenceByAccountId().get_preference_by_accountId(session['user']['accountId'])
+            country = ','.join(preference['preferenceCountry'])
+            industry = ','.join(preference['preferenceIndustry'])
+            result = NewsController().get_recommendation_news(country,industry,str(page))
+            return jsonify(result)
+        elif session.get('user')['profile'] == 'free':
+            return jsonify(NewsController().get_common_news(str(page)))
     else:
         return redirect(url_for('login'))
 # user login main page
 @app.route('/recommendation_symbol', methods=['GET', 'POST'])
 def recommendation_symbol():
     if session.get('user'):
-        return jsonify(RecommendationListController().get_recommendationList_by_accountId(session.get('user')['accountId']))
+        if session.get('user')['profile'] == 'premium':
+            return jsonify(RecommendationListController().get_recommendationList_by_accountId(session.get('user')['accountId']))
+        elif session.get('user')['profile'] == 'free':
+            return jsonify(StockDataController().get_common_symbol_data())
     else:
         return redirect(url_for('login'))
 @app.route('/get_notification',methods=['GET', 'POST'])
