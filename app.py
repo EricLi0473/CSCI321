@@ -78,7 +78,7 @@ def dislike_comment(comment_id):
 def preference():
     if session.get('user'):
         preference = GetPreferenceByAccountId().get_preference_by_accountId(session.get('user')['accountId'])
-        return render_template("/premiumUser/preference.html",preference=preference)
+        return render_template("/premiumUser/preference.html",preference=preference, user=session.get("user"))
     else:
         return redirect(url_for('login'))
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
@@ -89,7 +89,7 @@ def space(accountId):
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
                 account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(session.get('user')['accountId'])
-                return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList)
+                return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
             else:
                 account = GetAccountByAccountId().get_account_by_accountId(accountId)
                 if int(account['isPrivateAccount']) == 1:
@@ -97,7 +97,7 @@ def space(accountId):
                 accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
-                return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList)
+                return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
     else:
         return redirect(url_for('login'))
 
@@ -117,14 +117,14 @@ def friend_list():
             followList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
             who_follow_me_list = Get_who_follows_me_by_accountID().get_who_follows_me_by_accountID(session.get('user')['accountId'])
             account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
-            return render_template("/system/friend.html",followList=followList,who_follow_me_list=who_follow_me_list,account=account)
+            return render_template("/system/friend.html",followList=followList,who_follow_me_list=who_follow_me_list,account=account, user=session.get("user"))
     else:
         return redirect(url_for('login'))
 @app.route('/ratingComment', methods=['GET', 'POST'])
 def ratingComment():
     if session.get('user'):
         if request.method == 'GET':
-            return render_template("/system/RatingComment.html")
+            return render_template("/system/RatingComment.html",user=session.get("user"))
         if request.method == 'POST':
             data = request.json
             Insert_review_by_id().insert_review_by_id(session.get('user')['accountId'],data.get("rating"),data.get("comment"))
@@ -161,7 +161,7 @@ def search(content):
         accountsList = GetAccountsByUserName().get_accounts_by_userName(content,session.get('user')['accountId'])
         accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List(session.get('user')['accountId'])
         stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-        return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList)
+        return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList,user=session['user'])
     return redirect(url_for('login'))
 
 @app.route('/mainPage', methods=['GET', 'POST'])
@@ -502,7 +502,7 @@ def get_predictionData_by_symbol(symbol):
 def history():
     if session.get('user'):
         history = Get_searchHistory_by_id().get_searchHistory_by_id(session.get('user')['accountId'])
-        return render_template("system/history.html",history=history)
+        return render_template("system/history.html",history=history, user=session.get("user"))
     else:
         return redirect(url_for('login'))
 
