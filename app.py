@@ -39,6 +39,8 @@ from Control.User.emailVerificationController import *
 from Control.Admin.get_all_HeadLine_reviews import *
 from Control.Admin.update_profile_status import *
 from Control.Admin.get_all_account import *
+from Control.User.reset_pwd import *
+from Control.User.verify_account_by_email import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -252,7 +254,7 @@ def delete_comment_by_id(commentId):
 def symbol(symbol):
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol,"1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
@@ -260,7 +262,8 @@ def symbol(symbol):
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
             return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            session.get('user')['mlViewLeft'] = session.get('user')['mlViewLeft']-1
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
@@ -399,9 +402,17 @@ def emailVerification():
     if request.method == "POST":
         # here to sent email, not verification
         data = request.json
-        email = data["email"]
-        EmailVerificationController().send_verification_code(email)
-        return jsonify({"success": True})
+        if data.get('status') == "signup":
+            email = data["email"]
+            EmailVerificationController().send_verification_code(email)
+            return jsonify({"success": True})
+        elif data.get('status') == "resetPwd":
+            if VerifyAccountByEmail().verify_account_by_email(data["email"]):
+                EmailVerificationController().send_verification_code(data["email"])
+                return jsonify({"success": True})
+            else:
+                return jsonify({"success": False})
+
 @app.route('/detectDuplicateEmail',methods=['GET','POST'])
 def detectDuplicateEmail():
     data = request.json
@@ -422,9 +433,19 @@ def verifyEmailCode():
         EmailVerificationController().verify_code(email,code)
         session['user'] = SignupController().individualSignUp(**account)
         return jsonify({"success": True})
-
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/reset_pwd',methods=['POST','GET'])
+def reset_pwd():
+    if request.method == "POST":
+        data = request.json
+        EmailVerificationController().verify_code(data.get('email'), data.get('code'))
+        ResetPwd().reset_pwd(data.get('email'),data.get('password'))
+        return jsonify({"success": True})
+    elif request.method == "GET":
+        return render_template('/system/ResetPassword.html')
 @app.route('/signup',methods=['GET'])
 def signup():
     return render_template("system/signup.html")
