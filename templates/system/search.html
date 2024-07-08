@@ -192,10 +192,10 @@
                     <!-- head -->
                     <thead>
                       <tr>
-                        <th class="text-black">#</th>
-                        <th class="text-black text-lg " style="width: 15%;">User Name</th>
-                        <th class="text-black text-lg">BIO</th>
-                        <th class="text-black text-lg">Follow</th>
+                        <th class="text-black text-center">#</th>
+                        <th class="text-black text-lg text-center" style="width: 15%;">User Name</th>
+                        <th class="text-black text-lg text-center">BIO</th>
+                        <th class="text-black text-lg text-center">Follow</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -208,6 +208,7 @@
                           <button
                             class="btn btn-outline btn-sm w-40"
                             @click.stop="toggleFriendFollow(account.accountId)"
+                            v-if="account.isPrivateAccount === 0"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"

@@ -86,10 +86,11 @@
             </div>
             <!-- Content Start! -->
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
-              <div class="mb-8">
+              <div class="mb-8" v-if="account.profile === 'premium'">
                   <span class="text-4xl">Preference Setting</span>
               </div>
-              <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8">
+              <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8"
+              v-if="account.profile === 'premium'">
   <div class="h-fit rounded-lg">
                         <table class="table">
                     <!-- head -->
@@ -146,7 +147,19 @@
 </div>
 
   </div>
+
 </div>
+                                <div>
+                                    <div class=" mt-4">
+                       <span class="text-4xl">Account Setting</span></div>
+                      <div class="join mt-4"> <span class="text-md">Private Account</span>
+                          <div class="tooltip" data-tip="other user can not see your account">
+                          <label class="ml-4" >
+                          <input type="checkbox" class="toggle" v-model="account.isPrivateAccount" @change="updateAccountStatus">
+                      </label>
+                      </div>
+                      </div>
+                  </div>
       </div>
     </div>
                       <dialog id="exception" class="modal modal-bottom sm:modal-middle">
@@ -191,15 +204,29 @@
               el: '#app',
               delimiters: ['[[', ']]'],
               data: {
-                  user:JSON.parse('{{user|tojson}}'),
-                preference:JSON.parse('{{preference|tojson}}')
+                preference:JSON.parse('{{preference|tojson}}'),
+                  information:"",
+                  exception:"",
+                  account:JSON.parse('{{account|tojson}}')
+
           },
                   created() {
                   },
               mounted(){
-
+                console.log(this.account)
           },
               methods: {
+                updateAccountStatus() {
+                    axios.post('/updatePersonalInfo', {
+                        userAccount:this.account
+                    })
+                    .then(response => {
+                        console.log(response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+                },
         gotoPreference(){
             window.location.href = `/country_Setting`;
         }
