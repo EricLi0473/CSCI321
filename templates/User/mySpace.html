@@ -91,8 +91,8 @@
                     </label>
                     <div class="join my-2 mt-4">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
-  <button class="btn join-item" @click="showDiv('watchList')">WatchList</button>
-  <button class="btn join-item" @click="showDiv('thresholdList')">Threshold</button>
+  <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium'">WatchList</button>
+  <button class="btn join-item" @click="showDiv('thresholdList')" v-if="myAccount.profile === 'premium'">Threshold</button>
 
 </div>
                     <div class="divider"></div>

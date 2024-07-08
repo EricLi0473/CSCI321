@@ -83,14 +83,17 @@
                       <span class="indicator-item badge badge-secondary" v-if="myAccount.profile === 'premium'">Premium User</span>
                   <span class="text-4xl">[[myAccount.userName]]</span>
                       </div>
-                <div>
+                <div v-if="myAccount.isPrivateAccount !== 0">
+                  <span class="text-2xl text-zinc-600"><i>This is a private account, you can not follow him/her</i></span>
+                </div>
+                <div v-if="myAccount.isPrivateAccount !== 1">
                     <label class="block">
                         <span class="block text-sm mb-2 text-slate-500">[[myAccount.bio]]</span>
                     </label>
                     <div class="join my-2 mt-4">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
-  <button class="btn join-item" @click="showDiv('watchList')">WatchList</button>
-  <button class="btn join-item" @click="showDiv('thresholdList')">Threshold</button>
+  <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">WatchList</button>
+  <button class="btn join-item" @click="showDiv('thresholdList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">Threshold</button>
 
                                                 <button
                             class="btn btn-outline btn-md w-40 ml-4"
@@ -290,6 +293,7 @@
               delimiters: ['[[', ']]'],
               data: {
                   myAccount:JSON.parse('{{account|tojson}}'),
+                  Account:JSON.parse('{{Account|tojson}}'),
                   isEditingInfo:0,
                   backupAccount: {},
                   showPasswordModal: false,

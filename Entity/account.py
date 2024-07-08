@@ -91,7 +91,7 @@ class Account:
         return self.commit(sql,val)
 
     def update_Account(self, accountId, userName, email, bio, age, sex, occupation, incomeLevel, netWorth,
-                             investmentExperience, riskTolerance, investmentGoals, profile) -> bool:
+                             investmentExperience, riskTolerance, investmentGoals, profile,isPrivateAccount) -> bool:
         sql = """
         UPDATE account
         SET userName = %s,
@@ -105,12 +105,13 @@ class Account:
             investmentExperience = %s,
             riskTolerance = %s,
             investmentGoals = %s,
-            profile = %s
+            profile = %s,
+            isPrivateAccount = %s
         WHERE accountId = %s
         """
         values = (
         userName, email, bio, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance,
-        investmentGoals, profile, accountId)
+        investmentGoals, profile, isPrivateAccount,accountId)
 
         try:
             self.commit(sql, values)
