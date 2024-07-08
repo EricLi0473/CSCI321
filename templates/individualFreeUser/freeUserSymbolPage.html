@@ -370,7 +370,7 @@
     <div class="flex">
       <div>
   <div>
-  <label for="HeadlineAct" class="text-center mt-2 block text-sm text-gray-900"> select model </label>
+  <label for="HeadlineAct" class="text-center mt-2 block text-sm text-gray-900"> You can only choose AVG </label>
 
   <select
     name="HeadlineAct"
@@ -379,8 +379,7 @@
     v-model="model"
   >
     <option value="GRU">AVG</option>
-    <option value="LR">FAST</option>
-    <option value="GRU">ACCURACY</option>
+
   </select>
 </div>
 
@@ -623,7 +622,7 @@
           <b id="news">News</b>
         </div>
 
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 mt-8">
+        <div class="blur-lg grid grid-cols-1 gap-4 lg:grid-cols-4 lg:gap-8 mt-8">
     <div class="h-fit rounded-lg bg-gray-200" v-for="item in news":key="item.url">
       <article class="overflow-hidden rounded-lg shadow transition hover:shadow-lg">
   <img
@@ -655,7 +654,7 @@
   <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
 </div>
         <div class="w-fit mx-auto mt-6">
-              <button class="btn btn-outline" @click="get_symbol_news" v-if="isNewsLoading === 0">Load more</button>
+              <button class="btn btn-outline" @click="get_symbol_news" v-if="isNewsLoading === 0">Upgrade to Premium</button>
           </div>
 
 
