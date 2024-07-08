@@ -252,7 +252,7 @@ def delete_comment_by_id(commentId):
 def symbol(symbol):
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol,"1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
@@ -260,7 +260,8 @@ def symbol(symbol):
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
             return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            session.get('user')['mlViewLeft'] = session.get('user')['mlViewLeft']-1
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)

@@ -102,7 +102,7 @@
       <tr class="text-xl">
           <th>*</th>
         <th>User Name</th>
-        <th>subscribe Threshold</th>
+        <th v-if="user.profile === 'premium'">subscribe Threshold</th>
           <th></th>
       </tr>
     </thead>
@@ -111,7 +111,7 @@
           <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
               <td class="ml-4 h-fit w-fit text-2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
-        <td><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
+        <td  v-if="user.profile === 'premium'"><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
         <td><button class="btn btn-outline btn-sm" @click.stop="confirmUnfollow(follower.accountAccountId, index)">UnFollow</button></td>
       </tr>
 
