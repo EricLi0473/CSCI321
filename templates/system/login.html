@@ -180,7 +180,7 @@
         sessionStorage.setItem('failedAttempts', this.failedAttempts);
 
         if (this.failedAttempts > 3) {
-          this.cooldownTime += 30;
+          this.cooldownTime = 30;
           sessionStorage.setItem('cooldownTime', this.cooldownTime);
           this.startCooldown();
         }

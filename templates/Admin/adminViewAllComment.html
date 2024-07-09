@@ -23,7 +23,7 @@
     <div class="w-16 flex flex-col justify-between border-e bg-white h-screen fixed">
       <div>
         <div class="inline-flex size-16 items-center justify-center">
-          <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">L</span>
+          <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">[[account.userName.substring(0, 2)]]</span>
         </div>
         <div class="border-t border-gray-100">
           <div class="px-2">
@@ -38,29 +38,25 @@
             </div>
             <ul class="space-y-1 border-t border-gray-100 pt-4">
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a :href="`/space/${account.accountId}`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">My Account</span>
                 </a>
               </li>
               <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
-                </a>
-              </li>
-              <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                <a href="/admin/allUser" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Friend</span>
+                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Users</span>
                 </a>
               </li>
-              <li>
-                <a href="#" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">History Search</span>
-                </a>
-              </li>
+                  <li>
+                  <a href="/admin/review" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                    <svg class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </svg>
+                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
+                  </a>
+                </li>
             </ul>
           </div>
         </div>
@@ -82,8 +78,6 @@
           <div class="">
             <a class="btn btn-ghost text-xl">Stock4Me</a>
           </div>
-              <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
-            <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
           </div>
           <!-- Content Start! -->
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
@@ -91,17 +85,16 @@
           <table class="table w-full table-fixed">
             <thead>
               <tr>
-                <th class="text-black text-center w-1/12 text-xl">#</th>
                 <th class="text-black text-center w-1/12 text-xl">Username</th>
-                <th class="text-black text-center w-2/12 text-xl">Rating star</th>
-                <th class="text-black text-left w-5/12 text-xl">Comment</th>
-                <th class="text-black text-center w-2/12 text-xl">Show in headline</th>
+                <th class="text-black text-center w-2/12 text-xl"></th>
+                <th class="text-black text-left w-2/12 text-xl">Comment</th>
+                <th class="text-black text-center w-1/12 text-xl">isHeadline</th>
+                <th class="text-black text-center w-2/12 text-xl"></th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="(review, index) in reviews" :key="review.reviewId" class="hover:bg-gray-200 cursor-pointer">
-                <th class="text-black text-center text-xl w-1/12">[[ review.reviewId ]]</th>
-                <td class="text-black text-center text-xl w-1/12">[[ review.accountId ]]</td>
+              <tr v-for="(review, index) in truncatedReviews" :key="review.reviewId" class="hover:bg-gray-200 cursor-pointer" @click="showFullReview(review.reviewText)">
+                <td class="text-black text-center text-xl w-1/12">[[ review.userName ]]</td>
                 <td class="text-black text-center text-xl w-2/12">
                   <div class="rating rating-md rating-half">
                     <input type="radio" :name="'rating-' + review.reviewId" class="rating-hidden" />
@@ -117,16 +110,29 @@
                     <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 5" />
                   </div>
                 </td>
-                <td class="text-black text-left text-lg w-5/12">[[ review.reviewText ]]</td>
+                <td class="text-black text-left text-lg w-2/12">[[ review.truncatedText ]]</td>
+                <td class="text-black text-center text-xl w-1/12">
+                  <input type="checkbox" :checked="review.rating >= 4" class="checkbox checkbox-lg" disabled />
+                </td>
                 <td class="text-black text-center text-xl w-2/12">
-                  <input type="checkbox" :checked="review.isHeadline === 1" class="checkbox checkbox-lg" />
+                                  <button class="btn btn-outline btn-error" @click="delReview(review.reviewId)">Delete</button>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
     </div>
-  </div>
+        <dialog id="information" class="modal modal-bottom sm:modal-middle">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg">Info</h3>
+        <p class="py-4">[[information]]</p>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn">OK</button>
+          </form>
+        </div>
+      </div>
+    </dialog>
   </div>
 
       <script>
@@ -134,17 +140,39 @@
           el: '#app',
           delimiters: ['[[', ']]'],
           data: {
-              reviews: JSON.parse('[{"reviewId": 5, "accountId": 1, "rating": 4.5, "reviewText": "Great tool for stock analysis. It is very useful and easy to use, highly recommended for investors.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 13, 52)"}, ' +
-                      '{"reviewId": 6, "accountId": 1, "rating": 2.5, "reviewText": "Not satisfied with the predictions. It needs improvement to be more accurate and reliable.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 16, 33)"}, ' +
-                      '{"reviewId": 7, "accountId": 1, "rating": 5.0, "reviewText": "Excellent interface with good design, but the data accuracy can definitely be improved.", "isHeadline": 1, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 17, 24)"}, ' +
-                      '{"reviewId": 8, "accountId": 1, "rating": 5.0, "reviewText": "Helpful for beginners and provides basic features, but lacks advanced functionalities for expert users.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 17, 37)"}, ' +
-                      '{"reviewId": 9, "accountId": 1, "rating": 3.5, "reviewText": "User-friendly design makes it easy to navigate, but some important functionalities are still missing.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 19, 8)"}, ' +
-                      '{"reviewId": 10, "accountId": 1, "rating": 3.0, "reviewText": "Fast and reliable performance. I recommend it for getting daily stock updates and market insights.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 19, 51)"}, ' +
-                      '{"reviewId": 11, "accountId": 1, "rating": 5.0, "reviewText": "Could use more real-time data integration, but overall, it\'s a good tool for stock market analysis.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 21, 11)"}, ' +
-                      '{"reviewId": 12, "accountId": 1, "rating": 4.5, "reviewText": "Very intuitive and easy to use. The predictions are helpful, but could be more precise for better decisions.", "isHeadline": 0, "reviewDate": "datetime.datetime(2024, 6, 27, 1, 22, 19)"}]')
+            reviews: JSON.parse('{{reviews|tojson}}'),
+            information: '',
+            account:JSON.parse('{{account|tojson}}')
           },
+                computed: {
+        truncatedReviews() {
+          return this.reviews.map(review => {
+            let truncatedText = review.reviewText;
+            if (truncatedText.length > 30) {
+              truncatedText = truncatedText.substring(0, 30) + '...';
+            }
+            return {
+              ...review,
+              truncatedText: truncatedText
+            };
+          });
+        }
+      },
           methods: {
-
+            showFullReview(reviewText){
+              this.information = reviewText;
+              document.getElementById('information').showModal();
+            },
+              delReview(reviewId) {
+                 this.reviews = this.reviews.filter(review => review.reviewId !== reviewId);
+                axios.post(`/deleteReview/${reviewId}`)
+                        .then(response => {
+                          if (response.data.success){
+                                this.information = 'You have successfully delete this comment'
+                                document.getElementById('information').showModal();
+                          }
+                        })
+              }
           }
         });
         </script>

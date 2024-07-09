@@ -41,6 +41,8 @@ from Control.Admin.update_profile_status import *
 from Control.Admin.get_all_account import *
 from Control.User.reset_pwd import *
 from Control.User.verify_account_by_email import *
+from Control.Admin.get_all_reviews import *
+from Control.Admin.delete_review_by_id import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -88,14 +90,22 @@ def preference():
 def space(accountId):
     if session.get('user'):
         if request.method == 'GET':
+            account = GetAccountByAccountId().get_account_by_accountId(accountId)
+            #  admin access admin page
+            if session.get('user')['profile'] == 'admin' and account['profile'] == 'admin':
+                return render_template('/Admin/adminSpace.html',account=session.get('user'))
+            # access self page
             if int(accountId) == session.get('user')['accountId']:
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
                 account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(session.get('user')['accountId'])
                 return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
-            else:
-                account = GetAccountByAccountId().get_account_by_accountId(accountId)
-                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
+            # access other user page
+            elif int(accountId) != session.get('user')['accountId']:
+                # non admin user are prohibits to access admin account page
+                if account['profile'] == 'admin':
+                    return redirect(url_for('login'))
+                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(accountId)
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
                 return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,Account=session.get('user'))
@@ -262,7 +272,7 @@ def symbol(symbol):
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
             return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            session.get('user')['mlViewLeft'] = session.get('user')['mlViewLeft']-1
+            session['user']['mlViewLeft'] = session['user']['mlViewLeft'] - 1 if session['user']['mlViewLeft'] > 0 else session['user']['mlViewLeft']
             user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
@@ -472,17 +482,12 @@ def updatePersonalInfo():
             return jsonify({'success': False, 'error': 'Invalid input'}), 400
 
         try:
-            if account['profile'] != "admin":
-                update_result = UpdatePersonalInfoController().update_personal_info(account)
-                if update_result:
-                    # Update session['user']
-                    session['user'] = account
-                    return jsonify({'data': account})
-                else:
-                    return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
+            update_result = UpdatePersonalInfoController().update_personal_info(account)
+            if update_result:
+                session['user'] = account
+                return jsonify({'data': account})
             else:
-                # depends on how we want to do, whether we want to allow admins to update personal info
-                return jsonify({'success': False, 'error': 'Admins cannot update personal info this way'}), 403
+                return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
         except Exception as e:
             return jsonify({'success': False, 'error': str(e)}), 500
     else:
@@ -539,7 +544,10 @@ def remove_searchHistory(id):
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
-        return redirect(url_for('mainPage'))
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('mainPage'))
+        else:
+            return redirect(url_for("space", accountId=session.get('user')['accountId']))
     else:
         return redirect(url_for('login'))
 
@@ -587,13 +595,37 @@ def pricing():
 @app.route('/admin/allUser',methods=['GET','POST'])
 def adminAllUser():
     if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
         if request.method == 'GET':
             allAccounts = GetAllAccount().get_all_account()
-            return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts)
+            return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts,account=session.get('user'))
         if request.method == 'POST':
             data = request.json
             UpdateProfileStatus().update_profile_status(data['Account']["accountId"],data['Account']["status"])
             return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/admin/review',methods=['GET','POST'])
+def adminReview():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        if request.method == 'GET':
+            reviews = Get_all_reviews().get_all_reviews()
+            return render_template('/Admin/adminViewAllComment.html',reviews=reviews,account=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/deleteReview/<string:reviewId>',methods=['GET','POST'])
+def deleteReview(reviewId):
+    if session.get('user'):
+        if session.get('user')['profile'] == 'admin':
+            DeleteReviewById().delete_review_by_id(reviewId)
+            return jsonify({'success': True})
+        else:
+            return redirect(url_for('login'))
     else:
         return redirect(url_for('login'))
 #

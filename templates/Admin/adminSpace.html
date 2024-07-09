@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StockPage</title>
+    <title>AdminSapce</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -14,12 +14,12 @@
       <div class="w-16 flex flex-col justify-between border-e bg-white h-screen fixed">
         <div>
           <div class="inline-flex size-16 items-center justify-center">
-            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">[[Account.userName.substring(0, 2)]]</span>
+            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">[[account.userName.substring(0, 2)]]</span>
           </div>
           <div class="border-t border-gray-100">
             <div class="px-2">
               <div class="py-4">
-                <a href="/preference" class="t group relative flex justify-center rounded bg-blue-50 px-2 py-1.5 text-blue-700">
+                <a href="#" class="t group relative flex justify-center rounded bg-blue-50 px-2 py-1.5 text-blue-700">
                   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -29,49 +29,23 @@
               </div>
               <ul class="space-y-1 border-t border-gray-100 pt-4">
                 <li>
-                  <a :href="`/space/${Account.accountId}`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <a :href="`/space/${account.accountId}`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">My Account</span>
                   </a>
                 </li>
-                <li v-if="Account.profile !== 'admin'">
-                  <a :href="`/space/${Account.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
-                  </a>
-                </li>
-                <li v-if="Account.profile !== 'admin'">
-                  <a href="/friend" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Friend</span>
-                  </a>
-                </li>
-                                <li v-if="Account.profile === 'admin'">
+                <li>
                   <a href="/admin/allUser" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Users</span>
                   </a>
                 </li>
-                <li v-if="Account.profile !== 'admin'">
-                  <a href="/history" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
-                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">History Search</span>
-                  </a>
-                </li>
-                  <li v-if="Account.profile !== 'admin'">
-                  <a href="/ratingComment" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                    <svg class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
-                    </svg>
-                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
-                  </a>
-                </li>
-                                  <li v-if="Account.profile === 'admin'">
+                  <li>
                   <a href="/admin/review" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                     <svg class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
                     </svg>
-                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">All Comment</span>
+                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
                   </a>
                 </li>
               </ul>
@@ -95,48 +69,25 @@
             <div class="">
               <a class="btn btn-ghost text-xl">Stock4Me</a>
             </div>
-                <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search" v-if="Account.profile !== 'admin' ">
-              <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch" v-if="Account.profile !== 'admin'">Search</button>
             </div>
             <!-- Content Start! -->
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
               <div class="mt-8">
+              <span class="text-sm ">Welcome, </span>
                   <div class="avatar indicator  mb-8">
-                      <span class="indicator-item badge badge-secondary" v-if="myAccount.profile === 'premium'">Premium User</span>
-                  <span class="text-4xl">[[myAccount.userName]]</span>
+                      <span class="indicator-item badge badge-secondary" >Admin</span>
+                  <span class="text-4xl">[[account.userName]]</span>
                       </div>
-                <div v-if="myAccount.isPrivateAccount !== 0">
-                  <span class="text-2xl text-zinc-600"><i>This is a private account, you can not follow him/her</i></span>
-                </div>
-                <div v-if="myAccount.isPrivateAccount !== 1">
+                <div>
                     <label class="block">
-                        <span class="block text-sm mb-2 text-slate-500">[[myAccount.bio]]</span>
+                        <span class="block text-sm mb-2 text-slate-500">Check and edit your Bio Here...</span>
+                        <textarea class="textarea textarea-bordered w-96" placeholder="Bio" v-model="account.bio"></textarea>
                     </label>
                     <div class="join my-2 mt-4">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
-  <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">WatchList</button>
-  <button class="btn join-item" @click="showDiv('thresholdList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">Threshold</button>
+  <button class="btn join-item" @click="showDiv('watchList')" v-if="account.profile === 'premium'">WatchList</button>
+  <button class="btn join-item" @click="showDiv('thresholdList')" v-if="account.profile === 'premium'">Threshold</button>
 
-                                                <button
-                            class="btn btn-outline btn-md w-40 ml-4"
-                            @click.stop="toggleFriendFollow(myAccount.accountId)"
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="h-6 w-6 text-red-500"
-                              :fill="accountFavoList.includes(myAccount.accountId) ? 'currentColor' : 'none'"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-                              />
-                            </svg>
-                            <span class="text-red-500">[[ accountFavoList.includes(myAccount.accountId) ? 'Followed' : 'Follow' ]]</span>
-                          </button>
 </div>
                     <div class="divider"></div>
 <!--                    -->
@@ -145,42 +96,46 @@
             <dl class="-my-3 divide-y divide-gray-100 text-sm">
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Name</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.userName]]</dd>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.userName]]</dd>
                   <input
   type="text"
   placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.userName"/>
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.userName"/>
               </div>
 
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Password</dt>
+                <dd class="text-gray-700 sm:col-span-2">********</dd>
+              </div>
 
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Email</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.email]]</dd>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.email]]</dd>
                                    <input
   type="text"
   placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.email"/>
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.email"/>
               </div>
 
 
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Profile</dt>
-                <dd class="text-gray-700 sm:col-span-2">[[myAccount.profile]]</dd>
+                <dd class="text-gray-700 sm:col-span-2">[[account.profile]]</dd>
               </div>
 
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Age</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.age]]</dd>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.age]]</dd>
                     <input
   type="text"
   placeholder="Type here"
-  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.age" @input="validateNumber"/>
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.age" @input="validateNumber"/>
               </div>
 
               <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
                 <dt class="font-medium text-gray-900">Sex</dt>
-                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[myAccount.sex]]</dd>
-                  <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="myAccount.sex">
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.sex]]</dd>
+                  <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.sex">
   <option disabled selected>Choose your sex</option>
   <option value="male">Male</option>
   <option value="female">Female</option>
@@ -188,69 +143,76 @@
 </select>
               </div>
 
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Occupation</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.occupation]]</dd>
+                  <input
+  type="text"
+  placeholder="Type here"
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.occupation"/>
+              </div>
+
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Income Level</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">$ [[account.incomeLevel]] +</dd>
+                                    <input
+  type="text"
+  placeholder="Type here"
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.incomeLevel" @input="validateNumber"/>
+              </div>
+
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Net Worth</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">$ [[account.netWorth]] +</dd>
+                                                      <input
+  type="text"
+  placeholder="Type here"
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.netWorth" @input="validateNumber"/>
+
+              </div>
+
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Investment Experience</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.investmentExperience]]</dd>
+                                <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.investmentExperience">
+  <option disabled selected>Choose your sex</option>
+  <option value="novice">novice</option>
+  <option value="intermediate">intermediate</option>
+  <option value="expert">expert</option>
+</select>
+
+              </div>
+
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Risk Tolerance</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.riskTolerance]]</dd>
+                                                  <select class="select select-bordered select-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.riskTolerance">
+  <option disabled selected>Choose your sex</option>
+  <option value="low">low</option>
+  <option value="medium">medium</option>
+  <option value="high">high</option>
+</select>
+              </div>
+
+              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Investment Goals</dt>
+                <dd class="text-gray-700 sm:col-span-2" v-if="isEditingInfo === 0">[[account.investmentGoals]]</dd>
+                                                                        <input
+  type="text"
+  placeholder="Type here"
+  class="input input-bordered input-sm w-full max-w-xs" v-if="isEditingInfo === 1" v-model="account.investmentGoals"/>
+
+              </div>
             </dl>
           </div>
+                  <div class="flex flex-row gap-4 mt-8">
+                  <button class="btn btn-outline btn-info" @click="toggleInfoEdit()">Edit</button>
+                  <button class="btn btn-outline btn-warning" @click="updateUser">Confirm</button>
+                      <button class="btn btn-outline btn-warning" @click="togglePasswordModal">Change Password</button>
+                  </div>
               </div>
                 </div>
-<!--                 2 -->
-                  <div id="watchList" v-if="activeDiv === 'watchList'">
-                  <table class="table" >
-                    <!-- head -->
-                    <thead>
-                      <tr>
-                        <th class="text-black">#</th>
-                        <th class="text-black text-xl text-center">Symbol</th>
-                        <th class="text-black text-xl text-center">Full Name</th>
-                        <th class="text-black text-xl ">Latest Price</th>
-                        <th class="text-black text-xl ">Chg</th>
-                        <th class="text-black text-xl ">%Chg</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- row 1 -->
-                      <tr v-for="(stock, index) in routeResults" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
-                        <th class="text-black text-xl">[[ index + 1 ]]</th>
-                        <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
-                        <td class="text-black text-xl truncate max-w-xs text-center">[[ stock.longName ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
 
-
-                      </tr>
-                    </tbody>
-                  </table>
-                  </div>
-<!--                3 -->
-                  <div v-if="activeDiv === 'thresholdList'">
-  <table class="table">
-    <!-- head -->
-    <thead>
-      <tr>
-        <th class="text-black">#</th>
-        <th class="text-black text-xl">Symbol</th>
-        <th class="text-black text-xl">Percentage</th>
-      </tr>
-    </thead>
-    <tbody>
-      <!-- row 1 -->
-      <tr v-for="(item, index) in thresholdList" :key="index" @click="handleRowClick(item)" class="hover:bg-gray-200 cursor-pointer">
-        <th class="text-black text-xl">[[ index + 1 ]]</th>
-        <td class="text-black text-xl">[[ item.stockSymbol ]]</td>
-        <td class="text-black text-xl">
-          <div v-if="item.isEditing">
-            <input type="text" v-model="item.changePercentage" @input.stop="validateNumber" class="input input-bordered input-sm w-full max-w-xs" />
-          </div>
-          <div v-else>
-            [[ item.changePercentage ]]
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-
-                  </div>
                       <div v-if="showPasswordModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white p-6 rounded-lg shadow-lg">
         <h3 class="text-xl font-bold mb-4">Change Password</h3>
@@ -314,8 +276,7 @@
               el: '#app',
               delimiters: ['[[', ']]'],
               data: {
-                  myAccount:JSON.parse('{{account|tojson}}'),
-                  Account:JSON.parse('{{Account|tojson}}'),
+                  account:JSON.parse('{{account|tojson}}'),
                   isEditingInfo:0,
                   backupAccount: {},
                   showPasswordModal: false,
@@ -326,42 +287,17 @@
                   },
                   exception:"",
                   activeDiv : "accountInfo",
-                  watchList: JSON.parse('{{watchList|tojson}}'),
                   information:"",
-                  thresholdList:JSON.parse('{{thresholdList|tojson}}'),
-                  routeResults:[],
-                 accountFavoList:[],
-                search:''
-
           },
+                  created(){
+                const urlParams = new URLSearchParams(window.location.search);
+                const page = urlParams.get('page');
+                if (page) {
+                  this.activeDiv = page;
+                  }},
               mounted(){
-                this.fetchRoutes();
-                      this.thresholdList = this.initializeList(this.thresholdList);
-    this.thresholdList = this.thresholdList.map(item => ({
-      ...item,
-      isEditing: false
-    }));
           },
               methods: {
-                                  doSearch(){
-                    window.location.href = `/search/${this.search}`;
-                },
-                                                  async fetchRoutes() {
-                    this.routeResults = []; // Clear previous results
-                    for (const item of this.watchList) {
-                        await this.fetchRoute(item);
-                    }
-
-                },
-                async fetchRoute(item) {
-                    try {
-                        const response = await axios.get(`/stock_info_minimum/${item}`);
-                        this.routeResults.push(response.data);
-                        console.log(this.routeResults)
-                    } catch (error) {
-                        console.error(`Failed to fetch route for ${item}:`, error);
-                    }
-                },
                       initializeList(list) {
       return list
         .map(item => ({
@@ -379,6 +315,9 @@
 
                             this.setButtonClickTime();
                         });
+                },
+                  doSearch(){
+                    window.location.href = `/search/${this.search}`;
                 },
     handleRowClick(item) {
       if (!item.isEditing) {
@@ -408,26 +347,12 @@
           console.error('Error:', error);
         });
     },
-            toggleFriendFollow(accountId) {
-                const index = this.accountFavoList.indexOf(accountId);
-                if (index > -1) {
-                    this.accountFavoList.splice(index, 1);
-                    axios.post(`/remove_follower_in_followList/${accountId}`)
-                    .then(response => {
 
-                    });
-
-                } else {
-                    this.accountFavoList.push(accountId);
-                    axios.post(`/insert_followList/${accountId}`)
-                    .then(response => {
-
-                    });
-                }
-            },
                               toggleFollow(symbol) {
                 const index = this.watchList.indexOf(symbol);
+                const index2 = this.routeResults.indexOf(symbol);
                     this.watchList.splice(index, 1);
+                    this.routeResults.splice(index2, 1);
                               this.information = "Successful remove " + symbol;
           document.getElementById('information').showModal();
                 // Send update request
@@ -447,9 +372,12 @@
                   },
                   updateUser(){
                               axios.post('/updatePersonalInfo', {
-          userAccount : this.myAccount
-        })
-                  },
+          userAccount : this.account
+        }).then(response =>{
+                this.account = response.data.data
+                           this.backupAccount =  response.data.data
+                                  this.isEditingInfo = 0
+                  })},
                         changePassword() {
         if (this.passwords.new !== this.passwords.confirm) {
           this.exception = "New passwords do not match";
@@ -497,11 +425,11 @@
     toggleInfoEdit() {
       if (this.isEditingInfo === 0) {
         // 进入编辑模式，备份当前信息
-        this.backupAccount = { ...this.myAccount };
+        this.backupAccount = { ...this.account };
         this.isEditingInfo = 1;
       } else {
         // 退出编辑模式，恢复备份信息
-        this.myAccount = { ...this.backupAccount };
+        this.account = { ...this.backupAccount };
         this.isEditingInfo = 0;
       }
     },
