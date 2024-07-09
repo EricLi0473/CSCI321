@@ -1,0 +1,10 @@
+GET http://127.0.0.1/space/1
+User-Agent: IntelliJ HTTP Client/PyCharm 2024.1.4
+Accept-Encoding: br, deflate, gzip, x-gzip
+Accept: */*
+content-length: 0
+
+<> 2024-07-05T122908.200.html
+
+###
+
