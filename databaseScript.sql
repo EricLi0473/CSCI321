@@ -17,7 +17,8 @@ CREATE TABLE account
     investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
     investmentGoals      VARCHAR(255) NULL,
-    isPrivateAccount BOOL default 0 not null
+    isPrivateAccount BOOL default 0 not null,
+    mlViewLeft int default 10 not null
 );
 
 -- User Favourites List(watchList)

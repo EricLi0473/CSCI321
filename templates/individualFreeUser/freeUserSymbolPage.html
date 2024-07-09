@@ -42,14 +42,6 @@
               </li>
               <li>
 
-{#        favorate          #}
-                <a :href="`/space/${user.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-                  <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
-                </a>
-              </li>
-              <li>
-
 {#        friend          #}
                 <a href="/friend" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
@@ -103,7 +95,7 @@
           <nav aria-label="Breadcrumb">
   <ol class="flex items-center gap-1 text-sm text-gray-600">
     <li>
-      <a href="/" class="block transition hover:text-gray-700">
+      <a href="/mainPage" class="block transition hover:text-gray-700">
         <span class="sr-only"> Home </span>
 
         <svg
@@ -151,37 +143,6 @@
           <div id="stock_name" class="text-2xl flex justify-between">
             <h1 class="mr-4 "><b>[[stockInfo.longName]]</b></h1>
               <span class="mr-auto text-slate-700">([[stockInfo.symbol]])</span>
-            <div class="text-right pr-8 flex gap-5">
-<div class="text-md mt-3 ml-3 tooltip" data-tip="When the stock goes up or down by a certain percentage, the system will alert you on the home page">
-  <p>Notify me when..</p>
-</div>
-
- <div :class="{'bg-red-500': thresholdinputValid}"  class=" p-3 overflow-hidden w-[50px] h-[50px] hover:w-[270px] bg-gray-500 shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">    <div class="flex items-center justify-center fill-white" >
-      <svg xmlns="http://www.w3.org/2000/svg" width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0"></path>
-      </svg>
-    </div>
-    <input type="text" class="outline-none text-[20px] bg-transparent w-full text-white font-normal px-4"
-           placeholder="get up or down, %" v-model="percentage" @input="validateInput" @blur="submitPercentage"
-           />
-  </div>
-
-
-              <button :class="['btn', { 'bg-red-400': is_inside_watchList === 1 }]" @click="toggleWatchList">watchList
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor">
-    <path
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      stroke-width="2"
-      d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-  </svg>
-</button>
-            </div>
           </div>
           <div>
             <div id="stock_text1" class="mt-4 flex justify-between" v-if="stockInfo.upsAndDowns == 1">
@@ -364,21 +325,36 @@
             <span class="indicator-item badge badge-primary">advance ML feature</span>
           <b id="analysis">Analysis</b>
         </div>
-
-        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 ">
+          <div role="alert" class="alert alert-warning mt-4" v-if="stockInfo.symbol.includes('.') || user.mlViewLeft <=0 ">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="h-6 w-6 shrink-0 stroke-current"
+    fill="none"
+    viewBox="0 0 24 24">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+  </svg>
+  <span v-if="stockInfo.symbol.includes('.')">Your account level does not have access to forecast results outside of US equities</span>
+              <span v-if="user.mlViewLeft <=0">You've run out of times to view stock forecasts today.</span>
+</div>
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8 " v-if="!stockInfo.symbol.includes('.') && user.mlViewLeft > 0">
   <div class="h-fit rounded-lg">
     <div class="flex">
       <div>
   <div>
-  <label for="HeadlineAct" class="text-center mt-2 block text-sm text-gray-900"> You can only choose AVG </label>
+  <label for="HeadlineAct" class="text-center mt-2 block text-sm text-gray-900"> Upgrade premium to use other model </label>
 
   <select
     name="HeadlineAct"
     id="HeadlineAct"
     class="p-1 border-2 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm  text-center"
     v-model="model"
+    disabled
   >
-    <option value="GRU">AVG</option>
+    <option value="LR" selected >Fast</option>
 
   </select>
 </div>
@@ -391,11 +367,9 @@
     id="HeadlineAct1"
     class="p-1 border-2 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm"
     v-model="days"
+    disabled
   >
-    <option value="14">14 Day</option>
-    <option value="30">30 Days</option>
-    <option value="60">60 Days</option>
-
+    <option value="14" selected>14 Day</option>
   </select>
 </div>
 
@@ -898,14 +872,14 @@
         }
         },
         mounted() {
-
+            console.log(this.user)
             this.renderStockData(); // 调用renderStockData方法
             this.get_symbol_news();
             this.get_symbol_comments();
                         if(this.percentage && this.percentage !== '') {
                 this.thresholdinputValid = true;
             }
-
+            this.updateUser();
                                         // 检查 stockInfo.symbol 是否在 watchList 中
                 if (this.watchList.includes(this.stockInfo.symbol)) {
                     this.is_inside_watchList = 1;
@@ -914,6 +888,11 @@
                 }
         },
         methods: {
+                              updateUser(){
+                              axios.post('/updatePersonalInfo', {
+          userAccount : this.user
+        })
+                  },
             // used vue.set for like & dislike, because it is faster
             likeComment(index) {
                 const item = this.comments[index];

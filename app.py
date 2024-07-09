@@ -39,6 +39,8 @@ from Control.User.emailVerificationController import *
 from Control.Admin.get_all_HeadLine_reviews import *
 from Control.Admin.update_profile_status import *
 from Control.Admin.get_all_account import *
+from Control.User.reset_pwd import *
+from Control.User.verify_account_by_email import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -78,7 +80,8 @@ def dislike_comment(comment_id):
 def preference():
     if session.get('user'):
         preference = GetPreferenceByAccountId().get_preference_by_accountId(session.get('user')['accountId'])
-        return render_template("/premiumUser/preference.html",preference=preference, user=session.get("user"))
+        return render_template("/premiumUser/preference.html",preference=preference,account=session.get('user'))
+
     else:
         return redirect(url_for('login'))
 @app.route('/space/<string:accountId>',methods=['GET','POST'])
@@ -92,12 +95,11 @@ def space(accountId):
                 return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
             else:
                 account = GetAccountByAccountId().get_account_by_accountId(accountId)
-                if int(account['isPrivateAccount']) == 1:
-                    return render_template("/User/privateUser.html",account=account)
                 accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
-                return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
+                return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,Account=session.get('user'))
+
     else:
         return redirect(url_for('login'))
 
@@ -252,7 +254,7 @@ def delete_comment_by_id(commentId):
 def symbol(symbol):
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol,"1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
@@ -260,7 +262,8 @@ def symbol(symbol):
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
             return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            user = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
+            session.get('user')['mlViewLeft'] = session.get('user')['mlViewLeft']-1
+            user = session.get('user')
             stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
@@ -399,9 +402,17 @@ def emailVerification():
     if request.method == "POST":
         # here to sent email, not verification
         data = request.json
-        email = data["email"]
-        EmailVerificationController().send_verification_code(email)
-        return jsonify({"success": True})
+        if data.get('status') == "signup":
+            email = data["email"]
+            EmailVerificationController().send_verification_code(email)
+            return jsonify({"success": True})
+        elif data.get('status') == "resetPwd":
+            if VerifyAccountByEmail().verify_account_by_email(data["email"]):
+                EmailVerificationController().send_verification_code(data["email"])
+                return jsonify({"success": True})
+            else:
+                return jsonify({"success": False})
+
 @app.route('/detectDuplicateEmail',methods=['GET','POST'])
 def detectDuplicateEmail():
     data = request.json
@@ -422,9 +433,22 @@ def verifyEmailCode():
         EmailVerificationController().verify_code(email,code)
         session['user'] = SignupController().individualSignUp(**account)
         return jsonify({"success": True})
-
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/reset_pwd',methods=['POST','GET'])
+def reset_pwd():
+    if request.method == "POST":
+        data = request.json
+        EmailVerificationController().verify_code(data.get('email'), data.get('code'))
+        ResetPwd().reset_pwd(data.get('email'),data.get('password'))
+        return jsonify({"success": True})
+    elif request.method == "GET":
+        return render_template('/system/ResetPassword.html')
+@app.route('/signup',methods=['GET'])
+def signup():
+    return render_template("system/signup.html")
 @app.route('/login', methods=['POST','GET'])
 def login():
     if request.method == 'GET':
@@ -452,7 +476,7 @@ def updatePersonalInfo():
                 update_result = UpdatePersonalInfoController().update_personal_info(account)
                 if update_result:
                     # Update session['user']
-                    session['user'].update(account)
+                    session['user'] = account
                     return jsonify({'data': account})
                 else:
                     return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
@@ -490,7 +514,6 @@ def officialWeb():
     stockData = StockDataController().get_update_stock_data("AAPL","3mo")
     stockData1 = StockDataController().get_update_stock_data("BILI","3mo")
     stockData2 = StockDataController().get_update_stock_data("MSFT","3mo")
-
     review = GetAllHeadLineReviews().get_all_headline_reviews()
     return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
 

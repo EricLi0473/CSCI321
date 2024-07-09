@@ -47,6 +47,15 @@ class Account:
             list.append(id['accountId'])
         return list
 
+    def verify_account_by_email(self, email):
+        sql = "SELECT accountId FROM account WHERE email = %s"
+        val = (email,)
+        result = self.fetchOne(sql, val)
+        if result:
+            return True
+        else:
+            return False
+
     def get_account_by_accountId(self,accountId) -> dict:
         sql = "select * from account where accountId = %s"
         val = (accountId,)
@@ -91,7 +100,7 @@ class Account:
         return self.commit(sql,val)
 
     def update_Account(self, accountId, userName, email, bio, age, sex, occupation, incomeLevel, netWorth,
-                             investmentExperience, riskTolerance, investmentGoals, profile) -> bool:
+                             investmentExperience, riskTolerance, investmentGoals, profile,isPrivateAccount,mlViewLeft) -> bool:
         sql = """
         UPDATE account
         SET userName = %s,
@@ -105,12 +114,14 @@ class Account:
             investmentExperience = %s,
             riskTolerance = %s,
             investmentGoals = %s,
-            profile = %s
+            profile = %s,
+            isPrivateAccount = %s,
+            mlViewLeft = %s
         WHERE accountId = %s
         """
         values = (
         userName, email, bio, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance,
-        investmentGoals, profile, accountId)
+        investmentGoals, profile, isPrivateAccount,mlViewLeft,accountId)
 
         try:
             self.commit(sql, values)
@@ -134,6 +145,10 @@ class Account:
         sql = 'SELECT * FROM account WHERE accountId = %s'
         val = (lastId,)
         return self.fetchOne(sql, val)
+    def reset_pwd(self,email,hashedPassword):
+        sql = "Update account set hashedPassword = %s WHERE email = %s"
+        val = (hashedPassword, email)
+        return self.commit(sql, val)
 
 if __name__ == '__main__':
-    pass
+    print(Account().verify_account_by_email("ljr2004073@gmail.com"))

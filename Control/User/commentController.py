@@ -4,7 +4,6 @@ class CommentController:
         pass
 
     def get_comments_by_symbol(self,symbol):
-        # todo add filter high like comments features
         return Comment().get_comments_by_symbol(symbol)
 
     def insert_comment(self,accountId,symbol,comment):

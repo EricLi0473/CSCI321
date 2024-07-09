@@ -37,8 +37,7 @@ class Review:
         return self.fetchAll(sql,"")
 
     def get_all_HeadLine_reviews(self):
-        # todo filter by star
-        sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE isHeadline = 1"
+        sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE rating > 4"
         return self.fetchAll(sql,"")
     def insert_review_by_id(self, accountId,rating,reviewText):
         sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s)"
@@ -57,4 +56,4 @@ class Review:
 
 if __name__ == "__main__":
     review = Review()
-    print(review.delete_review_by_id("2"))
+    print(review.get_all_HeadLine_reviews())
