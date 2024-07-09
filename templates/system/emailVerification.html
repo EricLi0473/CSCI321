@@ -79,13 +79,13 @@
           email:"",
           password:"",
           exception:"",
-            countdown: null
+            countdown: null,
           },
                 created(){
                             const lastSentTime = localStorage.getItem('lastSentTime');
                 const currentTime = new Date().getTime();
-                if (lastSentTime && (currentTime - lastSentTime < 60000)) {
-                    const remainingTime = Math.ceil((60000 - (currentTime - lastSentTime)) / 1000);
+                if (lastSentTime && (currentTime - lastSentTime < 10000)) {
+                    const remainingTime = Math.ceil((10000 - (currentTime - lastSentTime)) / 1000);
                     this.buttonText = `Please wait ${remainingTime} seconds before sending another code.`;
                     this.startCountdown(remainingTime);
                 }
@@ -124,18 +124,19 @@
                     const lastSentTime = localStorage.getItem('lastSentTime');
                     const currentTime = new Date().getTime();
 
-                    if (lastSentTime && (currentTime - lastSentTime < 60000)) {
-                        const remainingTime = Math.ceil((60000 - (currentTime - lastSentTime)) / 1000);
+                    if (lastSentTime && (currentTime - lastSentTime < 10000)) {
+                        const remainingTime = Math.ceil((10000 - (currentTime - lastSentTime)) / 1000);
                         this.buttonText = `Please wait ${remainingTime} seconds before sending another code.`;
                         this.startCountdown(remainingTime);
                     } else {
                         // Send verification code logic here
                                                   axios.post('/emailVerification', {
                   email: this.account.email,
+                                                      status: "signup"
               })
                         localStorage.setItem('lastSentTime', currentTime);
-                        this.buttonText = 'Please wait 60 seconds before sending another code.';
-                        this.startCountdown(60);
+                        this.buttonText = 'Please wait 10 seconds before sending another code.';
+                        this.startCountdown(10);
                     }},
                             startCountdown(seconds) {
                     clearInterval(this.countdown);

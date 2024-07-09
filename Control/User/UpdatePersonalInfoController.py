@@ -16,10 +16,13 @@ class UpdatePersonalInfoController:
             riskTolerance = account['riskTolerance']
             investmentGoals = account['investmentGoals']
             profile = account['profile']
+            isPrivateAccount = account['isPrivateAccount']
+            mlViewLeft = account['mlViewLeft']
 
             return Account().update_Account(
                 accountId, userName, email, bio, age, sex, occupation,
-                incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals, profile
+                incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals, profile,
+                isPrivateAccount,mlViewLeft
             )
         except Exception as e:
             print(f"Error in update_personal_info: {e}")
