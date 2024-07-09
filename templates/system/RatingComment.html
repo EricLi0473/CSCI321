@@ -35,7 +35,9 @@
                   </a>
                 </li>
                 <li>
-                  <a :href="`/space/${user.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <a :href="`/space/${user.accountId}?page=watchList`"
+                     class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                      v-if="user.profile === 'premium'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
                   </a>
@@ -78,7 +80,7 @@
       <div class="flex-1 bg-gray-100 ml-16">
         <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
             <div class="">
-              <a class="btn btn-ghost text-xl">Stock4Me</a>
+                <a class="btn btn-ghost text-xl" href="/mainPage">Stock4Me</a>
             </div>
                 <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
         <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
