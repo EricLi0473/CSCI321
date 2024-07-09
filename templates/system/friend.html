@@ -14,7 +14,7 @@
       <div class="w-16 flex flex-col justify-between border-e bg-white h-screen fixed">
         <div>
           <div class="inline-flex size-16 items-center justify-center">
-            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">L</span>
+            <span class="grid size-10 place-content-center rounded-lg bg-gray-100 text-xs text-gray-600">[[user.userName.substring(0, 2)]]</span>
           </div>
           <div class="border-t border-gray-100">
             <div class="px-2">
@@ -81,8 +81,8 @@
             <div class="">
               <a class="btn btn-ghost text-xl">Stock4Me</a>
             </div>
-                <input type="text" placeholder="Search" class="input input-sm input-bordered w-80 ml-4">
-              <button class="btn btn-outline btn-sm btn-success ml-2">Search</button>
+                <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
+        <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
 
         </div>
 
@@ -199,6 +199,9 @@ function showContent(type) {
           }
         },
         methods: {
+            doSearch(){
+                    window.location.href = `/search/${this.search}`;
+                },
                         gotoSpace(id){
                 window.location.href = `/space/${id}`;
             },
