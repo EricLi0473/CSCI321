@@ -1,5 +1,5 @@
 from Entity.review import *
-class DeleteReviewById():
+class DeleteReviewById:
     def __init__(self):
         pass
 

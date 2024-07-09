@@ -37,7 +37,7 @@ class Review:
         return self.fetchAll(sql,"")
 
     def get_all_HeadLine_reviews(self):
-        sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE rating > 4"
+        sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE rating >= 4 ORDER BY reviewDate DESC LIMIT 5"
         return self.fetchAll(sql,"")
     def insert_review_by_id(self, accountId,rating,reviewText):
         sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s)"
