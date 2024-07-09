@@ -1,19 +1,22 @@
-from Entity.emailVerification import *
 import random
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-class EmailVerificationController():
+
+from Entity.emailVerification import *
+
+
+class EmailVerificationController:
     def __init__(self):
         pass
 
-    def send_verification_code(self,email):
+    def send_verification_code(self, email):
         verification_code = random.randint(1000, 9999)
 
         smtp_server = "smtp.gmail.com"
         smtp_port = 587
-        sender_email = "ErrFunnSmelly@gmail.com"  # Need to create new 'App Password' in Google to use different email as sender.
-        sender_password = "ugao xkih yhii nrww"  # Need to use the password from above.
+        sender_email = "stockforecast4me@gmail.com"  # Need to create new 'App Password' in Google to use different email as sender.
+        sender_password = "iwnm mhao iteg rafl"  # Need to use the password from above.
 
         message = MIMEMultipart()
         message["From"] = sender_email
@@ -36,6 +39,7 @@ class EmailVerificationController():
     def verify_code(self, email, code):
         return EmailVerification().emailVerify(email, code)
 
+
 if __name__ == "__main__":
     # EmailVerificationController().send_verification_code("ljr20040703@gmail.com")
-    EmailVerificationController().verify_code("ljr20040703@gmail.com",3704)
+    EmailVerificationController().verify_code("ljr20040703@gmail.com", 3704)
