@@ -4,15 +4,18 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import concurrent.futures
 import random
-import logging
-from cachetools import TTLCache
-from functools import lru_cache
+from cachetools import LRUCache,cached
 import time
 class StockDataController:
+    _instance = None
+    cache = LRUCache(maxsize=128)
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(StockDataController, cls).__new__(cls)
+        return cls._instance
     def __init__(self):
-        self.cache = TTLCache(maxsize=100, ttl=300)
-
-    @lru_cache(maxsize=128)
+        pass
+    @cached(cache=cache)
     def get_common_symbol_data(self):
         url = f"https://api.marketaux.com/v1/entity/stats/aggregation?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&countries=us"
         response = requests.get(url)
@@ -101,7 +104,6 @@ class StockDataController:
                     results.append(stock_data)
 
         return results
-
 
     def get_recommendation_stock_by_preference(self, countries:list,industries:list) -> list:
         stock_data = []
