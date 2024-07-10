@@ -628,7 +628,7 @@
   <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
 </div>
         <div class="w-fit mx-auto mt-6">
-              <button class="btn btn-outline" @click="get_symbol_news" v-if="isNewsLoading === 0">Upgrade to Premium</button>
+              <button class="btn btn-outline" @click="window.location.href='/preference'" v-if="isNewsLoading === 0">Upgrade to Premium</button>
           </div>
 
 

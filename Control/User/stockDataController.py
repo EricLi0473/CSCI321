@@ -71,7 +71,7 @@ class StockDataController:
                     "volume": global_quote[key_mapping["volume"]]
                 }
 
-                # 修改符号，替换 .LON 为 .L
+                # change symbol
                 if '.' in new_data['symbol']:
                     if '.LON' in new_data['symbol']:
                         new_data['symbol'] = new_data['symbol'].replace('.LON', '.L')

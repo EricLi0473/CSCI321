@@ -60,6 +60,12 @@ app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
 
+@app.route('/upgrade_to_premium',methods=['POST'])
+def upgrade_to_premium():
+    account = request.json.get('account')
+    UpdatePersonalInfoController().update_personal_info(account)
+    session['user'] = GetAccountByAccountId().get_account_by_accountId(session['user']['accountId'])
+    return jsonify({'success': True})
 @app.route('/like_comment/<int:comment_id>', methods=['POST'])
 def like_comment(comment_id):
     try:
