@@ -38,12 +38,12 @@ class SearchHistory:
 
 
     def get_searchHistory_by_id(self,accountId):
-        sql = "SELECT * FROM searchHistory WHERE accountId = %s"
+        sql = "SELECT * FROM searchHistory WHERE accountId = %s ORDER BY searchDate DESC"
         val = (accountId,)
         return self.fetchAll(sql, val)
 
     def insert_searchHistory_by_id(self,accountId,stockSymbol):
-        sql = "INSERT INTO searchHistory (accountId, stockSymbol) VALUES (%s, %s)"
+        sql = "INSERT INTO searchHistory (accountId, stockSymbol) VALUES (%s, %s) ON DUPLICATE KEY UPDATE searchDate = CURRENT_TIMESTAMP;"
         val = (accountId, stockSymbol)
         self.commit(sql, val)
 
@@ -53,4 +53,4 @@ class SearchHistory:
         self.commit(sql, val)
 
 if __name__ == '__main__':
-    print(SearchHistory().get_searchHistory_by_id("1"))
+    print(SearchHistory().insert_searchHistory_by_id("1","AAPL"))

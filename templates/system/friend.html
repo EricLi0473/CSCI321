@@ -142,7 +142,7 @@
       <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
           <td class="2xl">[[index+1]]</td>
           <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
-        <td>[[ new Date(follower.followDate).toLocaleDateString() ]]</td>
+        <td>[[ new Date(follower.followDate).toLocaleDateString('en-SG') ]]</td>
       </tr>
     </tbody>
   </table>

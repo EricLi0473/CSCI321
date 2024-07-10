@@ -43,6 +43,7 @@ from Control.User.reset_pwd import *
 from Control.User.verify_account_by_email import *
 from Control.Admin.get_all_reviews import *
 from Control.Admin.delete_review_by_id import *
+from Control.User.insert_searchHistory_by_id import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -265,22 +266,20 @@ def symbol(symbol):
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
             user = session.get('user')
-            stockData = StockDataController().get_update_stock_data(symbol,"1y")
+            # stockData = StockDataController().get_update_stock_data(symbol,"1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
             threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+            return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            session['user']['mlViewLeft'] = session['user']['mlViewLeft'] - 1 if session['user']['mlViewLeft'] > 0 else session['user']['mlViewLeft']
             user = session.get('user')
-            stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
             threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
                 session.get('user')['accountId'], symbol)
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockData=stockData, stockInfo=stockInfo,
+            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
                                    predictionresult=predictionresult, threshold=threshold, watchList=watchList,
                                    user=user)
 
@@ -388,7 +387,6 @@ def stock_info_minimum(symbol):
 def update_stock_data(symbol, period):
     if session.get('user'):
         result = StockDataController().get_update_stock_data(symbol, period)
-        print(len(result))
         return jsonify(result)
     else:
         return redirect(url_for('login'))
@@ -533,7 +531,13 @@ def history():
         return render_template("system/history.html",history=history, user=session.get("user"))
     else:
         return redirect(url_for('login'))
-
+@app.route('/insert_searchHistory/<string:symbol>',methods=['GET','POST'])
+def insert_searchHistory(symbol):
+    if session.get('user'):
+        InsertSearchHistoryById().insert_searchHistory_by_id(session.get('user')['accountId'],symbol)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/remove_searchHistory/<string:id>',methods=['POST'])
 def remove_searchHistory(id):
     if session.get('user'):

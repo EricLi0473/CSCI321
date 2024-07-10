@@ -839,7 +839,7 @@
             percentage: JSON.parse('{{ threshold|tojson}}'),
             thresholdinputValid: false,
             inputValid : false,
-            stockData: JSON.parse('{{ stockData|tojson }}'),
+            stockData:{},
             stockInfo: JSON.parse('{{ stockInfo|tojson }}'),
             predictionresult:JSON.parse('{{predictionresult|tojson}}'),
             watchList:JSON.parse('{{ watchList|tojson}}'),
@@ -861,7 +861,6 @@
         },
               computed: {
                     formattedDate() {
-          // 去除 GMT
           return this.predictionresult.requestDate.replace(' GMT', '');
         },
             firstLetter() {
@@ -872,8 +871,11 @@
         }
         },
         mounted() {
-            console.log(this.user)
-            this.renderStockData(); // 调用renderStockData方法
+                                                axios.get(`/update_stock_data/${this.stockInfo.symbol}/1y`)
+                        .then(response => {
+                        this.stockData = response.data;
+                        this.renderStockData();
+            })
             this.get_symbol_news();
             this.get_symbol_comments();
                         if(this.percentage && this.percentage !== '') {
@@ -886,9 +888,13 @@
                 } else {
                     this.is_inside_watchList = 0;
                 }
+                axios.post(`/insert_searchHistory/${this.stockInfo.symbol}`)
         },
         methods: {
                               updateUser(){
+                                  if (this.predictionresult && !this.stockInfo.symbol.includes('.')){
+                                      this.user.mlViewLeft -= 1
+                                  }
                               axios.post('/updatePersonalInfo', {
           userAccount : this.user
         })

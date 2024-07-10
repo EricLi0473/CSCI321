@@ -52,15 +52,6 @@ CREATE TABLE followList
     FOREIGN KEY (followedId) REFERENCES account(accountId)
 );
 
--- Table to store person search stock history
-CREATE TABLE searchHistory
-(
-    searchId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    stockSymbol  TEXT NOT NULL,
-    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
-);
 
 -- Merged table to store stock prediction history and results
 CREATE TABLE predictionData
@@ -146,4 +137,14 @@ CREATE TABLE watchList_symbol(
     priceInWatchList FLOAT NOT NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId),
     unique (accountId,symbol)
-)
+);
+-- Table to store person search stock history
+CREATE TABLE searchHistory
+(
+    searchId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    stockSymbol  VARCHAR(255) NOT NULL,
+    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    UNIQUE KEY unique_account_stock (accountId, stockSymbol),
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);

@@ -866,7 +866,7 @@
             percentage: JSON.parse('{{ threshold|tojson}}'),
             thresholdinputValid: false,
             inputValid : false,
-            stockData: JSON.parse('{{ stockData|tojson }}'),
+            stockData: {},
             stockInfo: JSON.parse('{{ stockInfo|tojson }}'),
             predictionresult:JSON.parse('{{predictionresult|tojson}}'),
             watchList:JSON.parse('{{ watchList|tojson}}'),
@@ -899,8 +899,12 @@
         }
         },
         mounted() {
-
-            this.renderStockData(); // 调用renderStockData方法
+                                    axios.get(`/update_stock_data/${this.stockInfo.symbol}/1y`)
+                        .then(response => {
+                        this.stockData = response.data;
+                        this.renderStockData();
+            })
+             // 调用renderStockData方法
             this.get_symbol_news();
             this.get_symbol_comments();
                         if(this.percentage && this.percentage !== '') {
@@ -913,6 +917,7 @@
                 } else {
                     this.is_inside_watchList = 0;
                 }
+                axios.post(`/insert_searchHistory/${this.stockInfo.symbol}`)
         },
         methods: {
             // used vue.set for like & dislike, because it is faster
