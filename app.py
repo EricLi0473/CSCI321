@@ -53,6 +53,7 @@ from datetime import datetime, timedelta
 # from machineLearningModel.TF_LR_Model import *
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
 # from Control.User.storePredictionResultController import *
 import threading
 import time
@@ -67,7 +68,7 @@ app.secret_key = 'csci314'
 @app.route('/generate_captcha')
 def generate_captcha():
     image = ImageCaptcha()
-    captcha_text = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=5))
+    captcha_text = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=5))
     session['captcha'] = captcha_text
 
     data = image.generate(captcha_text)
@@ -82,6 +83,7 @@ def verify_captcha():
     account = request.json.get('account')
     if user_captcha and user_captcha == session.get('captcha'):
         session['user'] = account
+        session.pop('captcha')
         return jsonify({'success': True})
     return jsonify({'success': False})
 
@@ -318,6 +320,7 @@ def symbol(symbol):
         return redirect(url_for('login'))
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
 def request_for_prediction(symbol, days, model):
+    from datetime import datetime
     if session.get('user'):
         days = int(days)
         # 1. Pass the parameters to the machine learning model
@@ -332,8 +335,12 @@ def request_for_prediction(symbol, days, model):
             # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
         elif model == 'LR':
-            df = LinearRegression_Model.get_stock_data(symbol)
-            prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
+            if '.' not in symbol:
+                # for non-us stock, use prophet
+                prediction_result = Prophet_model(symbol, days).predict()
+            else:
+                df = LinearRegression_Model.get_stock_data(symbol)
+                prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
 
             # format of LR model result
             # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
