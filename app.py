@@ -4,7 +4,7 @@ from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoControll
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from flask import request, render_template, url_for, jsonify,session
+from flask import request, render_template, url_for, jsonify,session,send_file
 #slow start when loadin ML functions, normal turn off
 # from Control.User.requestForPrediction import RequestForPrediction
 #
@@ -44,6 +44,7 @@ from Control.User.verify_account_by_email import *
 from Control.Admin.get_all_reviews import *
 from Control.Admin.delete_review_by_id import *
 from Control.User.insert_searchHistory_by_id import *
+from Control.User.get_all_predictionData import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -55,10 +56,34 @@ from datetime import datetime, timedelta
 # from Control.User.storePredictionResultController import *
 import threading
 import time
+from captcha.image import ImageCaptcha
+import random
+import io
 
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
+
+@app.route('/generate_captcha')
+def generate_captcha():
+    image = ImageCaptcha()
+    captcha_text = ''.join(random.choices('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', k=5))
+    session['captcha'] = captcha_text
+
+    data = image.generate(captcha_text)
+    img_io = io.BytesIO(data.read())
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/png')
+
+@app.route('/verify_captcha', methods=['POST'])
+def verify_captcha():
+    user_captcha = request.json.get('captcha')
+    account = request.json.get('account')
+    if user_captcha and user_captcha == session.get('captcha'):
+        session['user'] = account
+        return jsonify({'success': True})
+    return jsonify({'success': False})
 
 @app.route('/upgrade_to_premium',methods=['POST'])
 def upgrade_to_premium():
@@ -472,8 +497,8 @@ def login():
             data = request.json
             email = data.get('email')
             password = data.get('password')
-            session['user'] = LoginController().login(email, password)
-            return jsonify({'success':True})
+            account = LoginController().login(email, password)
+            return jsonify({'success':True,'account':account})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
 
@@ -525,6 +550,12 @@ def officialWeb():
     stockData2 = StockDataController().get_update_stock_data("MSFT","3mo")
     review = GetAllHeadLineReviews().get_all_headline_reviews()
     return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
+
+@app.route('/getSystemStats',methods=['GET'])
+def getSystemStats():
+    usersCount = len(GetAllAccount().get_all_account())
+    predictionCount = len(GetAllPredictionData().get_all_predictionData())
+    return jsonify({'usersCount':usersCount,'prediction':predictionCount,'symbol':5000})
 
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
 def get_predictionData_by_symbol(symbol):

@@ -49,7 +49,10 @@ class PredictionData:
         if result is None:
             return {}
         return result
-
+    def get_all_predictionData(self) -> list:
+        sql = "SELECT * FROM predictiondata"
+        return self.fetchAll(sql, '')
+    
     def insert_or_update_predictionData(self, symbol, min_price, avg_price, max_price, buy, hold, sell, time_range, target):
         current_time = datetime.datetime.now()
 
