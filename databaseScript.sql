@@ -98,9 +98,9 @@ CREATE TABLE review
     accountId     INT NOT NULL,
     rating        FLOAT NOT NULL CHECK (rating BETWEEN 0 AND 5),
     reviewText    TEXT NULL,
-    isHeadline    BOOL NULL DEFAULT 0,
     reviewDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    UNIQUE KEY unique_review_stock (accountId)
 );
 
 -- Table to store user comments on company stocks
@@ -136,7 +136,7 @@ CREATE TABLE watchList_symbol(
     symbol VARCHAR(255) NOT NULL ,
     priceInWatchList FLOAT NOT NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId),
-    unique (accountId,symbol)
+    unique KEY unique_watch_symbol (accountId,symbol)
 );
 -- Table to store person search stock history
 CREATE TABLE searchHistory
