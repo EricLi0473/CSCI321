@@ -68,7 +68,7 @@ app.secret_key = 'csci314'
 @app.route('/generate_captcha')
 def generate_captcha():
     image = ImageCaptcha()
-    captcha_text = ''.join(random.choices('abcdefghijklmnopqrstuvwxyz0123456789', k=5))
+    captcha_text = ''.join(random.choices('1234567890', k=5))
     session['captcha'] = captcha_text
 
     data = image.generate(captcha_text)
@@ -81,6 +81,8 @@ def generate_captcha():
 def verify_captcha():
     user_captcha = request.json.get('captcha')
     account = request.json.get('account')
+    print(user_captcha)
+    print(session.get('captcha'))
     if user_captcha and user_captcha == session.get('captcha'):
         session['user'] = account
         session.pop('captcha')
