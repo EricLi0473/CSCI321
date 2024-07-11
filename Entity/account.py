@@ -34,11 +34,6 @@ class Account:
         if self.mydb.is_connected():
             self.mydb.close()
 
-    def insert_account(self):
-        pass
-
-    def get_account(self):
-        pass
 
     def get_premium_accountId(self) -> tuple:
         sql = "SELECT accountId FROM account WHERE profile = 'premium'"

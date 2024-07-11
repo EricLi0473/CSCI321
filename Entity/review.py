@@ -40,7 +40,7 @@ class Review:
         sql = "SELECT * FROM review LEFT JOIN account ON review.accountId = account.accountId WHERE rating >= 4 ORDER BY reviewDate DESC LIMIT 5"
         return self.fetchAll(sql,"")
     def insert_review_by_id(self, accountId,rating,reviewText):
-        sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s)"
+        sql = "INSERT INTO review (accountId,rating,reviewText) VALUES (%s,%s,%s) ON DUPLICATE KEY UPDATE rating=VALUES(rating),reviewText=VALUES(reviewText)"
         val = (accountId,rating,reviewText)
         self.commit(sql,val)
 
@@ -54,6 +54,14 @@ class Review:
         val = (reviewId,)
         self.commit(sql,val)
 
+    def get_review_by_accountId(self,accountId):
+        sql = "SELECT * FROM review WHERE accountId=%s"
+        val = (accountId,)
+        result = self.fetchOne(sql, val)
+        if not result:
+            return {}
+        return self.fetchOne(sql,val)
+
 if __name__ == "__main__":
     review = Review()
-    print(review.get_all_HeadLine_reviews())
+    print(review.get_review_by_accountId("1"))

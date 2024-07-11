@@ -45,6 +45,7 @@ from Control.Admin.get_all_reviews import *
 from Control.Admin.delete_review_by_id import *
 from Control.User.insert_searchHistory_by_id import *
 from Control.User.get_all_predictionData import *
+from Control.User.get_review_by_accountId import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -70,7 +71,6 @@ def generate_captcha():
     image = ImageCaptcha()
     captcha_text = ''.join(random.choices('1234567890', k=5))
     session['captcha'] = captcha_text
-
     data = image.generate(captcha_text)
     img_io = io.BytesIO(data.read())
     img_io.seek(0)
@@ -172,14 +172,20 @@ def friend_list():
 def ratingComment():
     if session.get('user'):
         if request.method == 'GET':
-            return render_template("/system/RatingComment.html",user=session.get("user"))
+            userReview = GetReviewByAccountId().get_review_by_accountId(session.get('user')['accountId'])
+            return render_template("/system/RatingComment.html",user=session.get("user"),userReview=userReview)
         if request.method == 'POST':
             data = request.json
             Insert_review_by_id().insert_review_by_id(session.get('user')['accountId'],data.get("rating"),data.get("comment"))
             return jsonify({'success': True})
     else:
         return redirect(url_for('login'))
-
+@app.route('/getRatingCommentById', methods=['GET'])
+def getRatingCommentById():
+    if session.get('user'):
+        return jsonify(GetReviewByAccountId().get_review_by_accountId(session.get('user')['accountId']))
+    else:
+        return redirect(url_for('login'))
 @app.route('/insert_followList/<string:followedId>', methods=['GET', 'POST'])
 def insert_followList(followedId):
     if session.get('user'):
@@ -671,11 +677,8 @@ def adminReview():
 @app.route('/deleteReview/<string:reviewId>',methods=['GET','POST'])
 def deleteReview(reviewId):
     if session.get('user'):
-        if session.get('user')['profile'] == 'admin':
-            DeleteReviewById().delete_review_by_id(reviewId)
-            return jsonify({'success': True})
-        else:
-            return redirect(url_for('login'))
+        DeleteReviewById().delete_review_by_id(reviewId)
+        return jsonify({'success': True})
     else:
         return redirect(url_for('login'))
 #
