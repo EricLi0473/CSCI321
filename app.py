@@ -46,6 +46,7 @@ from Control.Admin.delete_review_by_id import *
 from Control.User.insert_searchHistory_by_id import *
 from Control.User.get_all_predictionData import *
 from Control.User.get_review_by_accountId import *
+from Control.premiumUser.verifyApiKeyController import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -81,8 +82,6 @@ def generate_captcha():
 def verify_captcha():
     user_captcha = request.json.get('captcha')
     account = request.json.get('account')
-    print(user_captcha)
-    print(session.get('captcha'))
     if user_captcha and user_captcha == session.get('captcha'):
         session['user'] = account
         session.pop('captcha')
@@ -681,6 +680,26 @@ def deleteReview(reviewId):
         return jsonify({'success': True})
     else:
         return redirect(url_for('login'))
+@app.route('/api',methods=['GET'])
+def api():
+    if session.get('user'):
+        return render_template('/premiumUser/apiPage.html',user=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+@app.route('/api/get',methods=['GET'])
+def apiGetPrediction():
+    try:
+        key = request.args.get('key')
+        symbol = request.args.get('symbol')
+        VerifyApiKeyController().verifyApiKey(key)
+        result  = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+        if not result:
+            raise Exception("This symbol do not have prediction data this time")
+        return jsonify({'prediction': result})
+    except Exception as e:
+        return jsonify({'error':str(e)})
+
+
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #

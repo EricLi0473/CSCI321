@@ -126,15 +126,15 @@ class Account:
             return False
 
     def signUp(self, userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
-               investmentExperience, riskTolerance, investmentGoals) -> dict:
+               investmentExperience, riskTolerance, investmentGoals,apikey) -> dict:
 
         sql = """
         INSERT INTO account 
-        (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s,  %s, %s, %s, %s)
+        (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals,apikey) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s,  %s, %s, %s, %s,%s)
         """
         val = (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
-                        investmentExperience, riskTolerance, investmentGoals)
+                        investmentExperience, riskTolerance, investmentGoals,apikey)
 
         lastId = self.commit(sql, val)
         sql = 'SELECT * FROM account WHERE accountId = %s'
@@ -145,5 +145,9 @@ class Account:
         val = (hashedPassword, email)
         return self.commit(sql, val)
 
+    def verify_AccountBy_apikey(self,key):
+        sql = "SELECT * from account where apikey = %s And profile = 'premium'"
+        val = (key,)
+        return self.fetchOne(sql, val)
 if __name__ == '__main__':
     print(Account().verify_account_by_email("ljr2004073@gmail.com"))

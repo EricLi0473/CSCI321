@@ -18,7 +18,8 @@ CREATE TABLE account
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
     investmentGoals      VARCHAR(255) NULL,
     isPrivateAccount BOOL default 0 not null,
-    mlViewLeft int default 10 not null
+    mlViewLeft int default 10 not null,
+    apikey VARCHAR(255) not null
 );
 
 -- User Favourites List(watchList)
@@ -85,10 +86,11 @@ CREATE TABLE thresholdSettings
 (
     thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
     accountId      INT NOT NULL,
-    stockSymbol    TEXT NOT NULL,
+    stockSymbol    VARCHAR(255) NOT NULL,
     changePercentage FLOAT NOT NULL,
     notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    UNIQUE KEY unique_thresholdSettings_stock (accountId,stockSymbol)
 );
 
 -- Table to store user reviews of the product/website
