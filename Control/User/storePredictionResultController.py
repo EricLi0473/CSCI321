@@ -1,12 +1,13 @@
 import statistics
 from collections import Counter
 from Entity.predictiondata import *
+import json
 class storePredictionResultController():
     def __init__(self):
         pass
 
     @staticmethod
-    def store_prediction_result(symbol, prediction_result):
+    def store_prediction_result(predictionId,symbol, prediction_result,accountId,model):
         db = PredictionData()
 
         predicted_prices = [pred['Predicted'] for pred in prediction_result]
@@ -28,7 +29,8 @@ class storePredictionResultController():
         sell_percentage = round((sell_count / total_count),1)
         time_range = total_count
 
-        prediction_id = db.insert_or_update_predictionData(
+        prediction_id = db.insert_predictionData(
+            predictionId,
             symbol,
             min_price,
             avg_price,
@@ -37,9 +39,16 @@ class storePredictionResultController():
             hold_percentage,
             sell_percentage,
             time_range,
-            most_frequent_recommendation
+            most_frequent_recommendation,
+            accountId,
+            model,
+            json.dumps(prediction_result)
         )
         return prediction_id
+
+    @staticmethod
+    def pre_store_prediction_result(symbol,timeRange,accountId,model):
+        return PredictionData().pre_store_prediction_result(symbol,timeRange,accountId,model)
 
 
 # testing purpose

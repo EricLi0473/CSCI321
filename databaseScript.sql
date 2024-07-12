@@ -127,9 +127,10 @@ CREATE TABLE notification(
     notification VARCHAR(255) NOT NULL DEFAULT 'Welcome to Stock Forecast4.me',
     notificationType VARCHAR(255) NOT NULL,
     referenceId INT NULL ,
-    symbol TEXT NULL ,
+    symbol VARCHAR(255) NULL ,
     notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    unique KEY unique_notification (accountId,notification,notificationType,referenceId,symbol)
 );
 
 CREATE TABLE watchList_symbol(
@@ -148,5 +149,23 @@ CREATE TABLE searchHistory
     stockSymbol  VARCHAR(255) NOT NULL,
     searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
     UNIQUE KEY unique_account_stock (accountId, stockSymbol),
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+CREATE TABLE predictionData
+(
+    predictionId      INT AUTO_INCREMENT PRIMARY KEY,
+    stockSymbol       TEXT NOT NULL,
+    requestDate       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    minPredictedPrice FLOAT NULL,
+    avgPredictedPrice FLOAT NULL,
+    maxPredictedPrice FLOAT NULL,
+    buyPercentage     FLOAT NULL,
+    holdPercentage    FLOAT NULL,
+    sellPercentage    FLOAT NULL,
+    timeRange INT NULL ,
+    target VARCHAR(255) NULL,
+    accountId INT NOT NULL ,
+    model VARCHAR(255) NULL ,
+    rawData LONGTEXT NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );

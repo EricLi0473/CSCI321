@@ -337,6 +337,9 @@ def request_for_prediction(symbol, days, model,accountId):
     prediction_result = None
     default_layers = 4
     default_neurons = 32
+
+    # pre insert prediction result, without final data
+    predictionId = storePredictionResultController.pre_store_prediction_result(symbol,days,accountId,model)
     if model == 'GRU':
         df = GRU_Model.get_stock_data(symbol)
         prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
@@ -374,11 +377,11 @@ def request_for_prediction(symbol, days, model,accountId):
         return jsonify({'success': False, 'error': 'Prediction failed'}), 500
 
     # 2. Store the prediction result in the database
-    prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
+    storePredictionResultController.store_prediction_result(predictionId,symbol, prediction_result,accountId,model)
 
     # 3. Store a notification
     #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
-    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
+    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', predictionId, symbol)
 
     return jsonify({'success': True, 'prediction_result': prediction_result})
 
@@ -768,4 +771,4 @@ if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)
     # schedule_thread.daemon = True
     # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=True)
+    app.run(host='0.0.0.0',port=80,debug=False)

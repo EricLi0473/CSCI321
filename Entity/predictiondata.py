@@ -1,5 +1,5 @@
 import datetime
-
+import json
 import mysql.connector
 class PredictionData:
     def __init__(self):
@@ -40,20 +40,45 @@ class PredictionData:
     def __del__(self):
         if self.mydb.is_connected():
             self.mydb.close()
-    def insert_predictionData(self,symbol,min,avg,max,buy,hold,sell, timeRange, target) -> None or Exception:
-        sql = "INSERT INTO predictiondata (stockSymbol, minPredictedPrice, avgPredictedPrice, maxPredictedPrice, buyPercentage,holdPercentage,sellPercentage, timeRange, target) VALUES (%s, %s, %s, %s, %s,%s,%s, %s,%s)"
-        self.commit(sql, (symbol,min,avg,max,buy,hold,sell, timeRange, target))
+    def insert_predictionData(self,id,symbol,min,avg,max,buy,hold,sell, timeRange, target,accountId,model,rawData) -> None or Exception:
+        sql = """
+        UPDATE predictiondata 
+        SET 
+            stockSymbol = %s,
+            minPredictedPrice = %s,
+            avgPredictedPrice = %s,
+            maxPredictedPrice = %s,
+            buyPercentage = %s,
+            holdPercentage = %s,
+            sellPercentage = %s,
+            timeRange = %s,
+            target = %s,
+            accountId = %s,
+            model = %s,
+            rawData = %s,
+            requestDate = CURRENT_TIMESTAMP
+        WHERE predictionId = %s
+        """
+        lastId = self.commitNReturnRowID(sql, (symbol, min, avg, max, buy, hold, sell, timeRange, target, accountId, model, rawData, id))
+        return lastId
+
     def get_predictionData_by_symbol(self,symbol) -> dict:
-        sql = "SELECT * FROM predictiondata WHERE stockSymbol=%s"
+        sql = "SELECT * FROM predictiondata WHERE stockSymbol=%s AND rawData IS NOT NULL ORDER BY requestDate DESC LIMIT 1;"
         result = self.fetchOne(sql, (symbol,))
         if result is None:
             return {}
+        elif result and 'rawData' in result:
+            result['rawData'] = json.loads(result['rawData'])
         return result
-    def get_all_predictionData(self) -> list:
-        sql = "SELECT * FROM predictiondata"
-        return self.fetchAll(sql, '')
-    
-    def insert_or_update_predictionData(self, symbol, min_price, avg_price, max_price, buy, hold, sell, time_range, target):
+    def get_all_predictionData(self,date:str ) -> list:
+        sql = "SELECT * FROM predictiondata WHERE requestDate >= %s"
+        return self.fetchAll(sql, (date,))
+
+    def get_predictionData_by_accountId(self,accountId,date:str ) -> list:
+        sql = "SELECT * FROM predictiondata WHERE accountId=%s AND requestDate >= %s"
+        return self.fetchAll(sql, (accountId,date))
+
+    def insert_or_update_predictionData(self, symbol, min_price, avg_price, max_price, buy, hold, sell, time_range, target,accountId,model,rawData):
         current_time = datetime.datetime.now()
 
         existing_prediction = self.get_predictionData_by_symbol(symbol)
@@ -87,12 +112,13 @@ class PredictionData:
             prediction_id = self.commitNReturnRowID(sql, values)
             return prediction_id
 
-# if __name__ == "__main__":
-    # print("test inserORUpdate")
-    # print(PredictionData().insert_or_update_predictionData("aapl", "10", "10", "10", "10", "10", "10", 10, "Buy"))
-    # print(PredictionData().insert_or_update_predictionData("L222", "10", "10", "10", "10", "10", "10", 10, "Buy"))
-    # print(PredictionData().insert_or_update_predictionData("L444", "10", "10", "10", "10", "10", "10", 10, "Buy"))
-    # print(PredictionData().insert_or_update_predictionData("L555", "10", "10", "10", "10", "10", "10", 10, "Buy"))
-
-    # PredictionData().insert_predictionData("aapl","10.5","10.5","10.5","10.5","10.5","10.5")
-    # print(PredictionData().get_predictionData_by_symbol("aapl"))
+    def  pre_store_prediction_result(self,symbol,timeRange,accountId,model) -> int:
+        sql = "INSERT INTO predictiondata(stockSymbol, timeRange, accountId, model) VALUES (%s, %s, %s, %s)"
+        values = (symbol, timeRange, accountId, model)
+        lastId = self.commitNReturnRowID(sql, values)
+        return lastId
+if __name__ == "__main__":
+    # PredictionData().insert_predictionData(13,"AAPL",1,2,3,4,5,6,15,"Buy","1","LSTM","raw")
+    # print(PredictionData().get_predictionData_by_accountId(1,"2024-06-12 00:00:00"))
+    # print(PredictionData().pre_store_prediction_result("AAPL",14,1,"LSTM"))
+    print(PredictionData().get_predictionData_by_symbol("AAPL"))
