@@ -103,7 +103,7 @@
           <nav aria-label="Breadcrumb">
   <ol class="flex items-center gap-1 text-sm text-gray-600">
     <li>
-      <a href="/" class="block transition hover:text-gray-700">
+      <a href="/mainPage" class="block transition hover:text-gray-700">
         <span class="sr-only"> Home </span>
 
         <svg
@@ -265,12 +265,12 @@
       <!--stock graphic-->
 <div>
     <div class="mt-4">
-        <button class="btn btn-outline btn-sm" @click="updatePeriod('3mo')">180 days</button>
         <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('5d')">one week</button>
         <button class="btn btn-outline btn-secondary btn-sm" @click="updatePeriod('1mo')">one month</button>
         <button class="btn btn-outline btn-sm" @click="updatePeriod('1y')">one year</button>
         <button class="btn btn-outline btn-primary btn-sm" @click="updatePeriod('10y')">ten years</button>
         <button class="btn btn-outline btn-sm" @click="updatePeriod('max')">Max</button>
+        <button class="btn btn-outline btn-info btn-sm" @click="toggleStyle">[[currentStyleLabel]] </button>
     </div>
     <div id="chart" class="mt-6"  style=" width:80%;height:600px"></div>
 </div>
@@ -380,7 +380,7 @@
   >
     <option value="GRU">AVG</option>
     <option value="LR">FAST</option>
-    <option value="GRU">ACCURACY</option>
+    <option value="LSTM">ACCURACY</option>
   </select>
 </div>
 
@@ -866,7 +866,7 @@
             percentage: JSON.parse('{{ threshold|tojson}}'),
             thresholdinputValid: false,
             inputValid : false,
-            stockData: JSON.parse('{{ stockData|tojson }}'),
+            stockData: {},
             stockInfo: JSON.parse('{{ stockInfo|tojson }}'),
             predictionresult:JSON.parse('{{predictionresult|tojson}}'),
             watchList:JSON.parse('{{ watchList|tojson}}'),
@@ -881,12 +881,17 @@
             isCoolingDown: false,
             buttonText: 'Submit',
             isNewsLoading :1,
-            search:""
+            search:"",
+            currentStyleIndex: 0,
+            styles: ['candle_solid', 'area']
         },
                 created() {
             this.checkButtonStatus();
         },
               computed: {
+            currentStyleLabel() {
+                    return this.styles[this.currentStyleIndex];
+                },
                     formattedDate() {
           // 去除 GMT
           return this.predictionresult.requestDate.replace(' GMT', '');
@@ -899,8 +904,12 @@
         }
         },
         mounted() {
-
-            this.renderStockData(); // 调用renderStockData方法
+                                    axios.get(`/update_stock_data/${this.stockInfo.symbol}/1y`)
+                        .then(response => {
+                        this.stockData = response.data;
+                        this.renderStockData();
+            })
+             // 调用renderStockData方法
             this.get_symbol_news();
             this.get_symbol_comments();
                         if(this.percentage && this.percentage !== '') {
@@ -913,6 +922,7 @@
                 } else {
                     this.is_inside_watchList = 0;
                 }
+                axios.post(`/insert_searchHistory/${this.stockInfo.symbol}`)
         },
         methods: {
             // used vue.set for like & dislike, because it is faster
@@ -1029,7 +1039,7 @@
                 if (lastClickTime) {
                     const currentTime = Date.now();
                     const timeDiff = currentTime - lastClickTime;
-                    const oneHour = 10000; // One hour in milliseconds
+                    const oneHour = 30000; // One hour in milliseconds
                     if (timeDiff < oneHour) {
                         this.remainingTime = Math.ceil((oneHour - timeDiff) / 1000);
                         this.isButtonDisabled = true;
@@ -1070,6 +1080,15 @@
               }
 
             },
+                            setType (type) {
+                  this.chart.setStyles({
+                    candle: {type}
+                  })
+                },
+                            toggleStyle() {
+                    this.currentStyleIndex = (this.currentStyleIndex + 1) % this.styles.length;
+                    this.setType(this.styles[this.currentStyleIndex]);
+                },
             renderStockData() {
                 if (!this.chart) {
                     this.chart = klinecharts.init('chart');

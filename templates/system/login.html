@@ -126,6 +126,24 @@
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
   </svg>
 </button>
+                                      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div class="bg-white p-6 rounded-2xl shadow-2xl">
+        <div class="flex flex-col" >
+         <img :src="captchaUrl" alt="Captcha" class="w-48 h-24">
+        <button class="btn btn-link" @click="refreshCaptcha">resend captcha</button>
+        <input
+  type="text"
+  placeholder="Type here"
+  class="input input-bordered input-sm w-30 max-w-xs"
+        v-model="captcha"
+        />
+          </div>
+        <div class="flex justify-end mt-8">
+          <button class="btn btn-secondary mr-2" @click="showModal = !showModal">Cancel</button>
+          <button class="btn btn-primary" @click="verifyCaptcha">OK</button>
+        </div>
+      </div>
+    </div>
 </div>
 
 <script>
@@ -138,7 +156,11 @@
       exception: "",
       failedAttempts: 0,
       cooldownTime: 0,
-      cooldownTimer: null
+      cooldownTimer: null,
+      showModal:false,
+      captchaUrl: '/generate_captcha',
+      captcha:'',
+      account:{}
     },
     mounted() {
       this.failedAttempts = sessionStorage.getItem('failedAttempts') || 0;
@@ -148,6 +170,20 @@
       }
     },
     methods: {
+      verifyCaptcha(){
+        axios.post('/verify_captcha', {captcha:this.captcha,account:this.account})
+                .then(response => {
+                  if (response.data.success){
+                      window.location.href = '/redirectToUserPage';
+                  }else {
+                    this.exception = "wrong captcha"
+                    document.getElementById('exception').showModal();
+                  }
+                })
+      },
+       refreshCaptcha() {
+                    this.captchaUrl = '/generate_captcha?' + new Date().getTime();
+                },
       login() {
         if (this.cooldownTime > 0) {
           alert(`Please wait for ${this.cooldownTime} seconds before trying again.`);
@@ -164,7 +200,9 @@
         }).then(response => {
           if (response.data.success) {
             console.log('Login successful');
-            window.location.href = '/redirectToUserPage';
+            this.account = response.data.account;
+            this.showModal = true;
+            console.log(this.account)
             sessionStorage.setItem('failedAttempts', 0);
             sessionStorage.setItem('cooldownTime', 0);
           } else {
@@ -179,8 +217,8 @@
         this.failedAttempts++;
         sessionStorage.setItem('failedAttempts', this.failedAttempts);
 
-        if (this.failedAttempts > 3) {
-          this.cooldownTime += 30;
+        if (this.failedAttempts > 10) {
+          this.cooldownTime = 30;
           sessionStorage.setItem('cooldownTime', this.cooldownTime);
           this.startCooldown();
         }

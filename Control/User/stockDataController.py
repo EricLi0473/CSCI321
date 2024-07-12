@@ -4,14 +4,18 @@ from datetime import datetime, timedelta
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import concurrent.futures
 import random
-import logging
-from cachetools import TTLCache
-from functools import lru_cache
+from cachetools import LRUCache,cached
+import time
 class StockDataController:
+    _instance = None
+    cache = LRUCache(maxsize=128)
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(StockDataController, cls).__new__(cls)
+        return cls._instance
     def __init__(self):
-        self.cache = TTLCache(maxsize=100, ttl=300)
-
-    @lru_cache(maxsize=128)
+        pass
+    @cached(cache=cache)
     def get_common_symbol_data(self):
         url = f"https://api.marketaux.com/v1/entity/stats/aggregation?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&countries=us"
         response = requests.get(url)
@@ -70,7 +74,7 @@ class StockDataController:
                     "volume": global_quote[key_mapping["volume"]]
                 }
 
-                # 修改符号，替换 .LON 为 .L
+                # change symbol
                 if '.' in new_data['symbol']:
                     if '.LON' in new_data['symbol']:
                         new_data['symbol'] = new_data['symbol'].replace('.LON', '.L')
@@ -100,7 +104,6 @@ class StockDataController:
                     results.append(stock_data)
 
         return results
-
 
     def get_recommendation_stock_by_preference(self, countries:list,industries:list) -> list:
         stock_data = []
@@ -233,9 +236,6 @@ class StockDataController:
             return result_list
 
     def get_update_stock_data(self, symbol, period):
-        cache_key = f"{symbol}_{period}"
-        if cache_key in self.cache:
-            return self.cache[cache_key]
 
         retries = 3
         for i in range(retries):
@@ -245,7 +245,7 @@ class StockDataController:
             except Exception as e:
                 if i == retries - 1:
                     return {"error": f"Failed to download data for {symbol} after {retries} retries: {e}"}
-                time.sleep(2 ** i)  # 指数退避重试
+                time.sleep(2 ** i)  # The indexes are retreating for a retest.
 
         if df.empty:
             return {"error": f"No data found for {symbol}"}
@@ -267,12 +267,9 @@ class StockDataController:
             }
         ).to_dict(orient='records')
 
-        self.cache[cache_key] = result  # 缓存结果
         return result
 
     def get_stock_info_full(self, symbol):
-        if symbol in self.cache:
-            return self.cache[symbol]
 
         data_dict = {}
 
@@ -354,7 +351,6 @@ class StockDataController:
 
         data_dict['company'] = company
 
-        self.cache[symbol] = data_dict  # 将结果存储在缓存中
         return data_dict
 
 if __name__ == '__main__':

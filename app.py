@@ -4,7 +4,7 @@ from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoControll
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from flask import request, render_template, url_for, jsonify,session
+from flask import request, render_template, url_for, jsonify,session,send_file
 #slow start when loadin ML functions, normal turn off
 # from Control.User.requestForPrediction import RequestForPrediction
 #
@@ -41,6 +41,12 @@ from Control.Admin.update_profile_status import *
 from Control.Admin.get_all_account import *
 from Control.User.reset_pwd import *
 from Control.User.verify_account_by_email import *
+from Control.Admin.get_all_reviews import *
+from Control.Admin.delete_review_by_id import *
+from Control.User.insert_searchHistory_by_id import *
+from Control.User.get_all_predictionData import *
+from Control.User.get_review_by_accountId import *
+from Control.premiumUser.verifyApiKeyController import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -49,14 +55,45 @@ from datetime import datetime, timedelta
 # from machineLearningModel.TF_LR_Model import *
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
 # from Control.User.storePredictionResultController import *
 import threading
 import time
+from captcha.image import ImageCaptcha
+import random
+import io
 
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
 
+@app.route('/generate_captcha')
+def generate_captcha():
+    image = ImageCaptcha()
+    captcha_text = ''.join(random.choices('1234567890', k=5))
+    session['captcha'] = captcha_text
+    data = image.generate(captcha_text)
+    img_io = io.BytesIO(data.read())
+    img_io.seek(0)
+
+    return send_file(img_io, mimetype='image/png')
+
+@app.route('/verify_captcha', methods=['POST'])
+def verify_captcha():
+    user_captcha = request.json.get('captcha')
+    account = request.json.get('account')
+    if user_captcha and user_captcha == session.get('captcha'):
+        session['user'] = account
+        session.pop('captcha')
+        return jsonify({'success': True})
+    return jsonify({'success': False})
+
+@app.route('/upgrade_to_premium',methods=['POST'])
+def upgrade_to_premium():
+    account = request.json.get('account')
+    UpdatePersonalInfoController().update_personal_info(account)
+    session['user'] = GetAccountByAccountId().get_account_by_accountId(session['user']['accountId'])
+    return jsonify({'success': True})
 @app.route('/like_comment/<int:comment_id>', methods=['POST'])
 def like_comment(comment_id):
     try:
@@ -88,14 +125,22 @@ def preference():
 def space(accountId):
     if session.get('user'):
         if request.method == 'GET':
+            account = GetAccountByAccountId().get_account_by_accountId(accountId)
+            #  admin access admin page
+            if session.get('user')['profile'] == 'admin' and account['profile'] == 'admin':
+                return render_template('/Admin/adminSpace.html',account=session.get('user'))
+            # access self page
             if int(accountId) == session.get('user')['accountId']:
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
                 account = GetAccountByAccountId().get_account_by_accountId(session.get('user')['accountId'])
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(session.get('user')['accountId'])
                 return render_template("/User/mySpace.html",account=account,watchList=watchList,thresholdList=thresholdList,user=session.get("user"))
-            else:
-                account = GetAccountByAccountId().get_account_by_accountId(accountId)
-                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(session.get('user')['accountId'])
+            # access other user page
+            elif int(accountId) != session.get('user')['accountId']:
+                # non admin user are prohibits to access admin account page
+                if account['profile'] == 'admin':
+                    return redirect(url_for('login'))
+                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(accountId)
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
                 return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,Account=session.get('user'))
@@ -126,14 +171,20 @@ def friend_list():
 def ratingComment():
     if session.get('user'):
         if request.method == 'GET':
-            return render_template("/system/RatingComment.html",user=session.get("user"))
+            userReview = GetReviewByAccountId().get_review_by_accountId(session.get('user')['accountId'])
+            return render_template("/system/RatingComment.html",user=session.get("user"),userReview=userReview)
         if request.method == 'POST':
             data = request.json
             Insert_review_by_id().insert_review_by_id(session.get('user')['accountId'],data.get("rating"),data.get("comment"))
             return jsonify({'success': True})
     else:
         return redirect(url_for('login'))
-
+@app.route('/getRatingCommentById', methods=['GET'])
+def getRatingCommentById():
+    if session.get('user'):
+        return jsonify(GetReviewByAccountId().get_review_by_accountId(session.get('user')['accountId']))
+    else:
+        return redirect(url_for('login'))
 @app.route('/insert_followList/<string:followedId>', methods=['GET', 'POST'])
 def insert_followList(followedId):
     if session.get('user'):
@@ -255,22 +306,20 @@ def symbol(symbol):
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
             user = session.get('user')
-            stockData = StockDataController().get_update_stock_data(symbol,"1y")
+            # stockData = StockDataController().get_update_stock_data(symbol,"1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
             threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/PremiumUser/symbolPage.html', stockData=stockData,stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+            return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
         elif session.get('user')['profile'] == 'free':
-            session.get('user')['mlViewLeft'] = session.get('user')['mlViewLeft']-1
             user = session.get('user')
-            stockData = StockDataController().get_update_stock_data(symbol, "1y")
             stockInfo = StockDataController().get_stock_info_full(symbol)
             predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
             threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
                 session.get('user')['accountId'], symbol)
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockData=stockData, stockInfo=stockInfo,
+            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
                                    predictionresult=predictionresult, threshold=threshold, watchList=watchList,
                                    user=user)
 
@@ -278,6 +327,7 @@ def symbol(symbol):
         return redirect(url_for('login'))
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
 def request_for_prediction(symbol, days, model):
+    from datetime import datetime
     if session.get('user'):
         days = int(days)
         # 1. Pass the parameters to the machine learning model
@@ -292,8 +342,12 @@ def request_for_prediction(symbol, days, model):
             # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
         elif model == 'LR':
-            df = LinearRegression_Model.get_stock_data(symbol)
-            prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
+            if '.' not in symbol:
+                # for non-us stock, use prophet
+                prediction_result = Prophet_model(symbol, days).predict()
+            else:
+                df = LinearRegression_Model.get_stock_data(symbol)
+                prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
 
             # format of LR model result
             # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
@@ -378,7 +432,6 @@ def stock_info_minimum(symbol):
 def update_stock_data(symbol, period):
     if session.get('user'):
         result = StockDataController().get_update_stock_data(symbol, period)
-        print(len(result))
         return jsonify(result)
     else:
         return redirect(url_for('login'))
@@ -458,8 +511,8 @@ def login():
             data = request.json
             email = data.get('email')
             password = data.get('password')
-            session['user'] = LoginController().login(email, password)
-            return jsonify({'success':True})
+            account = LoginController().login(email, password)
+            return jsonify({'success':True,'account':account})
         except Exception as e:
             return jsonify({'success':False,'error':str(e)})
 
@@ -472,17 +525,12 @@ def updatePersonalInfo():
             return jsonify({'success': False, 'error': 'Invalid input'}), 400
 
         try:
-            if account['profile'] != "admin":
-                update_result = UpdatePersonalInfoController().update_personal_info(account)
-                if update_result:
-                    # Update session['user']
-                    session['user'] = account
-                    return jsonify({'data': account})
-                else:
-                    return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
+            update_result = UpdatePersonalInfoController().update_personal_info(account)
+            if update_result:
+                session['user'] = account
+                return jsonify({'data': account})
             else:
-                # depends on how we want to do, whether we want to allow admins to update personal info
-                return jsonify({'success': False, 'error': 'Admins cannot update personal info this way'}), 403
+                return jsonify({'success': False, 'error': 'Failed to update personal info in the database'}), 500
         except Exception as e:
             return jsonify({'success': False, 'error': str(e)}), 500
     else:
@@ -517,6 +565,12 @@ def officialWeb():
     review = GetAllHeadLineReviews().get_all_headline_reviews()
     return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
 
+@app.route('/getSystemStats',methods=['GET'])
+def getSystemStats():
+    usersCount = len(GetAllAccount().get_all_account())
+    predictionCount = len(GetAllPredictionData().get_all_predictionData())
+    return jsonify({'usersCount':usersCount,'prediction':predictionCount,'symbol':5000})
+
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
 def get_predictionData_by_symbol(symbol):
     return jsonify(GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol))
@@ -528,7 +582,13 @@ def history():
         return render_template("system/history.html",history=history, user=session.get("user"))
     else:
         return redirect(url_for('login'))
-
+@app.route('/insert_searchHistory/<string:symbol>',methods=['GET','POST'])
+def insert_searchHistory(symbol):
+    if session.get('user'):
+        InsertSearchHistoryById().insert_searchHistory_by_id(session.get('user')['accountId'],symbol)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/remove_searchHistory/<string:id>',methods=['POST'])
 def remove_searchHistory(id):
     if session.get('user'):
@@ -539,7 +599,10 @@ def remove_searchHistory(id):
 @app.route('/redirectToUserPage',methods=['GET'])
 def redirectToUserPage():
     if 'user' in session:
-        return redirect(url_for('mainPage'))
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('mainPage'))
+        else:
+            return redirect(url_for("space", accountId=session.get('user')['accountId']))
     else:
         return redirect(url_for('login'))
 
@@ -587,15 +650,56 @@ def pricing():
 @app.route('/admin/allUser',methods=['GET','POST'])
 def adminAllUser():
     if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
         if request.method == 'GET':
             allAccounts = GetAllAccount().get_all_account()
-            return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts)
+            return render_template('/Admin/adminShowAllUser.html',allAccounts=allAccounts,account=session.get('user'))
         if request.method == 'POST':
             data = request.json
             UpdateProfileStatus().update_profile_status(data['Account']["accountId"],data['Account']["status"])
             return jsonify({'success': True})
     else:
         return redirect(url_for('login'))
+
+@app.route('/admin/review',methods=['GET','POST'])
+def adminReview():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        if request.method == 'GET':
+            reviews = Get_all_reviews().get_all_reviews()
+            return render_template('/Admin/adminViewAllComment.html',reviews=reviews,account=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/deleteReview/<string:reviewId>',methods=['GET','POST'])
+def deleteReview(reviewId):
+    if session.get('user'):
+        DeleteReviewById().delete_review_by_id(reviewId)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
+@app.route('/api',methods=['GET'])
+def api():
+    if session.get('user'):
+        return render_template('/premiumUser/apiPage.html',user=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+@app.route('/api/get',methods=['GET'])
+def apiGetPrediction():
+    try:
+        key = request.args.get('key')
+        symbol = request.args.get('symbol')
+        VerifyApiKeyController().verifyApiKey(key)
+        result  = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+        if not result:
+            raise Exception("This symbol do not have prediction data this time")
+        return jsonify({'prediction': result})
+    except Exception as e:
+        return jsonify({'error':str(e)})
+
+
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #

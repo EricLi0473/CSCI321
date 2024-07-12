@@ -18,7 +18,8 @@ CREATE TABLE account
     riskTolerance        ENUM('low', 'medium', 'high') NULL,
     investmentGoals      VARCHAR(255) NULL,
     isPrivateAccount BOOL default 0 not null,
-    mlViewLeft int default 10 not null
+    mlViewLeft int default 10 not null,
+    apikey VARCHAR(255) not null
 );
 
 -- User Favourites List(watchList)
@@ -52,15 +53,6 @@ CREATE TABLE followList
     FOREIGN KEY (followedId) REFERENCES account(accountId)
 );
 
--- Table to store person search stock history
-CREATE TABLE searchHistory
-(
-    searchId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    stockSymbol  TEXT NOT NULL,
-    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
-);
 
 -- Merged table to store stock prediction history and results
 CREATE TABLE predictionData
@@ -94,10 +86,11 @@ CREATE TABLE thresholdSettings
 (
     thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
     accountId      INT NOT NULL,
-    stockSymbol    TEXT NOT NULL,
+    stockSymbol    VARCHAR(255) NOT NULL,
     changePercentage FLOAT NOT NULL,
     notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    UNIQUE KEY unique_thresholdSettings_stock (accountId,stockSymbol)
 );
 
 -- Table to store user reviews of the product/website
@@ -107,9 +100,9 @@ CREATE TABLE review
     accountId     INT NOT NULL,
     rating        FLOAT NOT NULL CHECK (rating BETWEEN 0 AND 5),
     reviewText    TEXT NULL,
-    isHeadline    BOOL NULL DEFAULT 0,
     reviewDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    FOREIGN KEY (accountId) REFERENCES account(accountId),
+    UNIQUE KEY unique_review_stock (accountId)
 );
 
 -- Table to store user comments on company stocks
@@ -145,5 +138,15 @@ CREATE TABLE watchList_symbol(
     symbol VARCHAR(255) NOT NULL ,
     priceInWatchList FLOAT NOT NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId),
-    unique (accountId,symbol)
-)
+    unique KEY unique_watch_symbol (accountId,symbol)
+);
+-- Table to store person search stock history
+CREATE TABLE searchHistory
+(
+    searchId     INT AUTO_INCREMENT PRIMARY KEY,
+    accountId    INT NOT NULL,
+    stockSymbol  VARCHAR(255) NOT NULL,
+    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
+    UNIQUE KEY unique_account_stock (accountId, stockSymbol),
+    FOREIGN KEY (accountId) REFERENCES account(accountId)
+);

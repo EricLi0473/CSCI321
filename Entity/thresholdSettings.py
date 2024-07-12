@@ -43,17 +43,22 @@ class ThresholdSettings:
         val = (thresholdId,)
         self.commit(sql, val)
 
+    # integrate insert and update
     def insert_threshold_settings_by_id(self, accountId,stockSymbol,changePercentage):
-        sql = "INSERT INTO thresholdsettings (accountId, stockSymbol, changePercentage) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO thresholdsettings (accountId, stockSymbol, changePercentage) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE changePercentage = VALUES(changePercentage)"
         val = (accountId, stockSymbol, changePercentage)
         self.commit(sql, val)
 
-    def update_threshold_settings_by_id(self, accountId, stockSymbol, changePercentage):
-        sql = "UPDATE thresholdsettings SET changePercentage = %s WHERE accountId = %s AND stockSymbol = %s"
-        val = (changePercentage, accountId, stockSymbol)
-        self.commit(sql, val)
 
     def remove_threshold_settings_by_info(self,accountId,stockSymbol):
         sql = "DELETE FROM thresholdsettings WHERE accountId = %s AND stockSymbol = %s"
         val = (accountId, stockSymbol)
         self.commit(sql, val)
+        # If a user removes threshold and also removes the notification
+        sql = "DELETE FROM notification WHERE accountId = %s AND symbol = %s AND notificationType = 'threshold'"
+        self.commit(sql, val)
+
+
+if __name__ == "__main__":
+    settings = ThresholdSettings()
+    print(settings.insert_threshold_settings_by_id("1","a",1.111))

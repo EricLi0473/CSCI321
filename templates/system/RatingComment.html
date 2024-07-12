@@ -35,7 +35,9 @@
                   </a>
                 </li>
                 <li>
-                  <a :href="`/space/${user.accountId}?page=watchList`" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
+                  <a :href="`/space/${user.accountId}?page=watchList`"
+                     class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+                      v-if="user.profile === 'premium'">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Favourites</span>
                   </a>
@@ -78,13 +80,14 @@
       <div class="flex-1 bg-gray-100 ml-16">
         <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
             <div class="">
-              <a class="btn btn-ghost text-xl">Stock4Me</a>
+                <a class="btn btn-ghost text-xl" href="/mainPage">Stock4Me</a>
             </div>
                 <input type="text" placeholder="Search symbol or accounts..." class="input input-sm input-bordered w-80 ml-4" v-model="search">
         <button class="btn btn-outline btn-sm btn-success ml-2" @click="doSearch">Search</button>
             </div>
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
             <h2 class="text-xl font-bold mb-4 text-black">How would you rate our product?</h2>
+            <div v-if="Object.keys(userReview).length === 0">
     <div class="rating rating-lg rating-half mb-4">
       <input v-for="n in 10" type="radio" :key="n" name="rating-10" :class="getClass(n)" @click="setRating(n)" :checked="rating === n">
     </div>
@@ -124,6 +127,27 @@
               </div>
             </div>
           </div>
+<!--           if user already have reviews and comments   -->
+              <div class="flex flex-col gap-y-4" v-if="Object.keys(userReview).length !== 0">
+                  <span class="text-sm"><span class="text-xl">Thanks!</span> You have already given review to our products, <br>now you can update or delete it.</span>
+                    <div class="rating rating-md rating-half">
+                      <input v-for="n in 10"
+                             type="radio"
+                             :key="n"
+                             :name="'rating-' + userReview.rating"
+                             :class="getClass(n)"
+                             @click="setUpdateRating(n/2)"
+                             :checked="userReview.rating === n/2">
+                    </div>
+                  <p class="text-sm">Now Rating: <b>[[ userReview.rating ]]</b> Star</p>
+                  <textarea class="textarea textarea-warning w-96" placeholder="Bio" v-model="userReview.reviewText"></textarea>
+                  <div class="flex flex-row w-96 justify-end gap-x-4">
+                      <button class="btn btn-outline btn-warning btn-sm" @click="updateRequest" v-if="!isButtonDisabled">Update</button>
+                      <button class="btn btn-outline btn-error btn-sm" v-if="!isButtonDisabled" @click="deleteReview">Delete</button>
+                      <p v-if="isButtonDisabled">Please wait <b>[[ remainingTime ]]</b> seconds to update again</p>
+                  </div>
+              </div>
+          </div>
           <!-- Content END! -->
     <!-- To The Top Button -->
     <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
@@ -152,24 +176,57 @@
       delimiters: ['[[', ']]'],
       data: {
         user:JSON.parse('{{user|tojson}}'),
-        rating: 10, // 默认评分，可以根据需要更改
+        rating: 10,
         comment: "",
         message: "",
         isButtonDisabled: false,
-        remainingTime: 0,
+        remainingTime: 10,
+        userReview:JSON.parse('{{userReview|tojson}}'),
+          search:'',
       },
       methods: {
+          updateRating(newRating) {
+        this.userReview.rating = newRating;
+    },
           doSearch(){
                     window.location.href = `/search/${this.search}`;
                 },
+          updateRequest(){
+              if (this.isButtonDisabled) return;
+                        axios.post('/ratingComment', {
+            comment: this.userReview.reviewText,
+            rating: this.userReview.rating/2
+          })
+          .then(response => {
+            this.message = "You have successfully update your comment, our administrator will see it soon!";
+            document.getElementById('success').showModal();
+            this.startTimer();
+          })
+          .catch(error => {
+            console.error('Bad:', error);
+          });
+        },
+          deleteReview(){
+            axios.post(`/deleteReview/${this.userReview.reviewId}`)
+                .then(response =>{
+                    this.userReview = [];
+                    this.rating = 10;
+                    this.clearText()
+                    this.message = "You have successfully delete a comment, you can send again!";
+                    document.getElementById('success').showModal();
+                })
+          },
         sendRequest() {
-          if (this.isButtonDisabled) return;
-
-          axios.post('/ratingComment', {
+            axios.post('/ratingComment', {
             comment: this.comment,
             rating: this.rating / 2
           })
           .then(response => {
+              axios.get('/getRatingCommentById')
+                  .then(response =>{
+                      this.userReview = response.data
+                      console.log(this.userReview)
+                  })
             this.message = "Congratulations, you have successfully submitted a comment, our administrator will see it soon!";
             document.getElementById('success').showModal();
             this.startTimer();
@@ -184,13 +241,16 @@
         setRating(value) {
           this.rating = value;
         },
+          setUpdateRating(value){
+            this.userReview.rating = value;
+          },
         getClass(index) {
           const half = index % 2 === 1 ? 'mask-half-1' : 'mask-half-2';
           return `mask mask-star-2 ${half} bg-orange-400`;
         },
         startTimer() {
           const currentTime = new Date().getTime();
-          const endTime = currentTime + 30000; // 10seconds
+          const endTime = currentTime + 10000; // 10seconds
           localStorage.setItem('endTime', endTime);
           this.isButtonDisabled = true;
           this.updateRemainingTime();
