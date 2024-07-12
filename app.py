@@ -10,7 +10,6 @@ from flask import request, render_template, url_for, jsonify,session,send_file
 #
 
 from Control.User.SignupController import *
-from Control.IndividualUser.getAccountInfo import *
 from Control.User.changePasswordController import *
 from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
