@@ -47,11 +47,15 @@ from Control.User.insert_searchHistory_by_id import *
 from Control.User.get_all_predictionData import *
 from Control.User.get_review_by_accountId import *
 from Control.premiumUser.verifyApiKeyController import *
+from Control.premiumUser.verify_symbol_usingYfinance import *
+from Control.premiumUser.getPremiumUsersController import *
+from Control.premiumUser.get_accountList_by_followedId import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
+import multiprocessing
 # from machineLearningModel.TF_LR_Model import *
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
@@ -62,6 +66,7 @@ import time
 from captcha.image import ImageCaptcha
 import random
 import io
+import schedule
 
 app = Flask(__name__)
 app.static_folder = 'static'
@@ -325,61 +330,58 @@ def symbol(symbol):
 
     else:
         return redirect(url_for('login'))
-@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
-def request_for_prediction(symbol, days, model):
+@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>/<string:accountId>', methods=['GET', 'POST'])
+def request_for_prediction(symbol, days, model,accountId):
     from datetime import datetime
-    if session.get('user'):
-        days = int(days)
-        # 1. Pass the parameters to the machine learning model
-        prediction_result = None
-        default_layers = 4
-        default_neurons = 32
-        if model == 'GRU':
-            df = GRU_Model.get_stock_data(symbol)
-            prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
+    days = int(days)
+    # 1. Pass the parameters to the machine learning model
+    prediction_result = None
+    default_layers = 4
+    default_neurons = 32
+    if model == 'GRU':
+        df = GRU_Model.get_stock_data(symbol)
+        prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
 
-            # format of GRU model result
-            # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
+        # format of GRU model result
+        # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
-        elif model == 'LR':
-            if '.' not in symbol:
-                # for non-us stock, use prophet
-                prediction_result = Prophet_model(symbol, days).predict()
-            else:
-                df = LinearRegression_Model.get_stock_data(symbol)
-                prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
-
-            # format of LR model result
-            # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
-
-        elif model == 'LSTM':
-            end_date = datetime.today().date()
-            start_date = (end_date - timedelta(days=365 * 5))
-            df = yf.download(symbol, start=start_date, end=end_date)
-            all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
-            df = df.reindex(all_dates)
-            df = df.fillna(method='ffill')
-            model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
-            prediction_result = model.predict()
-            # format of LSTM prediction result
-            # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
-
+    elif model == 'LR':
+        if '.' not in symbol:
+            # for non-us stock, use prophet
+            prediction_result = Prophet_model(symbol, days).predict()
         else:
-            return jsonify({'success': False, 'error': 'Invalid model'}), 400
+            df = LinearRegression_Model.get_stock_data(symbol)
+            prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
 
-        if not prediction_result:
-            return jsonify({'success': False, 'error': 'Prediction failed'}), 500
+        # format of LR model result
+        # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
 
-        # 2. Store the prediction result in the database
-        prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
+    elif model == 'LSTM':
+        end_date = datetime.today().date()
+        start_date = (end_date - timedelta(days=365 * 5))
+        df = yf.download(symbol, start=start_date, end=end_date)
+        all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+        df = df.reindex(all_dates)
+        df = df.fillna(method='ffill')
+        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+        prediction_result = model.predict()
+        # format of LSTM prediction result
+        # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
 
-        # 3. Store a notification
-        #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
-        NotificationController().set_notification(session.get('user')['accountId'], f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
-
-        return jsonify({'success': True, 'prediction_result': prediction_result})
     else:
-        return redirect(url_for('login'))
+        return jsonify({'success': False, 'error': 'Invalid model'}), 400
+
+    if not prediction_result:
+        return jsonify({'success': False, 'error': 'Prediction failed'}), 500
+
+    # 2. Store the prediction result in the database
+    prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
+
+    # 3. Store a notification
+    #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
+    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
+
+    return jsonify({'success': True, 'prediction_result': prediction_result})
 
 @app.route('/submit_comment',methods=["POST"])
 def submit_comment():
@@ -699,42 +701,69 @@ def apiGetPrediction():
     except Exception as e:
         return jsonify({'error':str(e)})
 
-
+@app.route('/api/request',methods=['GET'])
+def apiRequest():
+    try:
+        vmodel = ['fast','balance','accuracy']
+        vdays = ["7","14","30"]
+        key = request.args.get('key')
+        symbol = request.args.get('symbol')
+        model = request.args.get('model')
+        days = request.args.get('days')
+        if model not in vmodel:
+            raise Exception("not supported model")
+        if days not in vdays:
+            raise Exception("not supported days")
+        # verify end
+        days = int(days)
+        verify_symbol_usingYfinance().verify_symbol_usingYfinance(symbol)
+        account = VerifyApiKeyController().verifyApiKey(key)
+        model_mapping = {
+            'accuracy': 'LR',
+            'balance': 'GRU',
+            'fast': 'LSTM'
+        }
+        model = model_mapping[model]
+        process = multiprocessing.Process(target=request_for_prediction, args=(symbol, days, model,account['accountId']))
+        process.start()
+        return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
 # Define a cache to store recent notifications
-# notification_cache = {}
-#
-# def threshold_notification():
-#     global notification_cache
-#     premiumUserList = GetPremiumUsersController().getPremiumUsers()
-#     for user in premiumUserList:
-#         thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
-#         if thresholds:
-#             for threshold in thresholds:
-#                 symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
-#                 if abs(symbol["relative_change"]) > threshold['changePercentage']:
-#                     cache_key = (user, threshold["stockSymbol"])
-#                     current_time = time.time()
-#                     # Checking for recent notifications
-#                     if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
-#                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
-#                         notification_cache[cache_key] = current_time
-#                         Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
-#                         if Personal_who_follow_user_List:
-#                             for userFollow in Personal_who_follow_user_List:
-#                                 if userFollow['notifyMe'] == 1:
-#                                     notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
-#                                     hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+notification_cache = {}
 
-# def run_schedule():
-#     schedule.every(2).seconds.do(threshold_notification)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
+def threshold_notification():
+    global notification_cache
+    premiumUserList = GetPremiumUsersController().getPremiumUsers()
+    for user in premiumUserList:
+        thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
+        if thresholds:
+            for threshold in thresholds:
+                cache_key = (user, threshold["stockSymbol"], threshold["changePercentage"])
+                current_time = time.time()
+                if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
+                    symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
+                    if abs(symbol["relative_change"]) > threshold['changePercentage']:
+                        # Checking for recent notifications
+                            notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
+                            NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
+                            notification_cache[cache_key] = current_time
+                            Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
+                            if Personal_who_follow_user_List:
+                                for userFollow in Personal_who_follow_user_List:
+                                    if userFollow['notifyMe'] == 1:
+                                        notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
+                                        hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
+                                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+
+def run_schedule():
+    schedule.every(10).seconds.do(threshold_notification)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)

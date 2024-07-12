@@ -1008,7 +1008,7 @@
                 this.information = "You have successfully request for prediction, will be reminders you in main page when finish!"
                 document.getElementById('information').showModal();
                         this.setButtonClickTime();
-                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}`)
+                axios.post(`/request_for_prediction/${this.stockInfo.symbol}/${this.days}/${this.model}/${this.user.accountId}`)
             },
             setButtonClickTime() {
                 const currentTime = Date.now();
