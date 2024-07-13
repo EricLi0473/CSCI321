@@ -56,11 +56,11 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 import multiprocessing
-# from machineLearningModel.TF_LR_Model import *
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
 # from machineLearningModel.prophet_model import *
 # from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -342,30 +342,21 @@ def request_for_prediction(symbol, days, model,accountId):
     # pre insert prediction result, without final data
     predictionId = storePredictionResultController.pre_store_prediction_result(symbol,days,accountId,model)
     if model == 'GRU':
-        df = GRU_Model.get_stock_data(symbol)
+        df = GetSymbolData().fetch_data(symbol)
         prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
 
         # format of GRU model result
         # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
-    elif model == 'LR':
+    elif model == 'Prophet':
         if '.' not in symbol:
-            # for non-us stock, use prophet
             prediction_result = Prophet_model(symbol, days).predict()
-        else:
-            df = LinearRegression_Model.get_stock_data(symbol)
-            prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
 
-        # format of LR model result
+        # format of prophet model result
         # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
 
     elif model == 'LSTM':
-        end_date = datetime.today().date()
-        start_date = (end_date - timedelta(days=365 * 5))
-        df = yf.download(symbol, start=start_date, end=end_date)
-        all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
-        df = df.reindex(all_dates)
-        df = df.fillna(method='ffill')
+        df = GetSymbolData().fetch_data(symbol)
         model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
         prediction_result = model.predict()
         # format of LSTM prediction result
