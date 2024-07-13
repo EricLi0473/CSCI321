@@ -71,54 +71,32 @@ class PredictionData:
             result['rawData'] = json.loads(result['rawData'])
         return result
     def get_all_predictionData(self,date:str ) -> list:
-        sql = "SELECT * FROM predictiondata WHERE requestDate >= %s"
-        return self.fetchAll(sql, (date,))
+        sql = "SELECT * FROM predictiondata JOIN account on predictiondata.accountId = account.accountId WHERE requestDate >= %s"
+        results =  self.fetchAll(sql, (date,))
+        if results is None:
+            return []
+        for result in results:
+            if result['rawData'] is not None:
+                result['rawData'] = json.loads(result['rawData'])
+        return results
 
     def get_predictionData_by_accountId(self,accountId,date:str ) -> list:
         sql = "SELECT * FROM predictiondata WHERE accountId=%s AND requestDate >= %s"
         return self.fetchAll(sql, (accountId,date))
 
-    def insert_or_update_predictionData(self, symbol, min_price, avg_price, max_price, buy, hold, sell, time_range, target,accountId,model,rawData):
-        current_time = datetime.datetime.now()
-
-        existing_prediction = self.get_predictionData_by_symbol(symbol)
-
-        if existing_prediction:
-            # Update existing row
-            sql = """
-            UPDATE predictiondata
-            SET 
-                requestDate = %s,
-                minPredictedPrice = %s,
-                avgPredictedPrice = %s,
-                maxPredictedPrice = %s,
-                buyPercentage = %s,
-                holdPercentage = %s,
-                sellPercentage = %s,
-                timeRange = %s,
-                target = %s
-            WHERE stockSymbol = %s
-            """
-            values = (current_time, min_price, avg_price, max_price, buy, hold, sell, time_range, target, symbol)
-            self.commit(sql, values)
-            return existing_prediction['predictionId']
-        else:
-            # Insert new row
-            sql = """
-            INSERT INTO predictiondata (stockSymbol, requestDate, minPredictedPrice, avgPredictedPrice, maxPredictedPrice, buyPercentage, holdPercentage, sellPercentage, timeRange, target)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """
-            values = (symbol, current_time, min_price, avg_price, max_price, buy, hold, sell, time_range, target)
-            prediction_id = self.commitNReturnRowID(sql, values)
-            return prediction_id
 
     def  pre_store_prediction_result(self,symbol,timeRange,accountId,model) -> int:
         sql = "INSERT INTO predictiondata(stockSymbol, timeRange, accountId, model) VALUES (%s, %s, %s, %s)"
         values = (symbol, timeRange, accountId, model)
         lastId = self.commitNReturnRowID(sql, values)
         return lastId
+
+    def delete_predictionData_by_id(self,predictionId):
+        sql = "DELETE FROM predictiondata WHERE predictionId=%s"
+        values = (predictionId,)
+        self.commit(sql, values)
 if __name__ == "__main__":
     # PredictionData().insert_predictionData(13,"AAPL",1,2,3,4,5,6,15,"Buy","1","LSTM","raw")
-    # print(PredictionData().get_predictionData_by_accountId(1,"2024-06-12 00:00:00"))
+    print(PredictionData().get_predictionData_by_accountId(1,"2024-06-12"))
     # print(PredictionData().pre_store_prediction_result("AAPL",14,1,"LSTM"))
-    print(PredictionData().get_predictionData_by_symbol("AAPL"))
+    # print(PredictionData().get_predictionData_by_symbol("AAPL"))

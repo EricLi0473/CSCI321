@@ -49,6 +49,7 @@ from Control.premiumUser.verifyApiKeyController import *
 from Control.premiumUser.verify_symbol_usingYfinance import *
 from Control.premiumUser.getPremiumUsersController import *
 from Control.premiumUser.get_accountList_by_followedId import *
+from Control.User.delete_predictionData_by_id import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -572,7 +573,7 @@ def officialWeb():
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
     usersCount = len(GetAllAccount().get_all_account())
-    predictionCount = len(GetAllPredictionData().get_all_predictionData())
+    predictionCount = len(GetAllPredictionData().get_all_predictionData("2024-06-12"))
     return jsonify({'usersCount':usersCount,'prediction':predictionCount,'symbol':5000})
 
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
@@ -677,6 +678,37 @@ def adminReview():
     else:
         return redirect(url_for('login'))
 
+@app.route('/admin/allPredictions',methods=['GET','POST'])
+def adminAllPredictions():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        today = datetime.now().strftime("%Y-%m-%d")
+        predictions = GetAllPredictionData().get_all_predictionData(today)
+        return render_template('/Admin/adminPredictionData.html', predictions=predictions,account=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/getALLPredictionData',methods=['GET','POST'])
+def getALLPredictionData():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        data = request.json
+        return GetAllPredictionData().get_all_predictionData(data.get('date'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/deletePredictionData',methods=['GET','POST'])
+def deletePredictionData():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        data = request.json
+        DeletePredictionDataByID().delete_prediction_data_by_id(data.get("predictionId"))
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/deleteReview/<string:reviewId>',methods=['GET','POST'])
 def deleteReview(reviewId):
     if session.get('user'):
@@ -771,4 +803,4 @@ if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)
     # schedule_thread.daemon = True
     # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=False)
+    app.run(host='0.0.0.0',port=80,debug=True)
