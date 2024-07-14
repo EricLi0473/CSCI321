@@ -116,7 +116,21 @@
 
       </div>
               <div class="overflow-x-auto" >
-  <table class="table">
+                                                                                  <div role="alert" class="alert  mt-8" v-if="followList.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No following people, try to search some</span>
+                    </div>
+  <table class="table" v-if="followList.length !== 0">
     <thead>
       <tr class="text-xl">
           <th>*</th>
@@ -148,14 +162,28 @@
       <div class="flex">
           <h1 class=" text-4xl"><b>Followers</b></h1>
       </div>
-    <thead>
+                                                                                  <div role="alert" class="alert mt-8" v-if="who_follow_me_list.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No followers</span>
+                    </div>
+    <thead v-if="who_follow_me_list.length !== 0">
       <tr class="text-xl">
           <th>*</th>
         <th>User Name</th>
           <th>follow time</th>
       </tr>
     </thead>
-    <tbody v-for="(follower,index) in who_follow_me_list" :key="follower.followId">
+    <tbody v-for="(follower,index) in who_follow_me_list" :key="follower.followId" v-if="who_follow_me_list.length !== 0">
       <!-- row 1 -->
       <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
           <td class="2xl">[[index+1]]</td>

@@ -566,7 +566,7 @@ def change_password():
         return redirect(url_for('login'))
 
 @app.route('/',methods=['GET'])
-@limiter.limit("50 per minute")
+@limiter.limit("10 per minute")
 def officialWeb():
     stockInfo = StockDataController().get_stock_info_full("AAPL")
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
@@ -792,6 +792,14 @@ def apiRequest():
         return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('/system/404.html'), 404
+
+@app.errorhandler(429)
+def page_not_found(e):
+    return render_template('/system/429.html'), 429
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
@@ -827,20 +835,20 @@ def daily_task():
     reset_mlView().reset_mlView()
     #  update personal interested
     for accountId in GetPremiumUsersController().getPremiumUsers():
-        preference = GetPreferenceByAccountId(accountId)
+        preference = GetPreferenceByAccountId().get_preference_by_accountId(accountId)
         UpdatePreferenceByAccountId().update_preference_by_accountId(accountId,preference['preferenceCountry'],preference['preferenceIndustry'])
     #  clear cache
     global notification_cache
     notification_cache.clear()
 def run_schedule():
-    schedule.every(10).seconds.do(threshold_notification)
+    schedule.every(30).seconds.do(threshold_notification)
     schedule.every().day.at("04:00").do(daily_task)
     while True:
         schedule.run_pending()
         time.sleep(1)
 
 if __name__ == '__main__':
-    # schedule_thread = threading.Thread(target=run_schedule)
-    # schedule_thread.daemon = True
-    # schedule_thread.start()
+    schedule_thread = threading.Thread(target=run_schedule)
+    schedule_thread.daemon = True
+    schedule_thread.start()
     app.run(host='0.0.0.0',port=80,debug=True)

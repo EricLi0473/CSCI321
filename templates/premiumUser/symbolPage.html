@@ -677,7 +677,7 @@
 
 
         <div class="mt-24 text-3xl">
-          <b id="comment">comment</b>
+          <b id="comment">Comments</b>
         </div>
 
         <section class="bg-white">
@@ -690,9 +690,23 @@
     <textarea v-model="comment" :placeholder="commentPlaceholder" class="block  mt-2 w-full placeholder-gray-400/70 dark:placeholder-gray-500 rounded-lg border border-gray-200 bg-white px-4 h-24 py-2.5 text-gray-700 focus:border-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-40 dark:border-gray-600 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-blue-300"></textarea>
 
 </div>
+
       <div class="w-full text-right mt-6">
 <button class="btn btn-outline" @click="submit_comment" :disabled="isCoolingDown">[[ buttonText ]]</button>          </div>
-
+                                                                      <div role="alert" class="alert  mt-6" v-if="comments.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No comments belong to this symbol, try to add some!</span>
+                    </div>
     <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="(item,index) in comments" :key="item.url">
   <div class="flex-1">
     <div class="flex justify-between items-center">
