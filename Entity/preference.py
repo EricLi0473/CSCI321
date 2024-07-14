@@ -39,14 +39,9 @@ class Preference:
         return self.fetchOne(sql, val)
 
     def set_preference_by_accountId(self, accountId, preferenceIndustry,preferenceCountry):
-        sql = "INSERT INTO preferences(accountId, preferenceIndustry,preferenceCountry) VALUES (%s, %s, %s)"
+        sql = "INSERT INTO preferences(accountId, preferenceIndustry,preferenceCountry) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE preferenceIndustry=VALUES(preferenceIndustry),preferenceCountry=VALUES(preferenceCountry)"
         val = (accountId, preferenceIndustry, preferenceCountry)
         self.commit(sql, val)
 
-    def update_preference_by_accountId(self, accountId, preferenceIndustry,preferenceCountry):
-        sql = "UPDATE preferences SET preferenceIndustry = %s, preferenceCountry = %s WHERE accountId = %s"
-        val = (preferenceIndustry, preferenceCountry, accountId)
-        self.commit(sql, val)
-
 if __name__ == "__main__":
-    print(Preference().get_preference_by_accountId("1"))
+    print(Preference().set_preference_by_accountId("1","Energy","in"))

@@ -38,7 +38,7 @@ class SearchHistory:
 
 
     def get_searchHistory_by_id(self,accountId):
-        sql = "SELECT * FROM searchHistory WHERE accountId = %s ORDER BY searchDate DESC"
+        sql = "SELECT * FROM searchHistory WHERE accountId = %s ORDER BY searchDate DESC LIMIT 20"
         val = (accountId,)
         return self.fetchAll(sql, val)
 

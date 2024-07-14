@@ -110,7 +110,7 @@
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
+                            <button class="btn btn-accent btn-sm" @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -119,17 +119,53 @@
                     <div>
 
                         <h2 class="text-lg font-bold mb-4">News</h2>
-                        <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                            <h3 class="font-bold">
-                                <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
-                            </h3>
-                            <p>[[news.description]]</p>
-                            <img :src="news.image_url || '../../static/resource/altNewsIMG.jpg'"
-                             @error="onImageError"
-                             alt="News Image2"
-                             class="w-full h-32 object-cover mt-2 rounded-md">
-                            <p class = "text-gray-500 mt-2">Published on: [[news.published_at]]</p>
-                        </div>
+<!--                       news start -->
+                            <article class="flex bg-white transition hover:shadow-xl mb-8 rounded-lg shadow-md" v-for="news in recommendationNews" :key="news.id">
+                              <div class="rotate-180 p-2 [writing-mode:_vertical-lr]">
+                                <time
+                                  :datetime="news.published_at.split(', ')[1]"
+                                  class="flex items-center justify-between gap-4 text-xs font-bold uppercase text-gray-900"
+                                >
+                                    [[news.published_at.split(', ')[0] ]]
+                                    <span class="w-px flex-1 bg-gray-900/10"></span>
+                                  [[news.published_at.split(', ')[1] ]]
+                                </time>
+                              </div>
+
+                              <div class="hidden sm:block sm:basis-56">
+                                <img
+                                    :src="news.image_url || '../../static/resource/altNewsIMG.jpg'"
+                                    @error="onImageError"
+                                    alt="News Image2"
+                                  class="aspect-square h-full w-full object-cover"
+                                />
+                              </div>
+
+                              <div class="flex flex-1 flex-col justify-between">
+                                <div class="border-s border-gray-900/10 p-4 sm:border-l-transparent sm:p-6">
+                                  <a href="#">
+                                    <h3 class="font-bold uppercase text-gray-900">
+                                      [[news.title]]
+                                    </h3>
+                                  </a>
+
+                                  <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-700">
+                                   [[news.description]]
+                                  </p>
+                                </div>
+
+                                <div class="sm:flex sm:items-end sm:justify-end">
+                                  <a
+                                    :href="news.url"
+                                    target="_blank"
+                                    class="block bg-yellow-300 px-5 py-3 text-center text-xs font-bold uppercase text-gray-900 transition hover:bg-yellow-400"
+                                  >
+                                    Read Blog
+                                  </a>
+                                </div>
+                              </div>
+                            </article>
+<!--                        news end-->
                         <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4" v-if="isLoadingNews === 0">Load More</button>
                                                                     <div class="flex w-full flex-col gap-4" v-if="isLoadingNews === 1">
   <div class="skeleton h-32 w-full" v-if="isLoadingNews === 1"></div>

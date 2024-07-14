@@ -75,50 +75,48 @@
     <div class="flex-1 bg-gray-100 ml-16">
       <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
           <div class="">
-            <a class="btn btn-ghost text-xl" href="/admin/mainPage">Stock4Me</a>
+            <a class="btn btn-ghost text-xl">Stock4Me</a>
           </div>
           </div>
           <!-- Content Start! -->
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
-          <h2 class="text-2xl font-bold mb-4 text-black">User Comment List</h2>
-          <table class="table w-full table-fixed">
-            <thead>
-              <tr>
-                <th class="text-black text-center w-1/12 text-xl">Username</th>
-                <th class="text-black text-center w-2/12 text-xl"></th>
-                <th class="text-black text-left w-2/12 text-xl">Comment</th>
-                <th class="text-black text-center w-1/12 text-xl">isHeadline</th>
-                <th class="text-black text-center w-2/12 text-xl"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(review, index) in truncatedReviews" :key="review.reviewId" class="hover:bg-gray-200 cursor-pointer" @click="showFullReview(review.reviewText)">
-                <td class="text-black text-center text-xl w-1/12">[[ review.userName ]]</td>
-                <td class="text-black text-center text-xl w-2/12">
-                  <div class="rating rating-md rating-half">
-                    <input type="radio" :name="'rating-' + review.reviewId" class="rating-hidden" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 0.5" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 1" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 1.5" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 2" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 2.5" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 3" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 3.5" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 4" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-1 bg-orange-500" :checked="review.rating >= 4.5" />
-                    <input type="radio" :name="'rating-' + review.reviewId" class="mask mask-star-2 mask-half-2 bg-orange-500" :checked="review.rating >= 5" />
-                  </div>
-                </td>
-                <td class="text-black text-left text-lg w-2/12">[[ review.truncatedText ]]</td>
-                <td class="text-black text-center text-xl w-1/12">
-                  <input type="checkbox" :checked="review.rating >= 4" class="checkbox checkbox-lg" disabled />
-                </td>
-                <td class="text-black text-center text-xl w-2/12">
-                                  <button class="btn btn-outline btn-error" @click="delReview(review.reviewId)">Delete</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+<!---->
+<section class="bg-white">
+  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Monitor</h2>
+
+    </div>
+
+    <div class="mt-8 sm:mt-12">
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allUser')">
+          <dt class="order-last text-lg font-medium text-gray-500">Accounts</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[0] ]]</dd>
+        </div>
+
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allPredictions')">
+          <dt class="order-last text-lg font-medium text-gray-500">Predictions</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[1] ]]</dd>
+        </div>
+
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allPredictions')">
+          <dt class="order-last text-lg font-medium text-gray-500">Processing predictions</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[2] ]]</dd>
+        </div>
+                  <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/review')">
+          <dt class="order-last text-lg font-medium text-gray-500">Reviews</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[3] ]]</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+<!--            -->
         </div>
     </div>
         <dialog id="information" class="modal modal-bottom sm:modal-middle">
@@ -139,39 +137,16 @@
           el: '#app',
           delimiters: ['[[', ']]'],
           data: {
-            reviews: JSON.parse('{{reviews|tojson}}'),
-            information: '',
-            account:JSON.parse('{{account|tojson}}')
+            information:'',
+            account:JSON.parse('{{account|tojson}}'),
+              stats:JSON.parse('{{stats|tojson}}')
           },
                 computed: {
-        truncatedReviews() {
-          return this.reviews.map(review => {
-            let truncatedText = review.reviewText;
-            if (truncatedText.length > 30) {
-              truncatedText = truncatedText.substring(0, 30) + '...';
-            }
-            return {
-              ...review,
-              truncatedText: truncatedText
-            };
-          });
-        }
       },
           methods: {
-            showFullReview(reviewText){
-              this.information = reviewText;
-              document.getElementById('information').showModal();
-            },
-              delReview(reviewId) {
-                 this.reviews = this.reviews.filter(review => review.reviewId !== reviewId);
-                axios.post(`/deleteReview/${reviewId}`)
-                        .then(response => {
-                          if (response.data.success){
-                                this.information = 'You have successfully delete this comment'
-                                document.getElementById('information').showModal();
-                          }
-                        })
-              }
+        redirect(router) {
+            window.location.href = router;
+        }
           }
         });
         </script>

@@ -43,7 +43,11 @@ class Notification:
         return self.fetchAll(sql, val)
 
     def set_notification(self,accountId,notification,notificationType,referenceId,symbol):
-        sql = "INSERT INTO notification(accountId,notification,notificationType,referenceId,symbol) VALUES (%s,%s,%s,%s,%s)"
+        sql = """
+        INSERT INTO notification (accountId, notification, notificationType, referenceId, symbol)
+        VALUES (%s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE notificationDate = CURRENT_TIMESTAMP
+        """
         val = (accountId,notification,notificationType,referenceId,symbol)
         self.commit(sql, val)
 

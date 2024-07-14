@@ -40,11 +40,9 @@ class RecommendationList():
         return self.fetchOne(sql, val)
 
     def insert_recommendation_by_accountId(self, accountId, recommendedStock):
-        sql = "INSERT INTO recommendationList (accountId, recommendedStock) VALUES (%s, %s)"
+        sql = "INSERT INTO recommendationList (accountId, recommendedStock) VALUES (%s, %s) ON DUPLICATE KEY UPDATE recommendedStock=VALUES(recommendedStock)"
         val = (accountId, recommendedStock)
         self.commit(sql, val)
 
-    def update_recommendation_by_accountId(self, accountId, recommendedStock):
-        sql = "UPDATE recommendationList SET recommendedStock = %s WHERE accountId = %s"
-        val = (recommendedStock, accountId)
-        self.commit(sql, val)
+if __name__ == '__main__':
+    RecommendationList().insert_recommendation_by_accountId(1, "a")

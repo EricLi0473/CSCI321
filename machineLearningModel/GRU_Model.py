@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.preprocessing import MinMaxScaler
 import matplotlib.pyplot as plt
-
+from tqdm import tqdm
 from torch.utils.data import DataLoader, TensorDataset
 from datetime import datetime, timedelta
 
@@ -167,19 +167,19 @@ class GRU_Model:
         plt.tight_layout()
         plt.show()
 
+if __name__ == '__main__':
+    # # 示例用法
+    symbol = 'AAPL'  # 股票代码
+    df = GRU_Model.get_stock_data(symbol)
+    forecast_days = 14  # 预测天数
+    layers = 2  # GRU层数
+    neurons = 16  # 每层神经元数
 
-# # 示例用法
-# symbol = 'AAPL'  # 股票代码
-# df = GRU_Model.get_stock_data(symbol)
-# forecast_days = 30  # 预测天数
-# layers = 2  # GRU层数
-# neurons = 16  # 每层神经元数
-#
-# # 预测股票价格
-# predictions = GRU_Model.predict_future_prices(symbol, df, forecast_days, layers, neurons)
-#
-# # 打印预测结果
-# print(predictions)
-#
-# # 绘制预测结果
-# GRU_Model.plot_predictions(df, predictions)
+    # 预测股票价格
+    predictions = GRU_Model.predict_future_prices(symbol, df, forecast_days, layers, neurons)
+
+    # 打印预测结果
+    print(predictions)
+    #
+    # # 绘制预测结果
+    # GRU_Model.plot_predictions(df, predictions)

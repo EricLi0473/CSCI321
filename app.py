@@ -5,12 +5,9 @@ from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 from flask import request, render_template, url_for, jsonify,session,send_file
-#slow start when loadin ML functions, normal turn off
-# from Control.User.requestForPrediction import RequestForPrediction
-#
-
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from Control.User.SignupController import *
-from Control.IndividualUser.getAccountInfo import *
 from Control.User.changePasswordController import *
 from Control.User.newsController import *
 from Control.premiumUser.get_predictionData_by_symbol import *
@@ -47,27 +44,43 @@ from Control.User.insert_searchHistory_by_id import *
 from Control.User.get_all_predictionData import *
 from Control.User.get_review_by_accountId import *
 from Control.premiumUser.verifyApiKeyController import *
+from Control.premiumUser.verify_symbol_usingYfinance import *
+from Control.premiumUser.getPremiumUsersController import *
+from Control.premiumUser.get_accountList_by_followedId import *
+from Control.User.delete_predictionData_by_id import *
+from Control.premiumUser.set_preference_by_accountId import *
+from Control.User.reset_mlView import *
+from Control.User.detectDuplicateEmail import *
+from Control.Admin.get_all_precessing_predictionData import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.TF_LR_Model import *
+import multiprocessing
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
 # from machineLearningModel.prophet_model import *
 # from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
 import random
 import io
+import schedule
 
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["100 per minute"]
+)
 
 @app.route('/generate_captcha')
+@limiter.limit("100 per minute")
 def generate_captcha():
     image = ImageCaptcha()
     captcha_text = ''.join(random.choices('1234567890', k=5))
@@ -222,7 +235,7 @@ def mainPage():
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
-            return render_template('mainPage.html',user=session['user'],watchList=watchList)
+            return render_template('/premiumUser/mainPage.html',user=session['user'],watchList=watchList)
         elif session.get('user')['profile'] == 'free':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
             return render_template('/individualFreeUser/mainPage.html', user=session['user'], watchList=watchList)
@@ -237,12 +250,7 @@ def remove_notification():
         notificationId = data.get('notificationId')
         notificationType = data.get('notificationType')
         referenceId = data.get('referenceId')
-
-        if notificationType == "threshold":
-            Remove_notification_by_id().remove_notification_by_id(notificationId)
-            Remove_threshold_settings_by_thresholdId().remove_threshold_settings_by_thresholdId(referenceId)
-        else:
-            Remove_notification_by_id().remove_notification_by_id(notificationId)
+        Remove_notification_by_id().remove_notification_by_id(notificationId)
 
         return jsonify({'success': True})
     else:
@@ -325,61 +333,58 @@ def symbol(symbol):
 
     else:
         return redirect(url_for('login'))
-@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>', methods=['GET', 'POST'])
-def request_for_prediction(symbol, days, model):
+@app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>/<string:accountId>', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+def request_for_prediction(symbol, days, model,accountId):
     from datetime import datetime
-    if session.get('user'):
-        days = int(days)
-        # 1. Pass the parameters to the machine learning model
-        prediction_result = None
-        default_layers = 4
-        default_neurons = 32
-        if model == 'GRU':
-            df = GRU_Model.get_stock_data(symbol)
-            prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
+    days = int(days)
+    # 1. Pass the parameters to the machine learning model
+    prediction_result = None
+    default_layers = 4
+    default_neurons = 32
 
-            # format of GRU model result
-            # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
+    # pre insert prediction result, without final data
+    predictionId = storePredictionResultController.pre_store_prediction_result(symbol,days,accountId,model)
+    if model == 'GRU':
+        df = GRU_Model.get_stock_data(symbol)
+        prediction_result = GRU_Model().predict_future_prices(symbol, df, days, default_layers, default_neurons)
 
-        elif model == 'LR':
-            if '.' not in symbol:
-                # for non-us stock, use prophet
-                prediction_result = Prophet_model(symbol, days).predict()
-            else:
-                df = LinearRegression_Model.get_stock_data(symbol)
-                prediction_result = LinearRegression_Model(symbol, df, days, default_layers, default_neurons).predict_stock_price()
+        # format of GRU model result
+        # [{'Date': '2024-06-29', 'Predicted': 195.99, 'Recommendation': 'Hold'}, {'Date': '2024-06-30', 'Predicted': 193.51, 'Recommendation': 'Hold'}]
 
-            # format of LR model result
-            # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
+    elif model == 'Prophet':
+        prediction_result = Prophet_model(symbol, days).predict()
 
-        elif model == 'LSTM':
-            end_date = datetime.today().date()
-            start_date = (end_date - timedelta(days=365 * 5))
-            df = yf.download(symbol, start=start_date, end=end_date)
-            all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
-            df = df.reindex(all_dates)
-            df = df.fillna(method='ffill')
-            model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
-            prediction_result = model.predict()
-            # format of LSTM prediction result
-            # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
+        # format of LR model result
+        # [{'Date': '2024-06-29', 'Predicted': 171.28, 'Recommendation': 'Hold'}]
 
-        else:
-            return jsonify({'success': False, 'error': 'Invalid model'}), 400
+    elif model == 'LSTM':
+        end_date = datetime.today().date()
+        start_date = (end_date - timedelta(days=365 * 5))
+        df = yf.download(symbol, start=start_date, end=end_date)
+        all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+        df = df.reindex(all_dates)
+        df = df.fillna(method='ffill')
+        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+        prediction_result = model.predict()
+        # format of LSTM prediction result
+        # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
 
-        if not prediction_result:
-            return jsonify({'success': False, 'error': 'Prediction failed'}), 500
-
-        # 2. Store the prediction result in the database
-        prediction_id = storePredictionResultController.store_prediction_result(symbol, prediction_result)
-
-        # 3. Store a notification
-        #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
-        NotificationController().set_notification(session.get('user')['accountId'], f"Prediction for {symbol} is completed.", 'Prediction', prediction_id, symbol)
-
-        return jsonify({'success': True, 'prediction_result': prediction_result})
     else:
-        return redirect(url_for('login'))
+        return jsonify({'success': False, 'error': 'Invalid model'}), 400
+
+    if not prediction_result:
+        return jsonify({'success': False, 'error': 'Prediction failed'}), 500
+
+    # 2. Store the prediction result in the database
+    storePredictionResultController.store_prediction_result(predictionId,symbol, prediction_result,accountId,model)
+
+    # 3. Store a notification
+    #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
+    NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', predictionId, symbol)
+
+    return jsonify({'success': True, 'prediction_result': prediction_result})
+
 
 @app.route('/submit_comment',methods=["POST"])
 def submit_comment():
@@ -470,10 +475,8 @@ def emailVerification():
 def detectDuplicateEmail():
     data = request.json
     email = data["email"]
-    account = GetAllAccount().get_all_account()
-    for i in account:
-        if i["email"] == email:
-            return jsonify({"success": False,'error':"Duplicate email, try to login"})
+    if DetectDuplicateEmail().detectDuplicateEmail(email) == 1:
+        return jsonify({"success": False, 'error': "Duplicate email, try to login"})
     return jsonify({"success": True})
 
 @app.route('/verifyEmailCode',methods=['POST'])
@@ -485,6 +488,7 @@ def verifyEmailCode():
         account = data.get('account')
         EmailVerificationController().verify_code(email,code)
         session['user'] = SignupController().individualSignUp(**account)
+        Set_preference_by_accountId().set_preference_by_accountId(session['user']['accountId'],"Technology","us")
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
@@ -503,6 +507,7 @@ def reset_pwd():
 def signup():
     return render_template("system/signup.html")
 @app.route('/login', methods=['POST','GET'])
+@limiter.limit("100 per minute")
 def login():
     if request.method == 'GET':
         return render_template("system/login.html")
@@ -556,6 +561,7 @@ def change_password():
         return redirect(url_for('login'))
 
 @app.route('/',methods=['GET'])
+@limiter.limit("50 per minute")
 def officialWeb():
     stockInfo = StockDataController().get_stock_info_full("AAPL")
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
@@ -568,7 +574,7 @@ def officialWeb():
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
     usersCount = len(GetAllAccount().get_all_account())
-    predictionCount = len(GetAllPredictionData().get_all_predictionData())
+    predictionCount = len(GetAllPredictionData().get_all_predictionData("2024-06-12"))
     return jsonify({'usersCount':usersCount,'prediction':predictionCount,'symbol':5000})
 
 @app.route('/get_predictionData_by_symbol/<string:symbol>',methods=['GET'])
@@ -602,7 +608,7 @@ def redirectToUserPage():
         if session.get('user')['profile'] != 'admin':
             return redirect(url_for('mainPage'))
         else:
-            return redirect(url_for("space", accountId=session.get('user')['accountId']))
+            return redirect(url_for("adminMainPage"))
     else:
         return redirect(url_for('login'))
 
@@ -672,7 +678,61 @@ def adminReview():
             return render_template('/Admin/adminViewAllComment.html',reviews=reviews,account=session.get('user'))
     else:
         return redirect(url_for('login'))
+@app.route('/admin/mainPage',methods=['GET'])
+def adminMainPage():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        stats = [len(GetAllAccount().get_all_account()),len(GetAllPredictionData().get_all_predictionData("1970-01-01")),len(GetAllPrecessingPredictionData().get_all_precessing_predictionData()),len(Get_all_reviews().get_all_reviews())]
+        return render_template('/Admin/mainPage.html',account=session['user'],stats=stats)
+    else:
+        return redirect(url_for('login'))
+@app.route('/admin/allPredictions',methods=['GET','POST'])
+def adminAllPredictions():
+    from datetime import datetime
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        today = datetime.now().strftime("%Y-%m-%d")
+        predictions = GetAllPredictionData().get_all_predictionData(today)
+        return render_template('/Admin/adminPredictionData.html', predictions=predictions,account=session.get('user'))
+    else:
+        return redirect(url_for('login'))
 
+@app.route('/predictionData',methods=['GET','POST'])
+def predictionData():
+    from datetime import datetime
+    if session.get('user'):
+        if session.get('user')['profile'] != 'premium':
+            return redirect(url_for('login'))
+        today = datetime.now().strftime("%Y-%m-%d")
+        return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],today))
+    else:
+        return redirect(url_for('login'))
+@app.route('/getALLPredictionData',methods=['GET','POST'])
+def getALLPredictionData():
+    if session.get('user'):
+        if session.get('user')['profile'] != 'admin':
+            return redirect(url_for('login'))
+        data = request.json
+        return GetAllPredictionData().get_all_predictionData(data.get('date'))
+    else:
+        return redirect(url_for('login'))
+@app.route('/getALLPredictionDataBy_accountId',methods=['GET','POST'])
+def getALLPredictionDataBy_accountId():
+    if session.get('user'):
+        data = request.json
+        return GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],data.get('date'))
+    else:
+        return redirect(url_for('login'))
+@app.route('/deletePredictionData',methods=['GET','POST'])
+def deletePredictionData():
+    if session.get('user'):
+        data = request.json
+        DeletePredictionDataByID().delete_prediction_data_by_id(data.get("predictionId"))
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/deleteReview/<string:reviewId>',methods=['GET','POST'])
 def deleteReview(reviewId):
     if session.get('user'):
@@ -699,42 +759,80 @@ def apiGetPrediction():
     except Exception as e:
         return jsonify({'error':str(e)})
 
-
+@app.route('/api/request',methods=['GET'])
+def apiRequest():
+    try:
+        vmodel = ['fast','balance','accuracy']
+        vdays = ["7","14","30"]
+        key = request.args.get('key')
+        symbol = request.args.get('symbol')
+        model = request.args.get('model')
+        days = request.args.get('days')
+        if model not in vmodel:
+            raise Exception("not supported model")
+        if days not in vdays:
+            raise Exception("not supported days")
+        # verify end
+        days = int(days)
+        verify_symbol_usingYfinance().verify_symbol_usingYfinance(symbol)
+        account = VerifyApiKeyController().verifyApiKey(key)
+        model_mapping = {
+            'accuracy': 'LR',
+            'balance': 'GRU',
+            'fast': 'Prophet'
+        }
+        model = model_mapping[model]
+        process = multiprocessing.Process(target=request_for_prediction, args=(symbol, days, model,account['accountId']))
+        process.start()
+        return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
 # Define a cache to store recent notifications
-# notification_cache = {}
-#
-# def threshold_notification():
-#     global notification_cache
-#     premiumUserList = GetPremiumUsersController().getPremiumUsers()
-#     for user in premiumUserList:
-#         thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
-#         if thresholds:
-#             for threshold in thresholds:
-#                 symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
-#                 if abs(symbol["relative_change"]) > threshold['changePercentage']:
-#                     cache_key = (user, threshold["stockSymbol"])
-#                     current_time = time.time()
-#                     # Checking for recent notifications
-#                     if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 3600):  # one hour
-#                         notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-#                         NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
-#                         notification_cache[cache_key] = current_time
-#                         Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
-#                         if Personal_who_follow_user_List:
-#                             for userFollow in Personal_who_follow_user_List:
-#                                 if userFollow['notifyMe'] == 1:
-#                                     notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
-#                                     hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-#                                     NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+notification_cache = {}
 
-# def run_schedule():
-#     schedule.every(2).seconds.do(threshold_notification)
-#     while True:
-#         schedule.run_pending()
-#         time.sleep(1)
+def threshold_notification():
+    global notification_cache
+    premiumUserList = GetPremiumUsersController().getPremiumUsers()
+    for user in premiumUserList:
+        thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
+        if thresholds:
+            for threshold in thresholds:
+                cache_key = (user['accountId'], threshold["stockSymbol"], threshold["changePercentage"])
+                current_time = time.time()
+                if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
+                    symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
+                    if abs(symbol["relative_change"]) > threshold['changePercentage']:
+                        # Checking for recent notifications
+                            notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
+                            NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
+                            notification_cache[cache_key] = current_time
+                            Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
+                            if Personal_who_follow_user_List:
+                                for userFollow in Personal_who_follow_user_List:
+                                    if userFollow['notifyMe'] == 1:
+                                        notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
+                                        hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
+                                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+
+def daily_task():
+    # Reset the number of times a free user can view ml prediction per day
+    reset_mlView().reset_mlView()
+    #  update personal interested
+    for accountId in GetPremiumUsersController().getPremiumUsers():
+        preference = GetPreferenceByAccountId(accountId)
+        UpdatePreferenceByAccountId().update_preference_by_accountId(accountId,preference['preferenceCountry'],preference['preferenceIndustry'])
+    #  clear cache
+    global notification_cache
+    notification_cache.clear()
+def run_schedule():
+    schedule.every(10).seconds.do(threshold_notification)
+    schedule.every().day.at("04:00").do(daily_task)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
 
 if __name__ == '__main__':
     # schedule_thread = threading.Thread(target=run_schedule)

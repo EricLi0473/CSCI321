@@ -7,22 +7,6 @@ class NotificationController:
         return Notification().get_notifications_by_accountId(accountId)
 
     def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
-        allNotifications = Notification().get_all_notifications()
-        # transfer input to str, (database allow str input as numeric)
-        accountId = str(accountId)
-        notification = str(notification)
-        notificationType = str(notificationType)
-        referenceId = str(referenceId)
-        symbol = str(symbol)
-        # if database data: str == input:str, duplicate data , false to insert
-        for notif in allNotifications:
-            if (str(notif['accountId']) == accountId and
-                    notif['notification'] == notification and
-                    notif['notificationType'] == notificationType and
-                    str(notif['referenceId']) == referenceId and
-                    notif['symbol'] == symbol):
-                return False
-        # if !=, insert
         Notification().set_notification(accountId, notification, notificationType, referenceId, symbol)
         return True
 

@@ -135,15 +135,16 @@ class LSTM_Model:
         return result
 
 
-# # 示例用法
-# end_date = datetime.today().date()
-# start_date = (end_date - timedelta(days=365 * 5))
-# ticker_symbol = "AAPL"
-# df = yf.download(ticker_symbol, start=start_date, end=end_date)
-# all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
-# df = df.reindex(all_dates)
-# df = df.fillna(method='ffill')
-# #
-# model = LSTM_Model('AAPL', df, n_days=10, layers=4, neurons=64)
-# future_predictions = model.predict()
-# print(future_predictions)
+if __name__ == '__main__':
+    # # 示例用法
+    end_date = datetime.today().date()
+    start_date = (end_date - timedelta(days=365 * 5))
+    ticker_symbol = "AAPL"
+    df = yf.download(ticker_symbol, start=start_date, end=end_date)
+    all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
+    df = df.reindex(all_dates)
+    df = df.fillna(method='ffill')
+    #
+    model = LSTM_Model('AAPL', df, n_days=10, layers=4, neurons=64)
+    future_predictions = model.predict()
+    print(future_predictions)

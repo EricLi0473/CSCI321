@@ -5,3 +5,6 @@ class GetPremiumUsersController:
 
     def getPremiumUsers(self):
         return Account().get_premium_accountId()
+
+if __name__ == '__main__':
+    print(GetPremiumUsersController().getPremiumUsers())

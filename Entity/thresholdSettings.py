@@ -54,10 +54,6 @@ class ThresholdSettings:
         sql = "DELETE FROM thresholdsettings WHERE accountId = %s AND stockSymbol = %s"
         val = (accountId, stockSymbol)
         self.commit(sql, val)
-        # If a user removes threshold and also removes the notification
-        sql = "DELETE FROM notification WHERE accountId = %s AND symbol = %s AND notificationType = 'threshold'"
-        self.commit(sql, val)
-
 
 if __name__ == "__main__":
     settings = ThresholdSettings()

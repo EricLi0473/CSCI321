@@ -62,6 +62,23 @@
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
                   </a>
                 </li>
+                                            <li v-if="user.profile === 'premium'">
+                  <a href="/api" class="group relative flex justify-center rounded px-2 py-1.5 hover:bg-gray-50 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
+                      <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
+                      <path d="M8.646 6.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L10.293 9 8.646 7.354a.5.5 0 0 1 0-.708m-1.292 0a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L5.707 9l1.647-1.646a.5.5 0 0 0 0-.708"/>
+                    </svg>
+                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">API</span>
+                  </a>
+                </li>
+                                                                                            <li v-if="user.profile === 'premium'">
+                  <a href="/predictionData" class="group relative flex justify-center rounded px-2 py-1.5 hover:bg-gray-50">
+<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16">
+  <path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/>
+</svg>
+                    <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">PredictionData</span>
+                  </a>
+                </li>
                         </ul>
                     </div>
                 </div>
@@ -114,7 +131,8 @@
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
+
+                            <button class="btn btn-accent btn-sm" @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -123,17 +141,53 @@
                     <div>
 
                         <h2 class="text-lg font-bold mb-4">Recommended News For You</h2>
-                        <div v-for="news in recommendationNews" :key="news.id" class="mb-4 bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
-                            <h3 class="font-bold">
-                                <a :href="news.url" target="_blank" class="text-blue-500 hover:underline">[[news.title]]</a>
-                            </h3>
-                            <p>[[news.description]]</p>
-                            <img :src="news.image_url || '../../static/resource/altNewsIMG.jpg'"
-                             @error="onImageError"
-                             alt="News Image2"
-                             class="w-full h-32 object-cover mt-2 rounded-md">
-                            <p class = "text-gray-500 mt-2">Published on: [[news.published_at]]</p>
-                        </div>
+<!--                  newsStart      -->
+<article class="flex bg-white transition hover:shadow-xl mb-8 rounded-lg shadow-md" v-for="news in recommendationNews" :key="news.id">
+  <div class="rotate-180 p-2 [writing-mode:_vertical-lr]">
+    <time
+      :datetime="news.published_at.split(', ')[1]"
+      class="flex items-center justify-between gap-4 text-xs font-bold uppercase text-gray-900"
+    >
+        [[news.published_at.split(', ')[0] ]]
+        <span class="w-px flex-1 bg-gray-900/10"></span>
+      [[news.published_at.split(', ')[1] ]]
+    </time>
+  </div>
+
+  <div class="hidden sm:block sm:basis-56">
+    <img
+        :src="news.image_url || '../../static/resource/altNewsIMG.jpg'"
+        @error="onImageError"
+        alt="News Image2"
+      class="aspect-square h-full w-full object-cover"
+    />
+  </div>
+
+  <div class="flex flex-1 flex-col justify-between">
+    <div class="border-s border-gray-900/10 p-4 sm:border-l-transparent sm:p-6">
+      <a href="#">
+        <h3 class="font-bold uppercase text-gray-900">
+          [[news.title]]
+        </h3>
+      </a>
+
+      <p class="mt-2 line-clamp-3 text-sm/relaxed text-gray-700">
+       [[news.description]]
+      </p>
+    </div>
+
+    <div class="sm:flex sm:items-end sm:justify-end">
+      <a
+        :href="news.url"
+        target="_blank"
+        class="block bg-yellow-300 px-5 py-3 text-center text-xs font-bold uppercase text-gray-900 transition hover:bg-yellow-400"
+      >
+        Read Blog
+      </a>
+    </div>
+  </div>
+</article>
+<!--                    newsEnd -->
                         <button @click="loadMoreNews" class="btn btn-sm btn-primary mt-4" v-if="isLoadingNews === 0">Load More</button>
                                                                     <div class="flex w-full flex-col gap-4" v-if="isLoadingNews === 1">
   <div class="skeleton h-32 w-full" v-if="isLoadingNews === 1"></div>
@@ -150,7 +204,7 @@
                         <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
                         <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
                     </div>
-                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300" @click="navigateToSymbol(stock.symbol)">
+                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300">
                                 <div>
                                     <div class="join">
                                         <a :href="'/symbol/' + stock.symbol" target="_blank" class="text-blue-500 hover:underline">[[stock.longName]]</a>
@@ -246,7 +300,7 @@
                     window.location.href = `/search/${this.search}`;
                 },
                 navigateToSymbol(symbol) {
-                    window.open(`/symbol/${symbol}`, '_blank');
+                    window.open(`/symbol/${symbol}`);
                 },
                 getNotifications() {
                     axios.get('/get_notification')
