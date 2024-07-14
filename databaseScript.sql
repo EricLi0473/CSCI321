@@ -130,7 +130,7 @@ CREATE TABLE notification(
     symbol VARCHAR(255) NULL ,
     notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId),
-    unique KEY unique_notification (accountId,notification,notificationType,referenceId,symbol)
+    unique KEY unique_notification (accountId,notification,notificationType,symbol)
 );
 
 CREATE TABLE watchList_symbol(
@@ -169,3 +169,10 @@ CREATE TABLE predictionData
     rawData LONGTEXT NULL ,
     FOREIGN KEY (accountId) REFERENCES account(accountId)
 );
+alter table preferences
+    add constraint preferences_pk
+        unique (accountId);
+alter table recommendationlist
+    add constraint recommendationlist_pk
+        unique (accountId);
+

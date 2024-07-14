@@ -79,10 +79,18 @@ class PredictionData:
             if result['rawData'] is not None:
                 result['rawData'] = json.loads(result['rawData'])
         return results
-
+    def get_all_precessing_predictionData(self) -> list:
+        sql = "SELECT * FROM predictiondata WHERE rawData IS NULL"
+        return self.fetchAll(sql, "")
     def get_predictionData_by_accountId(self,accountId,date:str ) -> list:
         sql = "SELECT * FROM predictiondata WHERE accountId=%s AND requestDate >= %s"
-        return self.fetchAll(sql, (accountId,date))
+        results =  self.fetchAll(sql, (accountId,date))
+        if results is None:
+            return []
+        for result in results:
+            if result['rawData'] is not None:
+                result['rawData'] = json.loads(result['rawData'])
+        return results
 
 
     def  pre_store_prediction_result(self,symbol,timeRange,accountId,model) -> int:
@@ -97,6 +105,6 @@ class PredictionData:
         self.commit(sql, values)
 if __name__ == "__main__":
     # PredictionData().insert_predictionData(13,"AAPL",1,2,3,4,5,6,15,"Buy","1","LSTM","raw")
-    print(PredictionData().get_predictionData_by_accountId(1,"2024-06-12"))
+    print(PredictionData().get_all_precessing_predictionData())
     # print(PredictionData().pre_store_prediction_result("AAPL",14,1,"LSTM"))
     # print(PredictionData().get_predictionData_by_symbol("AAPL"))

@@ -7,6 +7,15 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <style>
+      .checkbox-lg {
+        border-width: 2px;
+        border-color: black;
+      }
+      .rating input[type="radio"] {
+        pointer-events: none;
+      }
+    </style>
 </head>
 <body>
   <div class="flex h-screen" id="app">
@@ -31,7 +40,7 @@
                   <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Users</span>
                 </a>
               </li>
-                                <li>
+                  <li>
                   <a href="/admin/review" class="group relative flex justify-center rounded px-2 py-1.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700">
                     <svg class="h-6 w-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
@@ -39,7 +48,7 @@
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">Comment</span>
                   </a>
                 </li>
-                                              <li v-if="account.profile === 'admin'">
+                                                            <li v-if="account.profile === 'admin'">
                   <a href="/admin/allPredictions" class="group relative flex justify-center rounded px-2 py-1.5 hover:bg-gray-50">
 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16">
   <path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/>
@@ -66,71 +75,54 @@
     <div class="flex-1 bg-gray-100 ml-16">
       <div class="navbar bg-base-100/95 fixed top-0 w-[calc(100%-4rem)]">
           <div class="">
-            <a class="btn btn-ghost text-xl" href="/admin/mainPage">Stock4Me</a>
+            <a class="btn btn-ghost text-xl">Stock4Me</a>
           </div>
           </div>
           <!-- Content Start! -->
         <div class="overflow-y-scroll p-8 bg-white border mt-16">
-          <span class="text-3xl font-bold mb-4 text-black">PredictionData</span>
-          </br>
-          <div class="join gap-2 mt-8">
-            <button class="btn w-16" @click="showData('today')">Today</button>
-            <button class="btn w-16" @click="showData('week')">Week</button>
-            <button class="btn w-16" @click="showData('max')">ALL</button>
-          </div>
-          <table class="table w-full table-fixed">
-            <thead>
-              <tr>
-                <th class="text-black text-center w-2/12 text-xl">requestDate</th>
-                <th class="text-black text-center w-2/12 text-xl">stockSymbol</th>
-                <th class="text-black text-center w-2/12 text-xl">timeRange</th>
-                <th class="text-black text-center w-2/12 text-xl">model</th>
-                <th class="text-black text-center w-2/12 text-xl">userName</th>
-                <th class="text-black text-center w-1/12 text-xl"></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(predict, index) in predictions" :key="predict.predictionId" :class="{'hover:bg-gray-200 cursor-pointer': predict.rawData !== null}" @click="showRawData(index)">
-                <td class="text-black text-center text-md w-2/12">[[ predict.requestDate ]]</td>
-                <td class="text-black text-center text-md w-2/12">[[ predict.stockSymbol ]]</td>
-                <td class="text-black text-center text-md w-2/12">[[ predict.timeRange ]]</td>
-                <td class="text-black text-center text-md w-2/12">[[ predict.model ]]</td>
-                <td class="text-black text-center text-md w-2/12">[[ predict.userName ]]</td>
-                <td class="text-black text-center text-md w-1/12">
-                  <button class="btn btn-outline btn-error btn-sm" @click.stop="deletePrediction(predict.predictionId,index)" v-if="predict.rawData !== null">Delete</button>
-                  <span class="loading loading-bars loading-md" v-if="predict.rawData === null"></span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+<!---->
+<section class="bg-white">
+  <div class="mx-auto max-w-screen-xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+    <div class="mx-auto max-w-3xl text-center">
+      <h2 class="text-3xl font-bold text-gray-900 sm:text-4xl">Monitor</h2>
+
+    </div>
+
+    <div class="mt-8 sm:mt-12">
+      <dl class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allUser')">
+          <dt class="order-last text-lg font-medium text-gray-500">Accounts</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[0] ]]</dd>
         </div>
-          <dialog id="information" class="modal modal-bottom sm:modal-middle">
+
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allPredictions')">
+          <dt class="order-last text-lg font-medium text-gray-500">Predictions</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[1] ]]</dd>
+        </div>
+
+        <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/allPredictions')">
+          <dt class="order-last text-lg font-medium text-gray-500">Processing predictions</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[2] ]]</dd>
+        </div>
+                  <div class="flex flex-col rounded-lg bg-blue-50 px-4 py-8 text-center transition duration-200 ease-in-out transform hover:bg-blue-100 hover:text-white hover:cursor-pointer" @click="redirect('/admin/review')">
+          <dt class="order-last text-lg font-medium text-gray-500">Reviews</dt>
+
+          <dd class="text-4xl font-extrabold text-blue-600 md:text-5xl">[[ stats[3] ]]</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>
+<!--            -->
+        </div>
+    </div>
+        <dialog id="information" class="modal modal-bottom sm:modal-middle">
       <div class="modal-box">
         <h3 class="font-bold text-lg">Info</h3>
-        <div class="grid grid-cols-3 gap-2 content-center text-center mt-4">
-        <span>min: [[rawData.minPredictedPrice]]</span>
-        <span>avg: [[rawData.avgPredictedPrice]]</span>
-        <span>max: [[rawData.maxPredictedPrice]]</span>
-        <span>buy: [[rawData.buyPercentage]]</span>
-        <span>hold: [[rawData.holdPercentage]]</span>
-        <span>sell: [[rawData.sellPercentage]]</span>
-        </div>
-                  <table class="table w-full table-fixed mt-4">
-            <thead>
-              <tr>
-                <th class="text-black w-2/12 text-sm text-center">Date</th>
-                <th class="text-black w-2/12 text-sm text-center">Price</th>
-                <th class="text-black w-2/12 text-sm text-center">Recommendation</th>
-              </tr>
-            </thead>
-            <tbody>
-            <tr v-for="(predict, index) in rawData.rawData" :key="predict.Date" class="hover:bg-gray-200 cursor-pointer">
-                        <td class="text-black text-center text-sm w-2/12">[[ predict.Date ]]</td>
-            <td class="text-black text-center text-sm w-2/12">[[ predict.Predicted ]]</td>
-            <td class="text-black text-center text-sm w-2/12">[[ predict.Recommendation ]]</td>
-            </tr>
-            </tbody>
-                  </table>
+        <p class="py-4">[[information]]</p>
         <div class="modal-action">
           <form method="dialog">
             <button class="btn">OK</button>
@@ -138,71 +130,25 @@
         </div>
       </div>
     </dialog>
-    </div>
   </div>
 
-  <script>
-    new Vue({
-      el: '#app',
-      delimiters: ['[[', ']]'],
-      data: {
-        predictions:JSON.parse('{{predictions|tojson}}'),
-        account:JSON.parse('{{account|tojson}}'),
-        rawData:{}
-      },
-      mounted(){
-
-      },
-      methods: {
-        showRawData(index){
-          if (this.predictions[index].rawData !== null){
-          this.rawData = this.predictions[index];
-          console.log(this.predictions[index])
-          document.getElementById('information').showModal();
-        }
+      <script>
+        new Vue({
+          el: '#app',
+          delimiters: ['[[', ']]'],
+          data: {
+            information:'',
+            account:JSON.parse('{{account|tojson}}'),
+              stats:JSON.parse('{{stats|tojson}}')
           },
-            getFormattedDate(type) {
-      const today = new Date();
-      let date;
-
-      if (type === 'today') {
-        date = today;
-      } else if (type === 'week') {
-        date = new Date();
-        date.setDate(today.getDate() - 7);
-      } else if (type === 'max') {
-        date = new Date(0); // Unix epoch start date: 1970-01-01
-      } else {
-        throw new Error("Invalid date type");
-      }
-
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，需要加1，并确保两位数
-      const day = String(date.getDate()).padStart(2, '0'); // 确保两位数
-
-      return `${year}-${month}-${day}`;
-    },
-    showData(type) {
-      const day = this.getFormattedDate(type);
-      axios.post('/getALLPredictionData',{date : day})
-              .then(response => {
-                this.predictions = response.data
-              })
-    },
-                    gotoSpace(id){
-                window.location.href = `/space/${id}`;
-            },
-    deletePrediction(predictionId,index)
-    {
-      axios.post('/deletePredictionData',{predictionId:predictionId})
-              .then(response =>{
-                if (response.data.success) {
-                  this.predictions.splice(index, 1);
-                }
-              })
-    }
-      }
-    });
-  </script>
+                computed: {
+      },
+          methods: {
+        redirect(router) {
+            window.location.href = router;
+        }
+          }
+        });
+        </script>
 </body>
 </html>

@@ -35,7 +35,7 @@ class Account:
             self.mydb.close()
 
 
-    def get_premium_accountId(self) -> tuple:
+    def get_premium_accountId(self) -> list:
         sql = "SELECT accountId FROM account WHERE profile = 'premium'"
         list = []
         for id in self.fetchAll(sql,""):
@@ -57,13 +57,13 @@ class Account:
         return self.fetchOne(sql,val)
 
     def get_all_account(self):
-        sql = "select * from account"
+        sql = "select * from account WHERE profile != 'admin'"
         return self.fetchAll(sql,"")
 
     def get_accounts_by_userName(self, userName, accountId) -> list[dict]:
         if not userName:
             return []
-        sql = "SELECT * FROM account WHERE userName LIKE %s AND accountId != %s"
+        sql = "SELECT * FROM account WHERE userName LIKE %s AND accountId != %s AND profile != 'admin'"
 
         results = self.fetchAll(sql, (f"{userName}%",accountId))
         return results
@@ -149,5 +149,19 @@ class Account:
         sql = "SELECT * from account where apikey = %s And profile = 'premium'"
         val = (key,)
         return self.fetchOne(sql, val)
+
+    def reset_mlView(self):
+        sql = "UPDATE account SET mlViewLeft = 10"
+        self.commit(sql,"")
+
+    def detectDuplicateEmail(self,email):
+        sql = '''SELECT
+    CASE
+        WHEN EXISTS (SELECT 1 FROM account WHERE email = %s)
+        THEN TRUE
+        ELSE FALSE
+    END AS email_exists;
+    '''
+        return self.fetchOne(sql, (email,))['email_exists']
 if __name__ == '__main__':
-    print(Account().verify_account_by_email("ljr2004073@gmail.com"))
+    print(Account().detectDuplicateEmail("1"))

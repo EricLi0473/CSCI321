@@ -354,7 +354,7 @@
     v-model="model"
     disabled
   >
-    <option value="Prophet" selected >Fast</option>
+    <option value="GRU" selected >AVG</option>
 
   </select>
 </div>
@@ -405,14 +405,14 @@
         'bg-red-500': predictionresult.target === 'Sell'
       }"
     >
-      {{ predictionresult.target }}
+      [[predictionresult.target]]
     </button>
 
 <div id="has_predict" class=" ml-8 mt-12" >
   <div class="flex items-center mb-2">
     <span class="text-green-500 font-semibold w-12">Buy</span>
     <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
-        <div class="bg-green-500 h-full" style="width: calc({{ predictionresult.buyPercentage }}% * 100);"></div>
+        <div class="bg-green-500 h-full"  :style="{ width: `calc(${predictionresult.buyPercentage * 100}%)` }"></div>
     </div>
     <span class="text-gray-700 font-semibold">[[predictionresult.buyPercentage*100]]%</span>
 </div>
@@ -420,7 +420,7 @@
 <div class="flex items-center mb-2">
     <span class="text-blue-500 font-semibold w-12">Hold</span>
     <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
-        <div class="bg-blue-500 h-full" style="width: calc({{ predictionresult.holdPercentage }}% * 100);"></div>
+        <div class="bg-blue-500 h-full"  :style="{ width: `calc(${predictionresult.holdPercentage * 100}%)` }"></div>
     </div>
     <span class="text-gray-700 font-semibold">[[predictionresult.holdPercentage*100]]%</span>
 </div>
@@ -428,7 +428,7 @@
 <div class="flex items-center">
     <span class="text-red-500 font-semibold w-12">Sell</span>
     <div class="bg-gray-200 rounded-full w-48 h-4 overflow-hidden mx-2">
-        <div class="bg-red-500 h-full" style="width: calc({{ predictionresult.sellPercentage }}% * 100);"></div>
+        <div class="bg-red-500 h-full"  :style="{ width: `calc(${predictionresult.sellPercentage * 100}%)` }"></div>
     </div>
     <span class="text-gray-700 font-semibold">[[predictionresult.sellPercentage*100]]%</span>
 </div>
@@ -628,7 +628,7 @@
   <div class="skeleton h-4 w-full" v-if="isNewsLoading === 1"></div>
 </div>
         <div class="w-fit mx-auto mt-6">
-              <button class="btn btn-outline" @click="window.location.href='/preference'" v-if="isNewsLoading === 0">Upgrade to Premium</button>
+              <button class="btn btn-outline" @click="redirect('/preference')" v-if="isNewsLoading === 0">Upgrade to Premium</button>
           </div>
 
 
@@ -713,7 +713,7 @@
         delimiters: ['[[', ']]'],
         data: {
             isButtonDisabled: false,
-          model:"Prophet",
+          model:"GRU",
           days:"14",
             user:JSON.parse('{{user|tojson}}'),
             percentage: JSON.parse('{{ threshold|tojson}}'),
@@ -776,6 +776,9 @@
                 axios.post(`/insert_searchHistory/${this.stockInfo.symbol}`)
         },
         methods: {
+                    redirect(url) {
+            window.location.href = url; // 替换为你的目标URL
+        },
                               updateUser(){
                                   if (Object.keys(this.predictionresult).length !== 0 && !this.stockInfo.symbol.includes('.')){
                                       console.log(this.predictionresult)

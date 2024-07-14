@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from torch.utils.data import DataLoader, TensorDataset
 from datetime import datetime, timedelta
-from machineLearningModel.get_symbol_data import *
 
 class StockPredictor(nn.Module):
     def __init__(self, input_size, hidden_size, num_layers):
@@ -17,7 +16,7 @@ class StockPredictor(nn.Module):
         self.hidden_size = hidden_size
         self.num_layers = num_layers
         self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True)
-        self.fc = nn.Linear(hidden_size, 1)  # 只输出一个值，即 Adj Close
+        self.fc = nn.Linear(hidden_size, 2)
 
     def forward(self, x):
         h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(x.device)
@@ -52,13 +51,12 @@ class GRU_Model:
         for i in range(len(data) - time_step):
             a = data[i:(i + time_step), :]
             X.append(a)
-            Y.append(data[i + time_step, 0])  # 只选择 Adj Close 作为目标
+            Y.append(data[i + time_step, :])
         return np.array(X), np.array(Y)
 
     @staticmethod
     def predict_future_prices(symbol, df, forecast_days, layers, neurons):
-        df = df[['Adj Close', 'Volume', 'treasury_yield', 'FEDERAL_FUNDS_RATE']].copy()
-        df.rename(columns={"Adj Close": "Price"}, inplace=True)
+        df = df[['Open', 'Close']].copy()
 
         scaled_data, scaler = GRU_Model.preprocess_data(df)
 
@@ -66,7 +64,7 @@ class GRU_Model:
         X, Y = GRU_Model.create_dataset(scaled_data, time_step)
 
         X = torch.tensor(X, dtype=torch.float32)
-        Y = torch.tensor(Y, dtype=torch.float32).unsqueeze(1)  # 将目标形状变为 (N, 1)
+        Y = torch.tensor(Y, dtype=torch.float32)
 
         input_size = X.shape[2]
 
@@ -113,15 +111,14 @@ class GRU_Model:
             with torch.no_grad():
                 future_pred = model(future_inputs)
                 predictions.append(future_pred.squeeze().cpu().numpy())
-                future_pred_expanded = future_pred.unsqueeze(2).expand(-1, -1, input_size)
-                future_inputs = torch.cat((future_inputs[:, 1:, :], future_pred_expanded), dim=1)
+                future_inputs = torch.cat((future_inputs[:, 1:, :], future_pred.unsqueeze(0)), dim=1)
 
-        predictions = scaler.inverse_transform(np.concatenate([np.array(predictions).reshape(-1, 1), np.zeros((forecast_days, 3))], axis=1))[:, 0]
+        predictions = scaler.inverse_transform(predictions)
         future_dates = [df.index[-1] + timedelta(days=i+1) for i in range(forecast_days)]
 
         # 将预测结果和推荐加入结果字典
         future_df = pd.DataFrame(
-            {'Date': future_dates, 'Predicted': predictions})
+            {'Date': future_dates, 'Predicted': predictions[:, 1]})
         future_df.set_index('Date', inplace=True)
         window_size = 5
         future_df['SMA'] = future_df['Predicted'].rolling(window=window_size).mean()
@@ -137,27 +134,9 @@ class GRU_Model:
         future_df['Recommendation'] = future_df.apply(generate_recommendation, axis=1)
         future_df = future_df.reset_index()
         future_df['Date'] = future_df['Date'].dt.strftime('%Y-%m-%d')
-
-        # 结合过去的Close Price生成推荐
-        df['Short_SMA'] = df['Price'].rolling(window=10).mean()
-        df['Long_SMA'] = df['Price'].rolling(window=50).mean()
-
-        future_df['Past_Short_SMA'] = df['Short_SMA'].iloc[-forecast_days:].values
-        future_df['Past_Long_SMA'] = df['Long_SMA'].iloc[-forecast_days:].values
-
-        def combined_recommendation(row):
-            if row['Past_Short_SMA'] > row['Past_Long_SMA'] and row['Predicted'] > row['SMA']:
-                return 'Buy'
-            elif row['Past_Short_SMA'] < row['Past_Long_SMA'] and row['Predicted'] < row['SMA']:
-                return 'Sell'
-            else:
-                return 'Hold'
-
-        future_df['Combined_Recommendation'] = future_df.apply(combined_recommendation, axis=1)
-
         result = future_df[['Date', 'Predicted', 'Recommendation']].to_dict(orient='records')
         for record in result:
-            record['Predicted'] = round(record['Predicted'], 2)
+            record['Predicted'] = round(record['Predicted'],2)
         return result
 
     @staticmethod
@@ -188,23 +167,19 @@ class GRU_Model:
         plt.tight_layout()
         plt.show()
 
-if __name__ == "__main__":
-    df = GetSymbolData().fetch_data("AAPL")
-    future_predictions = GRU_Model.predict_future_prices('AAPL', df, 10, layers=4, neurons=64)
-    for i in future_predictions:
-        print(i)
-# # 示例用法
-# symbol = 'AAPL'  # 股票代码
-# df = GRU_Model.get_stock_data(symbol)
-# forecast_days = 30  # 预测天数
-# layers = 2  # GRU层数
-# neurons = 16  # 每层神经元数
-#
-# # 预测股票价格
-# predictions = GRU_Model.predict_future_prices(symbol, df, forecast_days, layers, neurons)
-#
-# # 打印预测结果
-# print(predictions)
-#
-# # 绘制预测结果
-# GRU_Model.plot_predictions(df, predictions)
+if __name__ == '__main__':
+    # # 示例用法
+    symbol = 'AAPL'  # 股票代码
+    df = GRU_Model.get_stock_data(symbol)
+    forecast_days = 14  # 预测天数
+    layers = 2  # GRU层数
+    neurons = 16  # 每层神经元数
+
+    # 预测股票价格
+    predictions = GRU_Model.predict_future_prices(symbol, df, forecast_days, layers, neurons)
+
+    # 打印预测结果
+    print(predictions)
+    #
+    # # 绘制预测结果
+    # GRU_Model.plot_predictions(df, predictions)

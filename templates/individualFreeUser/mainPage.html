@@ -110,7 +110,7 @@
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)" class="text-red-500">&times;</button>
+                            <button class="btn btn-accent btn-sm" @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)">Delete</button>
                         </div>
                     </div>
                 </div>
