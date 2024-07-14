@@ -35,7 +35,7 @@ class NewsController:
             news_list.append(new)
         return news_list
     def get_news_by_symbol(self,symbol,pages=1) -> list[dict]:
-        url  = f"https://api.marketaux.com/v1/news/all?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&language=en&limit=4&symbols={symbol}&page={pages}"
+        url  = f"https://api.marketaux.com/v1/news/all?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&language=en&limit=4&symbols={symbol}&filter_entities=true&page={pages}"
         response = requests.get(url).json()
         news_list = []
         for news in response['data']:

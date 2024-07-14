@@ -58,11 +58,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -71,8 +71,8 @@ import io
 from apscheduler.schedulers.background import BackgroundScheduler
 import concurrent.futures
 # disable output
-# sys.stdout = open(os.devnull,'w')
-# sys.stderr = open(os.devnull,'w')
+sys.stdout = open(os.devnull,'w')
+sys.stderr = open(os.devnull,'w')
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'

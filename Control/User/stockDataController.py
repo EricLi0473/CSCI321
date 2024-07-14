@@ -74,20 +74,22 @@ class StockDataController:
                     "volume": global_quote[key_mapping["volume"]]
                 }
 
-                # change symbol
+                # 定义符号映射字典
+                symbol_mapping = {
+                    '.LON': '.L',
+                    '.DEX': '.DE',
+                    '.SAO': '.SA',
+                    '.SHH': '.SS',
+                    '.FRK': '.F',
+                    '.AMS': '.AS',
+                    '.BSE': '.BO'
+                }
+
+                # 替换符号
                 if '.' in new_data['symbol']:
-                    if '.LON' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.LON', '.L')
-                    if '.DEX' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.DEX', '.DE')
-                    if '.SAO' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.SAO', '.SA')
-                    if '.SHH' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.SHH', '.SS')
-                    if '.FRK' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.FRK', '.F')
-                    if '.AMS' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.AMS', '.AS')
+                    for old_suffix, new_suffix in symbol_mapping.items():
+                        if old_suffix in new_data['symbol']:
+                            new_data['symbol'] = new_data['symbol'].replace(old_suffix, new_suffix)
 
                 return new_data
             except Exception as e:
