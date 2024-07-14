@@ -94,6 +94,7 @@
             this.account = JSON.parse(sessionStorage.getItem('account'));
                           axios.post('/emailVerification', {
                   email: this.account.email,
+                              status:"signup"
               })
         },
         methods: {

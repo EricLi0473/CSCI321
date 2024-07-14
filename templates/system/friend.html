@@ -220,7 +220,11 @@ function showContent(type) {
           }
         },
         methods: {
-            doSearch(){
+                                  doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
                         gotoSpace(id){

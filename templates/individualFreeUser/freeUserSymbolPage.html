@@ -839,6 +839,10 @@
                     });
             },
                             doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
                   isEmpty: function(obj) {

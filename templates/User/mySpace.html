@@ -2,11 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>StockPage</title>
+    <title>Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     <div class="flex h-screen" id="app">
@@ -105,7 +107,23 @@
             </div>
             <!-- Content Start! -->
           <div class="overflow-y-scroll p-8 bg-white border mt-16">
+              <div role="alert" class="alert alert-info w-fit" v-if="myAccount.isPrivateAccount">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="h-6 w-6 shrink-0 stroke-current">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  <span> You are currently a private account, No one else can see any of your messages, including following.<a class="link link-neutral" href="/preference"> Turn off here.</a></span>
+</div>
               <div class="mt-8">
+
+
               <span class="text-sm ">Welcome, </span>
                   <div class="avatar indicator  mb-8">
                       <span class="indicator-item badge badge-secondary" v-if="myAccount.profile === 'premium'">Premium User</span>
@@ -116,6 +134,7 @@
                         <span class="block text-sm mb-2 text-slate-500">Check and edit your Bio Here...</span>
                         <textarea class="textarea textarea-bordered w-96" placeholder="Bio" v-model="myAccount.bio"></textarea>
                     </label>
+
                     <div class="join my-2 mt-4">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
   <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium'">WatchList</button>
@@ -246,41 +265,37 @@
               </div>
                 </div>
 <!--                 2 -->
-                  <div id="watchList" v-if="activeDiv === 'watchList'">
-                  <table class="table" >
-                    <!-- head -->
-                    <thead>
-                      <tr>
-                        <th class="text-black">#</th>
-                        <th class="text-black text-xl text-center">Symbol</th>
-                        <th class="text-black text-xl text-center">Full Name</th>
-                        <th class="text-black text-xl ">Latest Price</th>
-                        <th class="text-black text-xl ">Chg</th>
-                        <th class="text-black text-xl ">%Chg</th>
-                        <th class="text-black text-xl "></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <!-- row 1 -->
-                      <tr v-for="(stock, index) in routeResults" :key="index"  @click="navigateToStock(stock.symbol)" class="hover:bg-gray-200 cursor-pointer">
-                        <th class="text-black text-xl">[[ index + 1 ]]</th>
-                        <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
-                        <td class="text-black text-xl truncate max-w-xs text-center">[[ stock.longName ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
-                        <td class="text-xl">
-                          <button
-                            class="w-40 btn btn-sm btn-outline btn-error"
-                            @click.stop="toggleFollow(stock.symbol)"
-                            >
-                              Cancel favourites
-                          </button>
-                        </td>
-
-                      </tr>
-                    </tbody>
-                  </table>
+                  <div id="watchList" v-if="activeDiv === 'watchList'" class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                                  <div v-for="(stock, index) in routeResults" :key="index" class = "mb-4 bg-white p-4 rounded-lg w-fit shadow-md hover:shadow-xl transition-shadow duration-300">
+                                <div>
+                                    <div class="join gap-4">
+                                        <a :href="'/symbol/' + stock.symbol" target="_blank" class="text-blue-500 hover:underline">[[stock.longName]]</a>
+<!--                                        <h1 class="text-xl font-bold mb-1">[[stock.longName]]</h1>-->
+                                        <span  class="text-gray-500">
+                                        <button class="btn btn-circle btn-xs"
+                                        @click.stop="toggleFollow(stock.symbol)"
+                                        >
+                                                  <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    class="h-6 w-6"
+                                                    fill="none"
+                                                    viewBox="0 0 24 24"
+                                                    stroke="currentColor">
+                                                    <path
+                                                      stroke-linecap="round"
+                                                      stroke-linejoin="round"
+                                                      stroke-width="2"
+                                                      d="M6 18L18 6M6 6l12 12" />
+                                                  </svg>
+                                                </button>
+                                        </span>
+                                        </button>
+                                    </div>
+                                        <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]]</p>
+                                        <p :class="{'text-green-500': stock.relative_change >= 0, 'text-red-500': stock.relative_change < 0}" class="text-md font-semibold">Change: [[stock.relative_change + "%"]] ([[stock.absolute_change]])</p>
+                                </div>
+                                <canvas :id="'myChart' + index" style="width: 300px; height: 100px;" class="rounded-xl"></canvas>
+                            </div>
                   </div>
 <!--                3 -->
                   <div v-if="activeDiv === 'thresholdList'">
@@ -407,6 +422,15 @@
                   routeResults:[],
                   search:''
           },
+                  watch:{
+    activeDiv(newVal) {
+      if (newVal === 'watchList') {
+        this.$nextTick(() => {
+          this.render_graph();
+        });
+      }
+    },
+                  },
                   created(){
                 const urlParams = new URLSearchParams(window.location.search);
                 const page = urlParams.get('page');
@@ -427,13 +451,14 @@
                     for (const item of this.watchList) {
                         await this.fetchRoute(item);
                     }
-
+                        this.$nextTick(() => {
+                            this.render_graph();
+                        });
                 },
                 async fetchRoute(item) {
                     try {
-                        const response = await axios.get(`/stock_info_minimum/${item}`);
+                        const response = await axios.get(`/stock_data_medium/${item}`);
                         this.routeResults.push(response.data);
-                        console.log(this.routeResults)
                     } catch (error) {
                         console.error(`Failed to fetch route for ${item}:`, error);
                     }
@@ -457,6 +482,10 @@
                         });
                 },
                   doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
     handleRowClick(item) {
@@ -580,7 +609,92 @@
         this.$emit('input', event.target.value);
       }
 
-          }}});
+          },
+                                  render_graph() {
+                    this.routeResults.forEach((stock, index) => {
+
+                        const data = stock.data;
+                        const labels = data.map(item => new Date(item.timestamp).toLocaleDateString());
+                        const closePrices = data.map(item => item.close);
+                        // 计算平均价格
+                        const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
+                        const averagePrices = new Array(closePrices.length).fill(averagePrice);
+
+                        this.$nextTick(() => {
+                            // 获取 Canvas 上下文
+                            const canvasId = 'myChart' + index;
+                            const ctx = document.getElementById(canvasId).getContext('2d');
+
+                            // 创建渐变
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            if (stock.upsAndDowns === 0) {
+                                gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)'); // 红色渐变
+                                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                            } else {
+                                gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)'); // 绿色渐变
+                                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                            }
+
+                            // 绘制图表
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        {
+                                            label: '', // 隐藏标签
+                                            data: closePrices,
+                                            borderColor: stock.upsAndDowns === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 2,
+                                            fill: true,
+                                            backgroundColor: gradient // 设置渐变填充
+                                        },
+                                        {
+                                            label: '', // 隐藏标签
+                                            data: averagePrices,
+                                            borderColor: 'rgba(128, 128, 128, 1)', // 灰色平均线
+                                            borderWidth: 2,
+                                            fill: false,
+                                            borderDash: [10, 5] // 设置虚线样式
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: false,
+                                    scales: {
+                                        x: {
+                                            display: false
+                                        },
+                                        y: {
+                                            display: false
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false // 隐藏图例
+                                        }
+                                    },
+                                    elements: {
+                                        point: {
+                                            radius: 0
+                                        }
+                                    },
+                                    layout: {
+                                        padding: {
+                                            left: 0,
+                                            right: 0,
+                                            top: 0,
+                                            bottom: 0
+                                        }
+                                    }
+                                }
+                            });
+
+                            // console.log('Chart initialized for:', stock.symbol);
+                        });
+                    });
+                }
+              }});
 
         // Scroll to the top when the button is clicked
         document.getElementById('toTopButton').addEventListener('click', () => {

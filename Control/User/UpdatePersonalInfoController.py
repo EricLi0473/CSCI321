@@ -1,5 +1,5 @@
 from Entity.account import *
-
+from Entity.followList import *
 class UpdatePersonalInfoController:
     def update_personal_info(self, account):
         try:
@@ -18,6 +18,10 @@ class UpdatePersonalInfoController:
             profile = account['profile']
             isPrivateAccount = account['isPrivateAccount']
             mlViewLeft = account['mlViewLeft']
+
+            # if private account, delete all followers
+            if isPrivateAccount == 1:
+                FollowList().remove_all_follower(accountId)
 
             return Account().update_Account(
                 accountId, userName, email, bio, age, sex, occupation,

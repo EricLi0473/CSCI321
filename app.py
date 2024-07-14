@@ -229,7 +229,12 @@ def search(content):
         stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
         return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList,user=session['user'])
     return redirect(url_for('login'))
-
+@app.route('/search/')
+def searchRe():
+    if session.get('user'):
+        return search("")
+    else:
+        return redirect(url_for('login'))
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     if session.get('user'):
