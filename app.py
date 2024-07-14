@@ -58,17 +58,17 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from machineLearningModel.prophet_model import *
-from Control.User.storePredictionResultController import *
-from machineLearningModel.get_symbol_data import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
+# from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
 import random
 import io
-import schedule
+from apscheduler.schedulers.background import BackgroundScheduler
 import concurrent.futures
 # disable output
 # sys.stdout = open(os.devnull,'w')
@@ -285,7 +285,8 @@ def recommendation_symbol():
         if session.get('user')['profile'] == 'premium':
             return jsonify(RecommendationListController().get_recommendationList_by_accountId(session.get('user')['accountId']))
         elif session.get('user')['profile'] == 'free':
-            return jsonify(StockDataController().get_common_symbol_data())
+            global free_user_stockData_cache
+            return jsonify(free_user_stockData_cache)
     else:
         return redirect(url_for('login'))
 @app.route('/get_notification',methods=['GET', 'POST'])
@@ -345,7 +346,6 @@ def symbol(symbol):
 @limiter.limit("5 per minute")
 def request_for_prediction(symbol, days, model,accountId):
     from datetime import datetime
-    print(1)
     days = int(days)
     # 1. Pass the parameters to the machine learning model
     prediction_result = None
@@ -572,13 +572,10 @@ def change_password():
 @app.route('/',methods=['GET'])
 @limiter.limit("10 per minute")
 def officialWeb():
-    stockInfo = StockDataController().get_stock_info_full("AAPL")
+    global mainPage_stockData_cache
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
-    stockData = StockDataController().get_update_stock_data("AAPL","3mo")
-    stockData1 = StockDataController().get_update_stock_data("BILI","3mo")
-    stockData2 = StockDataController().get_update_stock_data("MSFT","3mo")
     review = GetAllHeadLineReviews().get_all_headline_reviews()
-    return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
+    return render_template("system/template.html",symbolData1=mainPage_stockData_cache['stockData1'],symbolData2=mainPage_stockData_cache['stockData2'],stockInfo=mainPage_stockData_cache['stockInfo'],predictionData=predictionData,symbolData=mainPage_stockData_cache['stockData'],review=review)
 
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
@@ -792,10 +789,8 @@ def apiRequest():
         }
         model = model_mapping[model]
 
-        # 构建请求URL
         url = f'http://127.0.0.1/request_for_prediction/{symbol}/{days}/{model}/{account["accountId"]}'
 
-        # 使用线程来异步发送请求
         def send_request():
             response = requests.get(url)
 
@@ -816,8 +811,21 @@ def page_not_found(e):
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
-# Define a cache to store recent notifications
+# Define cache
 notification_cache = {}
+mainPage_stockData_cache = {}
+free_user_stockData_cache = []
+
+def cache_when_startUp():
+    global mainPage_stockData_cache
+    mainPage_stockData_cache = {
+        'stockData': StockDataController().get_update_stock_data("AAPL", "3mo"),
+        'stockData1': StockDataController().get_update_stock_data("BILI", "3mo"),
+        'stockData2': StockDataController().get_update_stock_data("MSFT", "3mo"),
+        'stockInfo': StockDataController().get_stock_info_full("AAPL")
+    }
+    global free_user_stockData_cache
+    free_user_stockData_cache = StockDataController().get_common_symbol_data()
 
 def threshold_notification():
     global notification_cache
@@ -844,24 +852,39 @@ def threshold_notification():
                                         NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
 
 def daily_task():
+    # update ml prediction every day
+    cache_when_startUp()
     # Reset the number of times a free user can view ml prediction per day
     reset_mlView().reset_mlView()
     #  update personal interested
     for accountId in GetPremiumUsersController().getPremiumUsers():
         preference = GetPreferenceByAccountId().get_preference_by_accountId(accountId)
         UpdatePreferenceByAccountId().update_preference_by_accountId(accountId,preference['preferenceCountry'],preference['preferenceIndustry'])
-    #  clear cache
-    global notification_cache
-    notification_cache.clear()
-def run_schedule():
-    schedule.every(30).seconds.do(threshold_notification)
-    schedule.every().day.at("04:00").do(daily_task)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+
+def start_threshold_notification_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(threshold_notification, 'interval', seconds=30)
+    scheduler.start()
+
+def start_daily_task_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(daily_task, 'cron', hour=3, minute=00)
+    scheduler.start()
+
 
 if __name__ == '__main__':
-    # schedule_thread = threading.Thread(target=run_schedule)
-    # schedule_thread.daemon = True
-    # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=False)
+    threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
+    threshold_scheduler_thread.daemon = True
+    threshold_scheduler_thread.start()
+
+    daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
+    daily_task_scheduler_thread.daemon = True
+    daily_task_scheduler_thread.start()
+
+    cache_whenStartUP = threading.Thread(target=cache_when_startUp)
+    cache_whenStartUP.start()
+
+    try:
+        app.run(host='0.0.0.0', port=80, debug=False)
+    finally:
+        pass
