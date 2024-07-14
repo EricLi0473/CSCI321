@@ -1,4 +1,5 @@
 import os
+import sys
 
 from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoController
 from Control.User.loginController import LoginController
@@ -57,19 +58,21 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import multiprocessing
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
 import random
 import io
 import schedule
-
+import concurrent.futures
+# disable output
+# sys.stdout = open(os.devnull,'w')
+# sys.stderr = open(os.devnull,'w')
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -342,6 +345,7 @@ def symbol(symbol):
 @limiter.limit("5 per minute")
 def request_for_prediction(symbol, days, model,accountId):
     from datetime import datetime
+    print(1)
     days = int(days)
     # 1. Pass the parameters to the machine learning model
     prediction_result = None
@@ -787,8 +791,17 @@ def apiRequest():
             'fast': 'Prophet'
         }
         model = model_mapping[model]
-        process = multiprocessing.Process(target=request_for_prediction, args=(symbol, days, model,account['accountId']))
-        process.start()
+
+        # 构建请求URL
+        url = f'http://127.0.0.1/request_for_prediction/{symbol}/{days}/{model}/{account["accountId"]}'
+
+        # 使用线程来异步发送请求
+        def send_request():
+            response = requests.get(url)
+
+        thread = threading.Thread(target=send_request)
+        thread.start()
+
         return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -813,7 +826,7 @@ def threshold_notification():
         thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
         if thresholds:
             for threshold in thresholds:
-                cache_key = (user['accountId'], threshold["stockSymbol"], threshold["changePercentage"])
+                cache_key = (user, threshold["stockSymbol"], threshold["changePercentage"])
                 current_time = time.time()
                 if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
                     symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
@@ -848,7 +861,7 @@ def run_schedule():
         time.sleep(1)
 
 if __name__ == '__main__':
-    schedule_thread = threading.Thread(target=run_schedule)
-    schedule_thread.daemon = True
-    schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=True)
+    # schedule_thread = threading.Thread(target=run_schedule)
+    # schedule_thread.daemon = True
+    # schedule_thread.start()
+    app.run(host='0.0.0.0',port=80,debug=False)
