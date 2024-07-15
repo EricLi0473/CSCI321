@@ -163,5 +163,21 @@ class Account:
     END AS email_exists;
     '''
         return self.fetchOne(sql, (email,))['email_exists']
+
+    def get_AllThresholds_by_account(self):
+        sql = '''
+        SELECT
+    ts.accountId,
+    ts.thresholdId,
+    ts.stockSymbol,
+    ts.changePercentage
+FROM
+    thresholdSettings ts
+LEFT JOIN
+    account a ON ts.accountId = a.accountId
+WHERE
+    a.profile = 'premium'
+        '''
+        return self.fetchAll(sql,"")
 if __name__ == '__main__':
-    print(Account().detectDuplicateEmail("1"))
+    print(Account().get_AllThresholds_by_account())

@@ -53,16 +53,17 @@ from Control.premiumUser.set_preference_by_accountId import *
 from Control.User.reset_mlView import *
 from Control.User.detectDuplicateEmail import *
 from Control.Admin.get_all_precessing_predictionData import *
+from Control.User.get_AllThresholds_by_account import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from machineLearningModel.prophet_model import *
-from Control.User.storePredictionResultController import *
-from machineLearningModel.get_symbol_data import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
+# from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -71,8 +72,8 @@ import io
 from apscheduler.schedulers.background import BackgroundScheduler
 import concurrent.futures
 # disable output
-sys.stdout = open(os.devnull,'w')
-sys.stderr = open(os.devnull,'w')
+# sys.stdout = open(os.devnull,'w')
+# sys.stderr = open(os.devnull,'w')
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -829,27 +830,24 @@ def cache_when_startUp():
 
 def threshold_notification():
     global notification_cache
-    premiumUserList = GetPremiumUsersController().getPremiumUsers()
-    for user in premiumUserList:
-        thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
-        if thresholds:
-            for threshold in thresholds:
-                cache_key = (user, threshold["stockSymbol"], threshold["changePercentage"])
-                current_time = time.time()
-                if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
-                    symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
-                    if abs(symbol["relative_change"]) > threshold['changePercentage']:
-                        # Checking for recent notifications
-                            notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-                            NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
-                            notification_cache[cache_key] = current_time
-                            Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
-                            if Personal_who_follow_user_List:
-                                for userFollow in Personal_who_follow_user_List:
-                                    if userFollow['notifyMe'] == 1:
-                                        notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
-                                        hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-                                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+    for user in GetAllThresholdsByAccount().get_all_thresholds_by_account():
+        if user:
+            cache_key = (user['accountId'], user["stockSymbol"], user["changePercentage"])
+            current_time = time.time()
+            if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
+                symbol = StockDataController().get_stock_info_minimum(user["stockSymbol"])
+                if abs(symbol["relative_change"]) > user['changePercentage']:
+                    # Checking for recent notifications
+                        notificationWord = f"Hi, Your followed {user['stockSymbol']} that exceeds your threshold."
+                        NotificationController().set_notification(user['accountId'], notificationWord, "threshold", user['thresholdId'],user['stockSymbol'])
+                        notification_cache[cache_key] = current_time
+                        Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user['accountId'])
+                        if Personal_who_follow_user_List:
+                            for userFollow in Personal_who_follow_user_List:
+                                if userFollow['notifyMe'] == 1:
+                                    notificationWord = f"There have been updates to stock {user['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
+                                    hashed_symbol = int(hashlib.md5(user['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
+                                    NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,user['stockSymbol'])
 
 def daily_task():
     # update ml prediction every day
