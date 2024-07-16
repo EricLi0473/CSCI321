@@ -5,7 +5,7 @@ from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoControll
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from flask import request, render_template, url_for, jsonify,session,send_file
+from flask import request, render_template, url_for, jsonify,session,send_file,abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from Control.User.SignupController import *
@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from machineLearningModel.prophet_model import *
-from Control.User.storePredictionResultController import *
-from machineLearningModel.get_symbol_data import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
+# from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -72,8 +72,8 @@ import io
 from apscheduler.schedulers.background import BackgroundScheduler
 import concurrent.futures
 # disable output
-sys.stdout = open(os.devnull,'w')
-sys.stderr = open(os.devnull,'w')
+# sys.stdout = open(os.devnull,'w')
+# sys.stderr = open(os.devnull,'w')
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
@@ -322,24 +322,26 @@ def delete_comment_by_id(commentId):
 @app.route('/symbol/<string:symbol>',methods=['GET','POST'])
 def symbol(symbol):
     if session.get('user'):
-        if session.get('user')['profile'] == 'premium':
-            user = session.get('user')
-            # stockData = StockDataController().get_update_stock_data(symbol,"1y")
-            stockInfo = StockDataController().get_stock_info_full(symbol)
-            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
-        elif session.get('user')['profile'] == 'free':
-            user = session.get('user')
-            stockInfo = StockDataController().get_stock_info_full(symbol)
-            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
-                session.get('user')['accountId'], symbol)
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
-                                   predictionresult=predictionresult, threshold=threshold, watchList=watchList,
-                                   user=user)
+        try:
+            if session.get('user')['profile'] == 'premium':
+                user = session.get('user')
+                stockInfo = StockDataController().get_stock_info_full(symbol)
+                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+                return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+            elif session.get('user')['profile'] == 'free':
+                user = session.get('user')
+                stockInfo = StockDataController().get_stock_info_full(symbol)
+                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
+                    session.get('user')['accountId'], symbol)
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+                return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
+                                       predictionresult=predictionresult, threshold=threshold, watchList=watchList,
+                                       user=user)
+        except Exception as e:
+            abort(404)
 
     else:
         return redirect(url_for('login'))
@@ -880,6 +882,6 @@ if __name__ == '__main__':
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=False)
+        app.run(host='0.0.0.0', port=80, debug=True)
     finally:
         pass

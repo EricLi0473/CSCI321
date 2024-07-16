@@ -216,7 +216,7 @@
               if (this.isButtonDisabled) return;
                         axios.post('/ratingComment', {
             comment: this.userReview.reviewText,
-            rating: this.userReview.rating/2
+            rating: this.userReview.rating
           })
           .then(response => {
             this.message = "You have successfully update your comment, our administrator will see it soon!";

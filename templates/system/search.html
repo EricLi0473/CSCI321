@@ -144,7 +144,7 @@
                         <th class="text-black text-xl text-center">Chg</th>
                         <th class="text-black text-xl ">%Chg</th>
                         <th class="text-black text-xl ">Volume</th>
-                        <th class="text-black text-xl ">Watch List</th>
+                        <th class="text-black text-xl "></th>
                       </tr>
                     </thead>
                     <tbody>
@@ -157,7 +157,7 @@
                         <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
                         <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
                         <td class="text-black text-xl">[[ stock.volume ]]</td>
-                        <td class="text-xl">
+                        <td class="text-xl" v-if="user.profile === 'premium'">
                           <button
                             class="btn btn-outline btn-sm w-40"
                             @click.stop="toggleFollow(stock.symbol)"
