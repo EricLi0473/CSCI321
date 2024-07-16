@@ -1,10 +1,8 @@
 import random
-import smtplib
+import requests
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-from Entity.emailVerification import *
-
+from Entity.emailVerification import EmailVerification
 
 class EmailVerificationController:
     def __init__(self):
@@ -12,34 +10,50 @@ class EmailVerificationController:
 
     def send_verification_code(self, email):
         verification_code = random.randint(1000, 9999)
-
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        sender_email = "stockforecast4me@gmail.com"  # Need to create new 'App Password' in Google to use different email as sender.
-        sender_password = "iwnm mhao iteg rafl"  # Need to use the password from above.
-
-        message = MIMEMultipart()
-        message["From"] = sender_email
-        message["To"] = email
-        message["Subject"] = "Your Verification Code"
+        subject = "Your Verification Code"
         body = f"Your verification code is {verification_code}"
-        message.attach(MIMEText(body, "plain"))
+        from_email = "stockforecast4me@trial-pq3enl6e8m742vwr.mlsender.net"  # 使用已验证的Mailersend域名
+        api_token = 'mlsn.86f3152b53b95736485f39da2bfa2e8ffc1967b5255bc442fd07c80d04ac34b0'
+
+        url = 'https://api.mailersend.com/v1/email'
+        headers = {
+            'Authorization': f'Bearer {api_token}',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            "from": {
+                "email": from_email
+            },
+            "to": [
+                {
+                    "email": email
+                }
+            ],
+            "subject": subject,
+            "text": body
+        }
 
         try:
-            server = smtplib.SMTP(smtp_server, smtp_port)
-            server.starttls()
-            server.login(sender_email, sender_password)
-            server.sendmail(sender_email, email, message.as_string())
-            server.quit()
-            EmailVerification().insert_verify_code(email, verification_code)
-            return f"Verification code sent to {email}"
+            response = requests.post(url, json=data, headers=headers)
+            if response.status_code == 202:
+                EmailVerification().insert_verify_code(email, verification_code)
+                return f"Verification code sent to {email}"
+            else:
+                print(f"Failed to send email: {response.status_code}")
+                print(response.json())
+                raise Exception(f"Failed to send email: {response.status_code}")
         except Exception as e:
-            raise f"Failed to send email: {e}"
+            raise Exception(f"Failed to send email: {e}")
 
     def verify_code(self, email, code):
         return EmailVerification().emailVerify(email, code)
 
 
 if __name__ == "__main__":
-    # EmailVerificationController().send_verification_code("ljr20040703@gmail.com")
-    EmailVerificationController().verify_code("ljr20040703@gmail.com", 3704)
+    # 发送验证码示例
+    controller = EmailVerificationController()
+    # result = controller.send_verification_code("ljr20040703@gmail.com")
+
+    # 验证验证码示例
+    verification_result = controller.verify_code("ljr20040703@gmail.com", 3435)
+    print(verification_result)

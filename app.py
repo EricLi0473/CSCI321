@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -377,8 +377,8 @@ def request_for_prediction(symbol, days, model,accountId):
         all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
         df = df.reindex(all_dates)
         df = df.fillna(method='ffill')
-        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
-        prediction_result = model.predict()
+        LSTM_model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+        prediction_result = LSTM_model.predict()
         # format of LSTM prediction result
         # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
 
@@ -702,8 +702,7 @@ def adminAllPredictions():
     if session.get('user'):
         if session.get('user')['profile'] != 'admin':
             return redirect(url_for('login'))
-        today = datetime.now().strftime("%Y-%m-%d")
-        predictions = GetAllPredictionData().get_all_predictionData(today)
+        predictions = GetAllPredictionData().get_all_predictionData("1970-01-01")
         return render_template('/Admin/adminPredictionData.html', predictions=predictions,account=session.get('user'))
     else:
         return redirect(url_for('login'))
@@ -714,8 +713,7 @@ def predictionData():
     if session.get('user'):
         if session.get('user')['profile'] != 'premium':
             return redirect(url_for('login'))
-        today = datetime.now().strftime("%Y-%m-%d")
-        return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],today))
+        return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],"1970-01-01"))
     else:
         return redirect(url_for('login'))
 @app.route('/getALLPredictionData',methods=['GET','POST'])
@@ -882,6 +880,6 @@ if __name__ == '__main__':
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=True)
+        app.run(host='0.0.0.0', port=80, debug=False)
     finally:
         pass
