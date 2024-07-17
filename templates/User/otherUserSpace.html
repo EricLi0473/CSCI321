@@ -378,7 +378,7 @@
                   information:"",
                   thresholdList:JSON.parse('{{thresholdList|tojson}}'),
                   routeResults:[],
-                 accountFavoList:[],
+                 accountFavoList:JSON.parse('{{accountFavoList|tojson}}'),
                 search:''
 
           },
@@ -462,6 +462,7 @@
     },
             toggleFriendFollow(accountId) {
                 const index = this.accountFavoList.indexOf(accountId);
+                console.log(this.accountFavoList.indexOf(accountId))
                 if (index > -1) {
                     this.accountFavoList.splice(index, 1);
                     axios.post(`/remove_follower_in_followList/${accountId}`)

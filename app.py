@@ -157,7 +157,7 @@ def space(accountId):
                 # non admin user are prohibits to access admin account page
                 if account['profile'] == 'admin':
                     return redirect(url_for('login'))
-                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(accountId)
+                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List(session.get('user')['accountId'])
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
                 return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,Account=session.get('user'))
@@ -880,6 +880,6 @@ if __name__ == '__main__':
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=False)
+        app.run(host='0.0.0.0', port=80, debug=True)
     finally:
         pass

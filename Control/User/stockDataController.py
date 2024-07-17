@@ -74,7 +74,7 @@ class StockDataController:
                     "volume": global_quote[key_mapping["volume"]]
                 }
 
-                # 定义符号映射字典
+                # mapping symbol
                 symbol_mapping = {
                     '.LON': '.L',
                     '.DEX': '.DE',
@@ -85,7 +85,7 @@ class StockDataController:
                     '.BSE': '.BO'
                 }
 
-                # 替换符号
+                # change symbol
                 if '.' in new_data['symbol']:
                     for old_suffix, new_suffix in symbol_mapping.items():
                         if old_suffix in new_data['symbol']:
@@ -96,7 +96,7 @@ class StockDataController:
                 print(f"Error fetching data for {stock['1. symbol']}: {e}")
                 return None
 
-        # 使用并发来处理每个股票数据的获取
+        # Use concurrency to handle each stock data fetch
         with ThreadPoolExecutor() as executor:
             future_to_stock = {executor.submit(fetch_stock_data, stock): stock for stock in best_matches}
 
