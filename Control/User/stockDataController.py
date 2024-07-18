@@ -38,6 +38,32 @@ class StockDataController:
             return response.json().get("data", [])
         else:
             return []
+
+
+    def get_similar_stock_data(self,symbol):
+        current_date = datetime.now()
+        five_days_ago = current_date - timedelta(days=5)
+        formatted_date = five_days_ago.strftime('%Y-%m-%d')
+        url = f"https://api.marketaux.com/v1/entity/search?symbols={symbol}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        response = requests.get(url).json()
+        if response.get("data"):
+            country = response.get("data")[0].get("country")
+            industry = response.get("data")[0].get("industry")
+            url = f"https://api.marketaux.com/v1/entity/trending/aggregation?industries={industry}&countries={country}&published_on={formatted_date}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+            responseNew = requests.get(url).json()
+            result = []
+            for Symbol in responseNew.get("data"):
+                try:
+                    if Symbol["key"] != symbol:
+                        symbol_data = self.get_stock_info_minimum(Symbol["key"])
+                        result.append(symbol_data)
+                    else:
+                        continue
+                except Exception:
+                    continue
+            return result
+        else:
+            return []
     def search_stock(self, content):
         api_key = '1TI3ZQ9MXCZ08O3M'
         url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey={api_key}"
@@ -82,7 +108,8 @@ class StockDataController:
                     '.SHH': '.SS',
                     '.FRK': '.F',
                     '.AMS': '.AS',
-                    '.BSE': '.BO'
+                    '.BSE': '.BO',
+                    '.SHZ': '.SZ'
                 }
 
                 # change symbol
@@ -356,6 +383,6 @@ class StockDataController:
         return data_dict
 
 if __name__ == '__main__':
-    print(StockDataController().get_common_symbol_data())
+    print(StockDataController().get_similar_stock_data("AAPL"))
 
 

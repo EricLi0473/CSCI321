@@ -77,6 +77,7 @@ import concurrent.futures
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 limiter = Limiter(
     get_remote_address,
     app=app,
@@ -99,9 +100,15 @@ def generate_captcha():
 def verify_captcha():
     user_captcha = request.json.get('captcha')
     account = request.json.get('account')
+    rememberMe = request.json.get('rememberMe')
     if user_captcha and user_captcha == session.get('captcha'):
+        # handle user has already login
         session['user'] = account
         session.pop('captcha')
+        if rememberMe:
+            session.permanent = False
+        else:
+            session.permanent = True
         return jsonify({'success': True})
     return jsonify({'success': False})
 
@@ -304,6 +311,12 @@ def symbol_news(symbol,page):
     else:
         return redirect(url_for('login'))
 
+@app.route('/getSimilarSymbol/<string:symbol>', methods=['GET'])
+def getSimilarSymbol(symbol):
+    if session.get('user'):
+        return jsonify(StockDataController().get_similar_stock_data(symbol))
+    else:
+        return redirect(url_for('login'))
 @app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
 def searchSymbol(symbol):
     if session.get('user'):
@@ -880,6 +893,6 @@ if __name__ == '__main__':
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=True)
+        app.run(host='0.0.0.0', port=80, debug=False)
     finally:
         pass
