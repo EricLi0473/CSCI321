@@ -310,7 +310,7 @@ class StockDataController:
             except Exception as e:
                 if i == retries - 1:
                     return {"error": f"Failed to download data for {symbol} after {retries} retries: {e}"}
-                time.sleep(2 ** i)  # 指数退避重试
+                time.sleep(2 ** i)
 
         if df.empty:
             return {"error": f"No data found for {symbol}"}
@@ -355,7 +355,7 @@ class StockDataController:
             except Exception as e:
                 if i == retries - 1:
                     return {"error": f"Failed to fetch ticker info for {symbol} after {retries} retries: {e}"}
-                time.sleep(2 ** i)  # 指数退避重试
+                time.sleep(2 ** i)
 
         data_dict['symbol'] = info.get('symbol', symbol)
         data_dict['longName'] = info.get('longName', 'N/A')
@@ -380,6 +380,8 @@ class StockDataController:
 
         data_dict['company'] = company
 
+
+        data_dict['companyExecutives'] = info['companyOfficers']
         return data_dict
 
 if __name__ == '__main__':
