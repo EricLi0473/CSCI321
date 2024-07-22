@@ -709,6 +709,7 @@ def adminMainPage():
         return render_template('/Admin/mainPage.html',account=session['user'],stats=stats)
     else:
         return redirect(url_for('login'))
+
 @app.route('/admin/allPredictions',methods=['GET','POST'])
 def adminAllPredictions():
     from datetime import datetime
@@ -729,6 +730,7 @@ def predictionData():
         return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],"1970-01-01"))
     else:
         return redirect(url_for('login'))
+
 @app.route('/getALLPredictionData',methods=['GET','POST'])
 def getALLPredictionData():
     if session.get('user'):
@@ -766,6 +768,11 @@ def api():
         return render_template('/premiumUser/apiPage.html',user=session.get('user'))
     else:
         return redirect(url_for('login'))
+
+@app.route('/payment',methods=['GET','POST'])
+def payment():
+    if session.get('user'):
+        return render_template('/User/payment.html',user=session.get('user'))
 @app.route('/api/get',methods=['GET'])
 def apiGetPrediction():
     try:
@@ -878,7 +885,6 @@ def start_daily_task_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_job(daily_task, 'cron', hour=5, minute=00)
     scheduler.start()
-
 
 if __name__ == '__main__':
     # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
