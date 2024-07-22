@@ -259,7 +259,7 @@
           </div>
                   <div class="flex flex-row gap-4 mt-8">
                   <button class="btn btn-outline btn-info" @click="toggleInfoEdit()">Edit</button>
-                  <button class="btn btn-outline btn-warning" @click="updateUser">Confirm</button>
+                  <button class="btn btn-outline btn-secondary" @click="updateUser" v-if="isEditingInfo === 1">Confirm</button>
                       <button class="btn btn-outline btn-warning" @click="togglePasswordModal">Change Password</button>
                   </div>
               </div>
@@ -571,9 +571,12 @@
                               axios.post('/updatePersonalInfo', {
           userAccount : this.myAccount
         }).then(response =>{
-                this.myAccount = response.data.data
-                           this.backupAccount =  response.data.data
-                                  this.isEditingInfo = 0
+                          this.information = 'You have change your personal information successfully';
+              document.getElementById('information').showModal();
+                this.myAccount = response.data.data;
+                           this.backupAccount =  response.data.data;
+                           this.user = response.data.data;
+                                  this.isEditingInfo = 0;
                   })},
                         changePassword() {
         if (this.passwords.new !== this.passwords.confirm) {
