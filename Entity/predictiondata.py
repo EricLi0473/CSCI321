@@ -71,7 +71,7 @@ class PredictionData:
             result['rawData'] = json.loads(result['rawData'])
         return result
     def get_all_predictionData(self,date:str ) -> list:
-        sql = "SELECT * FROM predictiondata JOIN account on predictiondata.accountId = account.accountId WHERE requestDate >= %s"
+        sql = "SELECT * FROM predictiondata JOIN account on predictiondata.accountId = account.accountId WHERE requestDate >= %s ORDER BY requestDate DESC;"
         results =  self.fetchAll(sql, (date,))
         if results is None:
             return []
@@ -83,7 +83,7 @@ class PredictionData:
         sql = "SELECT * FROM predictiondata WHERE rawData IS NULL"
         return self.fetchAll(sql, "")
     def get_predictionData_by_accountId(self,accountId,date:str ) -> list:
-        sql = "SELECT * FROM predictiondata WHERE accountId=%s AND requestDate >= %s"
+        sql = "SELECT * FROM predictiondata WHERE accountId=%s AND requestDate >= %s ORDER BY requestDate DESC"
         results =  self.fetchAll(sql, (accountId,date))
         if results is None:
             return []

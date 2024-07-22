@@ -98,7 +98,14 @@
           Forget password?
           <a class="underline" href="/reset_pwd">Reset here</a>
         </p>
+                      <div class="form-control">
+  <label class="label cursor-pointer">
+    <span class="label-text text-sm text-gray-500">Remember me</span>
+    <input type="checkbox"  v-model="isChecked" @change="toggleCheck" class="checkbox ml-2" />
+  </label>
+</div>
       </div>
+      <div> <a class="text-sm text-gray-500" href="/">< Back to mainPage</a></div>
     </form>
   </div>
   <dialog id="exception" class="modal modal-bottom sm:modal-middle">
@@ -160,7 +167,8 @@
       showModal:false,
       captchaUrl: '/generate_captcha',
       captcha:'',
-      account:{}
+      account:{},
+      isChecked:false
     },
     mounted() {
       this.failedAttempts = sessionStorage.getItem('failedAttempts') || 0;
@@ -170,8 +178,11 @@
       }
     },
     methods: {
+              toggleCheck() {
+          this.isChecked = !this.isChecked;
+        },
       verifyCaptcha(){
-        axios.post('/verify_captcha', {captcha:this.captcha,account:this.account})
+        axios.post('/verify_captcha', {captcha:this.captcha,account:this.account,rememberMe:this.isChecked})
                 .then(response => {
                   if (response.data.success){
                       window.location.href = '/redirectToUserPage';

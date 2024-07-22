@@ -18,7 +18,7 @@
           </div>
           <div class="border-t border-gray-100">
             <div class="px-2">
-              <div class="py-4">
+              <div class="py-4" v-if="Account.profile !== 'admin'">
                 <a href="/preference" class="t group relative flex justify-center rounded bg-blue-50 px-2 py-1.5 text-blue-700">
                   <svg xmlns="http://www.w3.org/2000/svg" class="size-5 opacity-75" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
@@ -77,7 +77,7 @@
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">All Comment</span>
                   </a>
                 </li>
-                                                                        <li v-if="user.profile === 'premium'">
+                                                                        <li v-if="Account.profile === 'premium'">
                   <a href="/api" class="group relative flex justify-center rounded px-2 py-1.5 hover:bg-gray-50 hover:text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-file-earmark-code" viewBox="0 0 16 16">
                       <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
@@ -86,7 +86,7 @@
                     <span class="invisible absolute start-full top-1/2 ms-4 -translate-y-1/2 rounded bg-gray-900 px-2 py-1.5 text-xs font-medium text-white group-hover:visible">API</span>
                   </a>
                 </li>
-                                                                                            <li v-if="user.profile === 'premium'">
+                                                                                            <li v-if="Account.profile === 'premium'">
                   <a href="/predictionData" class="group relative flex justify-center rounded px-2 py-1.5 hover:bg-gray-50">
 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bar-chart" viewBox="0 0 16 16">
   <path d="M4 11H2v3h2zm5-4H7v7h2zm5-5v12h-2V2zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM6 7a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1zm-5 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1z"/>
@@ -214,7 +214,21 @@
                 </div>
 <!--                 2 -->
                   <div id="watchList" v-if="activeDiv === 'watchList'">
-                  <table class="table" >
+                      <div role="alert" class="alert w-fit" v-if="watchList.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No watch list item</span>
+                    </div>
+                  <table class="table" v-if="watchList.length !== 0">
                     <!-- head -->
                     <thead>
                       <tr>
@@ -243,7 +257,21 @@
                   </div>
 <!--                3 -->
                   <div v-if="activeDiv === 'thresholdList'">
-  <table class="table">
+                                                                <div role="alert" class="alert w-fit" v-if="thresholdList.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No threshold item</span>
+                    </div>
+  <table class="table" v-if="thresholdList.length !== 0">
     <!-- head -->
     <thead>
       <tr>
@@ -350,7 +378,7 @@
                   information:"",
                   thresholdList:JSON.parse('{{thresholdList|tojson}}'),
                   routeResults:[],
-                 accountFavoList:[],
+                 accountFavoList:JSON.parse('{{accountFavoList|tojson}}'),
                 search:''
 
           },
@@ -364,6 +392,10 @@
           },
               methods: {
                                   doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
                                                   async fetchRoutes() {
@@ -430,6 +462,7 @@
     },
             toggleFriendFollow(accountId) {
                 const index = this.accountFavoList.indexOf(accountId);
+                console.log(this.accountFavoList.indexOf(accountId))
                 if (index > -1) {
                     this.accountFavoList.splice(index, 1);
                     axios.post(`/remove_follower_in_followList/${accountId}`)

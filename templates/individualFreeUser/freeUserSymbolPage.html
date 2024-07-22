@@ -304,7 +304,7 @@
 
     <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
       <dt class="font-medium text-gray-900">website</dt>
-      <dd class="text-gray-700 sm:col-span-2">[[stockInfo.company.website]]</dd>
+      <dd class="text-gray-700 sm:col-span-2"><a class="link link-primary" :href="stockInfo.company.website" target="_blank">[[stockInfo.company.website]]</a></dd>
     </div>
 
     <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 py-6 sm:gap-4">
@@ -319,6 +319,14 @@
   </dl>
 </div>
   </div>
+<!--            Company Executives-->
+            <div class="lg:col-span-2">
+                <span class="text-xl">Company Executives</span></br>
+                            <div class="flex h-fit my-2 p-3 bg-white rounded-lg shadow-sm flex items-center justify-between" v-for="(info,index) in stockInfo.companyExecutives" :key="info.name">
+                    <span>[[info.title]]</span>
+                    <span>[[info.name]], [[info.yearBorn]]</span>
+            </div>
+            </div>
 </div>
 
         <div class="mt-24 text-3xl indicator">
@@ -590,6 +598,20 @@
 </article>
 
   </div>
+            <div role="alert" class="alert lg:col-span-2">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    class="h-6 w-6 shrink-0 stroke-current">
+    <path
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      stroke-width="2"
+      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+  </svg>
+  <span>The Stock predictions are for reference purposes only. Please conduct your own research and consult a financial advisor before making any investment descsions.</span>
+</div>
 </div>
 
         <div class="mt-24 text-3xl">
@@ -633,7 +655,7 @@
 
 
         <div class="mt-24 text-3xl">
-          <b id="comment">comment</b>
+          <b id="comment">Comments</b>
         </div>
 
         <section class="bg-white">
@@ -648,7 +670,20 @@
 </div>
       <div class="w-full text-right mt-6">
 <button class="btn btn-outline" @click="submit_comment" :disabled="isCoolingDown">[[ buttonText ]]</button>          </div>
-
+                                                                      <div role="alert" class="alert  mt-6" v-if="comments.length === 0">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        class="stroke-info h-6 w-6 shrink-0">
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span>No comments belong to this symbol, try to add some!</span>
+                    </div>
     <div class="h-fit my-3 p-5 bg-white rounded-lg shadow-md flex items-start space-x-4"  v-for="(item,index) in comments" :key="item.url">
   <div class="flex-1">
     <div class="flex justify-between items-center">
@@ -839,6 +874,10 @@
                     });
             },
                             doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
                   isEmpty: function(obj) {

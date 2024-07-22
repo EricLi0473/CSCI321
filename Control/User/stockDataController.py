@@ -38,6 +38,32 @@ class StockDataController:
             return response.json().get("data", [])
         else:
             return []
+
+
+    def get_similar_stock_data(self,symbol):
+        current_date = datetime.now()
+        five_days_ago = current_date - timedelta(days=5)
+        formatted_date = five_days_ago.strftime('%Y-%m-%d')
+        url = f"https://api.marketaux.com/v1/entity/search?symbols={symbol}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+        response = requests.get(url).json()
+        if response.get("data"):
+            country = response.get("data")[0].get("country")
+            industry = response.get("data")[0].get("industry")
+            url = f"https://api.marketaux.com/v1/entity/trending/aggregation?industries={industry}&countries={country}&published_on={formatted_date}&api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe"
+            responseNew = requests.get(url).json()
+            result = []
+            for Symbol in responseNew.get("data"):
+                try:
+                    if Symbol["key"] != symbol:
+                        symbol_data = self.get_stock_info_minimum(Symbol["key"])
+                        result.append(symbol_data)
+                    else:
+                        continue
+                except Exception:
+                    continue
+            return result
+        else:
+            return []
     def search_stock(self, content):
         api_key = '1TI3ZQ9MXCZ08O3M'
         url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey={api_key}"
@@ -74,27 +100,30 @@ class StockDataController:
                     "volume": global_quote[key_mapping["volume"]]
                 }
 
+                # mapping symbol
+                symbol_mapping = {
+                    '.LON': '.L',
+                    '.DEX': '.DE',
+                    '.SAO': '.SA',
+                    '.SHH': '.SS',
+                    '.FRK': '.F',
+                    '.AMS': '.AS',
+                    '.BSE': '.BO',
+                    '.SHZ': '.SZ'
+                }
+
                 # change symbol
                 if '.' in new_data['symbol']:
-                    if '.LON' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.LON', '.L')
-                    if '.DEX' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.DEX', '.DE')
-                    if '.SAO' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.SAO', '.SA')
-                    if '.SHH' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.SHH', '.SS')
-                    if '.FRK' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.FRK', '.F')
-                    if '.AMS' in new_data['symbol']:
-                        new_data['symbol'] = new_data['symbol'].replace('.AMS', '.AS')
+                    for old_suffix, new_suffix in symbol_mapping.items():
+                        if old_suffix in new_data['symbol']:
+                            new_data['symbol'] = new_data['symbol'].replace(old_suffix, new_suffix)
 
                 return new_data
             except Exception as e:
                 print(f"Error fetching data for {stock['1. symbol']}: {e}")
                 return None
 
-        # 使用并发来处理每个股票数据的获取
+        # Use concurrency to handle each stock data fetch
         with ThreadPoolExecutor() as executor:
             future_to_stock = {executor.submit(fetch_stock_data, stock): stock for stock in best_matches}
 
@@ -281,7 +310,7 @@ class StockDataController:
             except Exception as e:
                 if i == retries - 1:
                     return {"error": f"Failed to download data for {symbol} after {retries} retries: {e}"}
-                time.sleep(2 ** i)  # 指数退避重试
+                time.sleep(2 ** i)
 
         if df.empty:
             return {"error": f"No data found for {symbol}"}
@@ -326,7 +355,7 @@ class StockDataController:
             except Exception as e:
                 if i == retries - 1:
                     return {"error": f"Failed to fetch ticker info for {symbol} after {retries} retries: {e}"}
-                time.sleep(2 ** i)  # 指数退避重试
+                time.sleep(2 ** i)
 
         data_dict['symbol'] = info.get('symbol', symbol)
         data_dict['longName'] = info.get('longName', 'N/A')
@@ -351,9 +380,11 @@ class StockDataController:
 
         data_dict['company'] = company
 
+
+        data_dict['companyExecutives'] = info['companyOfficers']
         return data_dict
 
 if __name__ == '__main__':
-    print(StockDataController().get_common_symbol_data())
+    print(StockDataController().get_similar_stock_data("AAPL"))
 
 

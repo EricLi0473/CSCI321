@@ -97,5 +97,10 @@ class FollowList():
         val = (accountId,followedId,)
         return self.fetchOne(sql, val)["notifyMe"]
 
+    def remove_all_follower(self,accountId):
+        sql = "DELETE FROM followList WHERE followedId = %s"
+        val = (accountId,)
+        self.commit(sql, val)
+
 if __name__ == "__main__":
-    FollowList().update_follower_in_followList_by_id("1","2",1)
+    FollowList().remove_all_follower("1")

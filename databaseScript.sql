@@ -176,3 +176,16 @@ alter table recommendationlist
     add constraint recommendationlist_pk
         unique (accountId);
 
+
+-- LEFT JOIN 部分
+SELECT
+    ts.accountId,
+    ts.thresholdId,
+    ts.stockSymbol,
+    ts.changePercentage
+FROM
+    thresholdSettings ts
+LEFT JOIN
+    account a ON ts.accountId = a.accountId
+WHERE
+    a.profile = 'premium';

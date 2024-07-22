@@ -200,7 +200,7 @@
     <div class="mockup-code w-4/5 mb-16">
   <pre data-prefix="#" class="bg-warning text-warning-content"><code>In https</code></pre>
       <pre data-prefix=""><code>click below to see the result</code></pre>
-      <pre data-prefix=""><code><a class="link link-hover" :href="`https://stockforecast4.me/api/request?key=${user.apikey}&symbol=aapl&days=14&model=balance`" target="_blank">https://stockforecast4.me/api/get?key=[[user.apikey]]&symbol=aapl</a></code></pre>
+      <pre data-prefix=""><code><a class="link link-hover" :href="`https://stockforecast4.me/api/request?key=${user.apikey}&symbol=aapl&days=14&model=balance`" target="_blank">https://stockforecast4.me/api/request?key=$[[user.apikey]]&symbol=aapl&days=14&model=balance</a></code></pre>
   </div>
 
 </div>
@@ -248,7 +248,11 @@
                         alert('Failed to copy ID.');
                     }
                 },
-            doSearch(){
+                                  doSearch(){
+                                      if (this.search === ''){
+                                          alert("please enter something")
+                                          return
+                                      }
                     window.location.href = `/search/${this.search}`;
                 },
       },

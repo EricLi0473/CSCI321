@@ -28,7 +28,7 @@
         <h1 class="text-2xl font-bold sm:text-3xl">We have sent verification code to<i> [[account.email]]</i></h1>
 
       </p>
-      <p class="mt-4 text-gray-500 underline-offset-auto underline" @click="sendVerificationCode">
+      <p class="mt-4 text-gray-500 underline-offset-auto underline cursor-pointer" @click="sendVerificationCode">
         [[ buttonText ]]
       </p>
         <div class="mt-8">
@@ -94,6 +94,7 @@
             this.account = JSON.parse(sessionStorage.getItem('account'));
                           axios.post('/emailVerification', {
                   email: this.account.email,
+                              status:"signup"
               })
         },
         methods: {

@@ -1,10 +1,11 @@
 import os
+import sys
 
 from Control.User.UpdatePersonalInfoController import UpdatePersonalInfoController
 from Control.User.loginController import LoginController
 
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
-from flask import request, render_template, url_for, jsonify,session,send_file
+from flask import request, render_template, url_for, jsonify,session,send_file,abort
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from Control.User.SignupController import *
@@ -52,12 +53,12 @@ from Control.premiumUser.set_preference_by_accountId import *
 from Control.User.reset_mlView import *
 from Control.User.detectDuplicateEmail import *
 from Control.Admin.get_all_precessing_predictionData import *
+from Control.User.get_AllThresholds_by_account import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-import multiprocessing
 # from machineLearningModel.GRU_Model import *
 # from machineLearningModel.LSTM_Model import *
 # from machineLearningModel.prophet_model import *
@@ -68,11 +69,15 @@ import time
 from captcha.image import ImageCaptcha
 import random
 import io
-import schedule
-
+from apscheduler.schedulers.background import BackgroundScheduler
+import concurrent.futures
+# disable output
+# sys.stdout = open(os.devnull,'w')
+# sys.stderr = open(os.devnull,'w')
 app = Flask(__name__)
 app.static_folder = 'static'
 app.secret_key = 'csci314'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 limiter = Limiter(
     get_remote_address,
     app=app,
@@ -95,9 +100,15 @@ def generate_captcha():
 def verify_captcha():
     user_captcha = request.json.get('captcha')
     account = request.json.get('account')
+    rememberMe = request.json.get('rememberMe')
     if user_captcha and user_captcha == session.get('captcha'):
+        # handle user has already login
         session['user'] = account
         session.pop('captcha')
+        if rememberMe:
+            session.permanent = False
+        else:
+            session.permanent = True
         return jsonify({'success': True})
     return jsonify({'success': False})
 
@@ -153,7 +164,7 @@ def space(accountId):
                 # non admin user are prohibits to access admin account page
                 if account['profile'] == 'admin':
                     return redirect(url_for('login'))
-                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId(accountId)
+                accountFavoList = GetFollowListByAccountId().get_followList_by_accountId_List(session.get('user')['accountId'])
                 watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(accountId)
                 thresholdList = GetThresholdSettingById().get_threshold_settings_by_id(accountId)
                 return render_template("/User/otherUserSpace.html",accountFavoList=accountFavoList,account=account,watchList=watchList,thresholdList=thresholdList,Account=session.get('user'))
@@ -229,7 +240,12 @@ def search(content):
         stockWatchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
         return render_template("/system/search.html",content=content,accountsList=accountsList,stockWatchList=stockWatchList,accountFavoList=accountFavoList,user=session['user'])
     return redirect(url_for('login'))
-
+@app.route('/search/')
+def searchRe():
+    if session.get('user'):
+        return search("")
+    else:
+        return redirect(url_for('login'))
 @app.route('/mainPage', methods=['GET', 'POST'])
 def mainPage():
     if session.get('user'):
@@ -277,7 +293,8 @@ def recommendation_symbol():
         if session.get('user')['profile'] == 'premium':
             return jsonify(RecommendationListController().get_recommendationList_by_accountId(session.get('user')['accountId']))
         elif session.get('user')['profile'] == 'free':
-            return jsonify(StockDataController().get_common_symbol_data())
+            global free_user_stockData_cache
+            return jsonify(free_user_stockData_cache)
     else:
         return redirect(url_for('login'))
 @app.route('/get_notification',methods=['GET', 'POST'])
@@ -294,6 +311,12 @@ def symbol_news(symbol,page):
     else:
         return redirect(url_for('login'))
 
+@app.route('/getSimilarSymbol/<string:symbol>', methods=['GET'])
+def getSimilarSymbol(symbol):
+    if session.get('user'):
+        return jsonify(StockDataController().get_similar_stock_data(symbol))
+    else:
+        return redirect(url_for('login'))
 @app.route("/searchSymbol/<string:symbol>", methods=['GET', 'POST'])
 def searchSymbol(symbol):
     if session.get('user'):
@@ -312,24 +335,26 @@ def delete_comment_by_id(commentId):
 @app.route('/symbol/<string:symbol>',methods=['GET','POST'])
 def symbol(symbol):
     if session.get('user'):
-        if session.get('user')['profile'] == 'premium':
-            user = session.get('user')
-            # stockData = StockDataController().get_update_stock_data(symbol,"1y")
-            stockInfo = StockDataController().get_stock_info_full(symbol)
-            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
-        elif session.get('user')['profile'] == 'free':
-            user = session.get('user')
-            stockInfo = StockDataController().get_stock_info_full(symbol)
-            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
-                session.get('user')['accountId'], symbol)
-            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
-                                   predictionresult=predictionresult, threshold=threshold, watchList=watchList,
-                                   user=user)
+        try:
+            if session.get('user')['profile'] == 'premium':
+                user = session.get('user')
+                stockInfo = StockDataController().get_stock_info_full(symbol)
+                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+                return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+            elif session.get('user')['profile'] == 'free':
+                user = session.get('user')
+                stockInfo = StockDataController().get_stock_info_full(symbol)
+                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
+                    session.get('user')['accountId'], symbol)
+                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+                return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
+                                       predictionresult=predictionresult, threshold=threshold, watchList=watchList,
+                                       user=user)
+        except Exception as e:
+            abort(404)
 
     else:
         return redirect(url_for('login'))
@@ -365,8 +390,8 @@ def request_for_prediction(symbol, days, model,accountId):
         all_dates = pd.date_range(start=df.index.min(), end=df.index.max(), freq='D')
         df = df.reindex(all_dates)
         df = df.fillna(method='ffill')
-        model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
-        prediction_result = model.predict()
+        LSTM_model = LSTM_Model(symbol, df, n_days=days, layers=default_layers, neurons=default_neurons)
+        prediction_result = LSTM_model.predict()
         # format of LSTM prediction result
         # [{'Date': '2024-06-29', 'Predicted': 202.17, 'Recommendation': 'Hold'}]
 
@@ -561,15 +586,12 @@ def change_password():
         return redirect(url_for('login'))
 
 @app.route('/',methods=['GET'])
-@limiter.limit("50 per minute")
+@limiter.limit("10 per minute")
 def officialWeb():
-    stockInfo = StockDataController().get_stock_info_full("AAPL")
+    global mainPage_stockData_cache
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
-    stockData = StockDataController().get_update_stock_data("AAPL","3mo")
-    stockData1 = StockDataController().get_update_stock_data("BILI","3mo")
-    stockData2 = StockDataController().get_update_stock_data("MSFT","3mo")
     review = GetAllHeadLineReviews().get_all_headline_reviews()
-    return render_template("system/template.html",symbolData1=stockData1,symbolData2=stockData2,stockInfo=stockInfo,predictionData=predictionData,symbolData=stockData,review=review)
+    return render_template("system/template.html",symbolData1=mainPage_stockData_cache['stockData1'],symbolData2=mainPage_stockData_cache['stockData2'],stockInfo=mainPage_stockData_cache['stockInfo'],predictionData=predictionData,symbolData=mainPage_stockData_cache['stockData'],review=review)
 
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
@@ -693,8 +715,7 @@ def adminAllPredictions():
     if session.get('user'):
         if session.get('user')['profile'] != 'admin':
             return redirect(url_for('login'))
-        today = datetime.now().strftime("%Y-%m-%d")
-        predictions = GetAllPredictionData().get_all_predictionData(today)
+        predictions = GetAllPredictionData().get_all_predictionData("1970-01-01")
         return render_template('/Admin/adminPredictionData.html', predictions=predictions,account=session.get('user'))
     else:
         return redirect(url_for('login'))
@@ -705,8 +726,7 @@ def predictionData():
     if session.get('user'):
         if session.get('user')['profile'] != 'premium':
             return redirect(url_for('login'))
-        today = datetime.now().strftime("%Y-%m-%d")
-        return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],today))
+        return render_template('/premiumUser/predictionData.html',user=session['user'],predictions=GetAllPredictionData().get_predictionData_by_accountId(session['user']['accountId'],"1970-01-01"))
     else:
         return redirect(url_for('login'))
 @app.route('/getALLPredictionData',methods=['GET','POST'])
@@ -777,65 +797,102 @@ def apiRequest():
         verify_symbol_usingYfinance().verify_symbol_usingYfinance(symbol)
         account = VerifyApiKeyController().verifyApiKey(key)
         model_mapping = {
-            'accuracy': 'LR',
+            'accuracy': 'LSTM',
             'balance': 'GRU',
             'fast': 'Prophet'
         }
         model = model_mapping[model]
-        process = multiprocessing.Process(target=request_for_prediction, args=(symbol, days, model,account['accountId']))
-        process.start()
+
+        url = f'http://127.0.0.1/request_for_prediction/{symbol}/{days}/{model}/{account["accountId"]}'
+
+        def send_request():
+            response = requests.get(url)
+
+        thread = threading.Thread(target=send_request)
+        thread.start()
+
         return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('/system/404.html'), 404
+
+@app.errorhandler(429)
+def page_not_found(e):
+    return render_template('/system/429.html'), 429
 #
 # DO NOT REMOVE, THIS IS SCHEDULE FUNCTION!!!!!
 #
-# Define a cache to store recent notifications
+# Define cache
 notification_cache = {}
+mainPage_stockData_cache = {}
+free_user_stockData_cache = []
+
+def cache_when_startUp():
+    global mainPage_stockData_cache
+    mainPage_stockData_cache = {
+        'stockData': StockDataController().get_update_stock_data("AAPL", "3mo"),
+        'stockData1': StockDataController().get_update_stock_data("BILI", "3mo"),
+        'stockData2': StockDataController().get_update_stock_data("MSFT", "3mo"),
+        'stockInfo': StockDataController().get_stock_info_full("AAPL")
+    }
+    global free_user_stockData_cache
+    free_user_stockData_cache = StockDataController().get_common_symbol_data()
 
 def threshold_notification():
     global notification_cache
-    premiumUserList = GetPremiumUsersController().getPremiumUsers()
-    for user in premiumUserList:
-        thresholds = GetThresholdSettingById().get_threshold_settings_by_id(user)
-        if thresholds:
-            for threshold in thresholds:
-                cache_key = (user['accountId'], threshold["stockSymbol"], threshold["changePercentage"])
-                current_time = time.time()
-                if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
-                    symbol = StockDataController().get_stock_info_minimum(threshold["stockSymbol"])
-                    if abs(symbol["relative_change"]) > threshold['changePercentage']:
-                        # Checking for recent notifications
-                            notificationWord = f"Hi, Your followed {threshold['stockSymbol']} that exceeds your threshold."
-                            NotificationController().set_notification(user, notificationWord, "threshold", threshold['thresholdId'],threshold['stockSymbol'])
-                            notification_cache[cache_key] = current_time
-                            Personal_who_follow_user_List = GetAccountListByFollowedId().get_accountList_by_followedId(user)
-                            if Personal_who_follow_user_List:
-                                for userFollow in Personal_who_follow_user_List:
-                                    if userFollow['notifyMe'] == 1:
-                                        notificationWord = f"There have been updates to stock {threshold['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
-                                        hashed_symbol = int(hashlib.md5(threshold['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-                                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,threshold['stockSymbol'])
+    for user in GetAllThresholdsByAccount().get_all_thresholds_by_account():
+        cache_key = (user['accountId'], user["stockSymbol"], user["changePercentage"])
+        current_time = time.time()
+        if cache_key not in notification_cache or (current_time - notification_cache[cache_key] > 10800):  # three hour
+            symbol = StockDataController().get_stock_info_minimum(user["stockSymbol"])
+            if abs(symbol["relative_change"]) > user['changePercentage']:
+                # Checking for recent notifications
+                notificationWord = f"Hi, Your followed {user['stockSymbol']} that exceeds your threshold."
+                NotificationController().set_notification(user['accountId'], notificationWord, "threshold", user['thresholdId'],user['stockSymbol'])
+                notification_cache[cache_key] = current_time
+                for userFollow in GetAccountListByFollowedId().get_accountList_by_followedId(user['accountId']):
+                    if userFollow['notifyMe'] == 1:
+                        notificationWord = f"There have been updates to stock {user['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
+                        hashed_symbol = int(hashlib.md5(user['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
+                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,user['stockSymbol'])
 
 def daily_task():
+    # update ml prediction every day
+    cache_when_startUp()
     # Reset the number of times a free user can view ml prediction per day
     reset_mlView().reset_mlView()
     #  update personal interested
     for accountId in GetPremiumUsersController().getPremiumUsers():
-        preference = GetPreferenceByAccountId(accountId)
-        UpdatePreferenceByAccountId().update_preference_by_accountId(accountId,preference['preferenceCountry'],preference['preferenceIndustry'])
-    #  clear cache
-    global notification_cache
-    notification_cache.clear()
-def run_schedule():
-    schedule.every(10).seconds.do(threshold_notification)
-    schedule.every().day.at("04:00").do(daily_task)
-    while True:
-        schedule.run_pending()
-        time.sleep(1)
+        preference = GetPreferenceByAccountId().get_preference_by_accountId(accountId)
+        UpdatePreferenceByAccountId().update_preference_by_accountId(accountId,preference['preferenceIndustry'],preference['preferenceCountry'])
+
+def start_threshold_notification_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(threshold_notification, 'interval', seconds=30)
+    scheduler.start()
+
+def start_daily_task_scheduler():
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(daily_task, 'cron', hour=5, minute=00)
+    scheduler.start()
+
 
 if __name__ == '__main__':
-    # schedule_thread = threading.Thread(target=run_schedule)
-    # schedule_thread.daemon = True
-    # schedule_thread.start()
-    app.run(host='0.0.0.0',port=80,debug=True)
+    # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
+    # threshold_scheduler_thread.daemon = True
+    # threshold_scheduler_thread.start()
+    #
+    # daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
+    # daily_task_scheduler_thread.daemon = True
+    # daily_task_scheduler_thread.start()
+    #
+    # cache_whenStartUP = threading.Thread(target=cache_when_startUp)
+    # cache_whenStartUP.start()
+
+    try:
+        app.run(host='0.0.0.0', port=80, debug=True)
+    finally:
+        pass
