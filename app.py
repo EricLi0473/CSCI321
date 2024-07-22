@@ -889,8 +889,8 @@ if __name__ == '__main__':
     # daily_task_scheduler_thread.daemon = True
     # daily_task_scheduler_thread.start()
     #
-    # cache_whenStartUP = threading.Thread(target=cache_when_startUp)
-    # cache_whenStartUP.start()
+    cache_whenStartUP = threading.Thread(target=cache_when_startUp)
+    cache_whenStartUP.start()
 
     try:
         app.run(host='0.0.0.0', port=80, debug=True)

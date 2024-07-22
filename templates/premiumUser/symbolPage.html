@@ -456,7 +456,7 @@
               :class="{ disabled: isButtonDisabled }"
         :disabled="isButtonDisabled"
       >Go</button>
-        <span v-if="isButtonDisabled" class="mt-2">Please wait ([[ remainingTime ]]s to get the next prediction)</span>
+        <span v-if="isButtonDisabled" class="mt-2">Please wait a while for the next prediction</span>
     </div>
     </div>
 <div role="alert" class="alert alert-success bg-teal-500 mt-8" v-if="!isEmpty(predictionresult)">
