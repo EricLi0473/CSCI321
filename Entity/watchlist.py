@@ -39,8 +39,11 @@ class Watchlist():
         return self.fetchOne(sql, val)
 
     def update_watchlist(self, accountId, stockSymbol):
-        sql = "UPDATE watchlist SET stockSymbol=%s WHERE accountId=%s"
-        val = (stockSymbol,accountId)
+        sql = '''INSERT INTO watchlist (accountId, stockSymbol)
+VALUES (%s, %s)
+ON DUPLICATE KEY UPDATE
+stockSymbol = VALUES(stockSymbol);'''
+        val = (accountId,stockSymbol)
         self.commit(sql, val)
 
     def is_stock_in_watchlist(self, accountId, stockSymbol):

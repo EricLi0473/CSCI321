@@ -95,7 +95,7 @@ class Account:
         return self.commit(sql,val)
 
     def update_Account(self, accountId, userName, email, bio, age, sex, occupation, incomeLevel, netWorth,
-                             investmentExperience, riskTolerance, investmentGoals, profile,isPrivateAccount,mlViewLeft) -> bool:
+                             investmentExperience, riskTolerance, investmentGoals, profile,isPrivateAccount,mlViewLeft,card_number,nextPaymentDate) -> bool:
         sql = """
         UPDATE account
         SET userName = %s,
@@ -111,12 +111,14 @@ class Account:
             investmentGoals = %s,
             profile = %s,
             isPrivateAccount = %s,
-            mlViewLeft = %s
+            mlViewLeft = %s,
+            card_number = %s,
+            nextPaymentDate = %s
         WHERE accountId = %s
         """
         values = (
         userName, email, bio, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance,
-        investmentGoals, profile, isPrivateAccount,mlViewLeft,accountId)
+        investmentGoals, profile, isPrivateAccount,mlViewLeft,card_number,nextPaymentDate,accountId)
 
         try:
             self.commit(sql, values)
@@ -126,15 +128,15 @@ class Account:
             return False
 
     def signUp(self, userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
-               investmentExperience, riskTolerance, investmentGoals,apikey) -> dict:
+               investmentExperience, riskTolerance, investmentGoals,apikey,card_number,nextPaymentDate) -> dict:
 
         sql = """
         INSERT INTO account 
-        (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals,apikey) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s,  %s, %s, %s, %s,%s)
+        (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth, investmentExperience, riskTolerance, investmentGoals,apikey,card_number,nextPaymentDate) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s,  %s, %s, %s, %s,%s,%s,%s)
         """
         val = (userName, hashedPassword, email, profile, age, sex, occupation, incomeLevel, netWorth,
-                        investmentExperience, riskTolerance, investmentGoals,apikey)
+                        investmentExperience, riskTolerance, investmentGoals,apikey,card_number,nextPaymentDate)
 
         lastId = self.commit(sql, val)
         sql = 'SELECT * FROM account WHERE accountId = %s'

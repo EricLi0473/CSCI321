@@ -189,3 +189,9 @@ LEFT JOIN
     account a ON ts.accountId = a.accountId
 WHERE
     a.profile = 'premium';
+
+alter table account
+    add card_number VARCHAR(255) null;
+
+alter table account
+    add nextPaymentDate DATETIME null;
