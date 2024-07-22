@@ -5,3 +5,6 @@ class InsertSearchHistoryById:
 
     def insert_searchHistory_by_id(self,accountID,stockSymbol):
         return SearchHistory().insert_searchHistory_by_id(accountID,stockSymbol)
+
+if __name__ == '__main__':
+    InsertSearchHistoryById().insert_searchHistory_by_id('1','AAPL')

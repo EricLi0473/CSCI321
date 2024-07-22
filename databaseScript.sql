@@ -1,197 +1,213 @@
--- Table to store person account info with additional profiling and important attributes
-CREATE TABLE account
+create table account
 (
-    accountId            INT AUTO_INCREMENT PRIMARY KEY,
-    userName             VARCHAR(255) NULL,
-    hashedPassword       VARCHAR(255) NULL,
-    email                VARCHAR(255) NULL,
-    bio                  VARCHAR(255) DEFAULT 'Welcome to stock4me!' NULL,
-    profile              ENUM('free', 'premium', 'admin') NULL,
-    status               ENUM('valid', 'invalid') DEFAULT 'valid' NULL,
-    createDateTime       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    age                  INT NULL,
-    sex                  ENUM('male', 'female', 'other') NULL,
-    occupation           VARCHAR(255) NULL,
-    incomeLevel          FLOAT NULL,
-    netWorth             FLOAT NULL,
-    investmentExperience ENUM('novice', 'intermediate', 'expert') NULL,
-    riskTolerance        ENUM('low', 'medium', 'high') NULL,
-    investmentGoals      VARCHAR(255) NULL,
-    isPrivateAccount BOOL default 0 not null,
-    mlViewLeft int default 10 not null,
-    apikey VARCHAR(255) not null
+    accountId            int auto_increment
+        primary key,
+    userName             varchar(255)                                             null,
+    hashedPassword       varchar(255)                                             null,
+    email                varchar(255)                                             null,
+    bio                  varchar(255)              default 'Welcome to stock4me!' null,
+    profile              enum ('free', 'premium', 'admin')                        null,
+    status               enum ('valid', 'invalid') default 'valid'                null,
+    createDateTime       timestamp                 default CURRENT_TIMESTAMP      null,
+    age                  int                                                      null,
+    sex                  enum ('male', 'female', 'other')                         null,
+    occupation           varchar(255)                                             null,
+    incomeLevel          float                                                    null,
+    netWorth             float                                                    null,
+    investmentExperience enum ('novice', 'intermediate', 'expert')                null,
+    riskTolerance        enum ('low', 'medium', 'high')                           null,
+    investmentGoals      varchar(255)                                             null,
+    isPrivateAccount     tinyint(1)                default 0                      not null,
+    mlViewLeft           int                       default 10                     not null,
+    apikey               varchar(255)                                             not null,
+    card_number          varchar(255)                                             null,
+    nextPaymentDate      datetime                                                 null
 );
 
--- User Favourites List(watchList)
-CREATE TABLE watchList(
-    watchItemId INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    stockSymbol  TEXT NOT NULL,
-    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
-);
--- User preferences List(Industry,Country), input when they sign up
-CREATE TABLE preferences
+create table comment
 (
-    preferencesId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    preferenceIndustry     TEXT NOT NULL,
-    preferenceCountry TEXT NOT NULL,
-    addedDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    commentId   int auto_increment
+        primary key,
+    accountId   int                                 not null,
+    stockSymbol text                                not null,
+    commentText text                                not null,
+    commentDate timestamp default CURRENT_TIMESTAMP null,
+    likes       int       default 0                 not null,
+    dislikes    int       default 0                 null,
+    constraint comment_ibfk_1
+        foreign key (accountId) references account (accountId)
 );
 
--- Table to store person follow someone
-CREATE TABLE followList
+create index accountId
+    on comment (accountId);
+
+create table emailverification
 (
-    followId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    followedId   INT NOT NULL,
-    notifyMe BOOL NULL ,
-    followDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId),
-    FOREIGN KEY (followedId) REFERENCES account(accountId)
+    verificationId   int auto_increment
+        primary key,
+    email            varchar(255)                        not null,
+    code             int                                 not null,
+    verificationDate timestamp default CURRENT_TIMESTAMP null
 );
 
-
--- Merged table to store stock prediction history and results
-CREATE TABLE predictionData
+create table followlist
 (
-    predictionId      INT AUTO_INCREMENT PRIMARY KEY,
-    stockSymbol       TEXT NOT NULL,
-    requestDate       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    minPredictedPrice FLOAT NULL,
-    avgPredictedPrice FLOAT NULL,
-    maxPredictedPrice FLOAT NULL,
-    buyPercentage     FLOAT NULL,
-    holdPercentage    FLOAT NULL,
-    sellPercentage    FLOAT NULL,
-    timeRange INT NULL ,
-    target VARCHAR(255) NULL
+    followId   int auto_increment
+        primary key,
+    accountId  int                                 not null,
+    followedId int                                 not null,
+    notifyMe   tinyint(1)                          null,
+    followDate timestamp default CURRENT_TIMESTAMP null,
+    constraint followlist_ibfk_1
+        foreign key (accountId) references account (accountId),
+    constraint followlist_ibfk_2
+        foreign key (followedId) references account (accountId)
 );
 
+create index accountId
+    on followlist (accountId);
 
--- Table to store the recommendation based on personal interests
-CREATE TABLE recommendationList
+create index followedId
+    on followlist (followedId);
+
+create table notification
 (
-    recommendationId INT AUTO_INCREMENT PRIMARY KEY,
-    accountId        INT NOT NULL,
-    recommendedStock LONGTEXT NOT NULL,
-    recommendationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    notificationId   int auto_increment
+        primary key,
+    accountId        int                                                  not null,
+    notification     varchar(255) default 'Welcome to Stock Forecast4.me' not null,
+    notificationType varchar(255)                                         not null,
+    referenceId      int                                                  null,
+    symbol           varchar(255)                                         null,
+    notificationDate timestamp    default CURRENT_TIMESTAMP               null,
+    constraint unique_notification
+        unique (accountId, notification, notificationType, symbol),
+    constraint notification_ibfk_1
+        foreign key (accountId) references account (accountId)
 );
 
--- Table to store user-specific thresholds for stock changes (Configuration; 5% change in stock price
-CREATE TABLE thresholdSettings
+create table predictiondata
 (
-    thresholdId    INT AUTO_INCREMENT PRIMARY KEY,
-    accountId      INT NOT NULL,
-    stockSymbol    VARCHAR(255) NOT NULL,
-    changePercentage FLOAT NOT NULL,
-    notifyDateTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId),
-    UNIQUE KEY unique_thresholdSettings_stock (accountId,stockSymbol)
+    predictionId      int auto_increment
+        primary key,
+    stockSymbol       text                                not null,
+    requestDate       timestamp default CURRENT_TIMESTAMP null,
+    minPredictedPrice float                               null,
+    avgPredictedPrice float                               null,
+    maxPredictedPrice float                               null,
+    buyPercentage     float                               null,
+    holdPercentage    float                               null,
+    sellPercentage    float                               null,
+    timeRange         int                                 null,
+    target            varchar(255)                        null,
+    accountId         int                                 null,
+    model             varchar(255)                        null,
+    rawData           longtext                            null,
+    constraint predictiondata__fk
+        foreign key (accountId) references account (accountId)
 );
 
--- Table to store user reviews of the product/website
-CREATE TABLE review
+create table preferences
 (
-    reviewId      INT AUTO_INCREMENT PRIMARY KEY,
-    accountId     INT NOT NULL,
-    rating        FLOAT NOT NULL CHECK (rating BETWEEN 0 AND 5),
-    reviewText    TEXT NULL,
-    reviewDate    TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId),
-    UNIQUE KEY unique_review_stock (accountId)
+    preferencesId      int auto_increment
+        primary key,
+    accountId          int                                 not null,
+    preferenceIndustry text                                not null,
+    preferenceCountry  text                                not null,
+    addedDate          timestamp default CURRENT_TIMESTAMP null,
+    constraint preferences_pk
+        unique (accountId),
+    constraint preferences_ibfk_1
+        foreign key (accountId) references account (accountId)
 );
 
--- Table to store user comments on company stocks
-CREATE TABLE comment
+create table recommendationlist
 (
-    commentId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId     INT NOT NULL,
-    stockSymbol   TEXT NOT NULL,
-    commentText   TEXT NOT NULL,
-    commentDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
-);
-CREATE TABLE emailVerification(
-    verificationId INT AUTO_INCREMENT PRIMARY KEY ,
-    email VARCHAR(255) NOT NULL ,
-    code INT NOT NULL ,
-    verificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL
-);
-CREATE TABLE notification(
-    notificationId INT AUTO_INCREMENT PRIMARY KEY ,
-    accountId INT NOT NULL ,
-    notification VARCHAR(255) NOT NULL DEFAULT 'Welcome to Stock Forecast4.me',
-    notificationType VARCHAR(255) NOT NULL,
-    referenceId INT NULL ,
-    symbol VARCHAR(255) NULL ,
-    notificationDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL ,
-    FOREIGN KEY (accountId) REFERENCES account(accountId),
-    unique KEY unique_notification (accountId,notification,notificationType,symbol)
+    recommendationId   int auto_increment
+        primary key,
+    accountId          int                                 not null,
+    recommendedStock   longtext                            not null,
+    recommendationDate timestamp default CURRENT_TIMESTAMP null,
+    constraint recommendationlist_pk
+        unique (accountId),
+    constraint recommendationlist_ibfk_1
+        foreign key (accountId) references account (accountId)
 );
 
-CREATE TABLE watchList_symbol(
-    watchList_symbol_id INT AUTO_INCREMENT PRIMARY KEY ,
-    accountId INT NOT NULL ,
-    symbol VARCHAR(255) NOT NULL ,
-    priceInWatchList FLOAT NOT NULL ,
-    FOREIGN KEY (accountId) REFERENCES account(accountId),
-    unique KEY unique_watch_symbol (accountId,symbol)
-);
--- Table to store person search stock history
-CREATE TABLE searchHistory
+create table review
 (
-    searchId     INT AUTO_INCREMENT PRIMARY KEY,
-    accountId    INT NOT NULL,
-    stockSymbol  VARCHAR(255) NOT NULL,
-    searchDate   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    UNIQUE KEY unique_account_stock (accountId, stockSymbol),
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    reviewId   int auto_increment
+        primary key,
+    accountId  int                                 not null,
+    rating     float                               not null,
+    reviewText text                                null,
+    reviewDate timestamp default CURRENT_TIMESTAMP null,
+    constraint unique_review_stock
+        unique (accountId),
+    constraint review_ibfk_1
+        foreign key (accountId) references account (accountId),
+    check (`rating` between 0 and 5)
 );
-CREATE TABLE predictionData
+
+create table searchhistory
 (
-    predictionId      INT AUTO_INCREMENT PRIMARY KEY,
-    stockSymbol       TEXT NOT NULL,
-    requestDate       TIMESTAMP DEFAULT CURRENT_TIMESTAMP NULL,
-    minPredictedPrice FLOAT NULL,
-    avgPredictedPrice FLOAT NULL,
-    maxPredictedPrice FLOAT NULL,
-    buyPercentage     FLOAT NULL,
-    holdPercentage    FLOAT NULL,
-    sellPercentage    FLOAT NULL,
-    timeRange INT NULL ,
-    target VARCHAR(255) NULL,
-    accountId INT NOT NULL ,
-    model VARCHAR(255) NULL ,
-    rawData LONGTEXT NULL ,
-    FOREIGN KEY (accountId) REFERENCES account(accountId)
+    searchId    int auto_increment
+        primary key,
+    accountId   int                                 not null,
+    stockSymbol varchar(255)                        not null,
+    searchDate  timestamp default CURRENT_TIMESTAMP null,
+    constraint unique_account_stock
+        unique (accountId, stockSymbol),
+    constraint searchhistory_ibfk_1
+        foreign key (accountId) references account (accountId)
 );
-alter table preferences
-    add constraint preferences_pk
-        unique (accountId);
-alter table recommendationlist
-    add constraint recommendationlist_pk
-        unique (accountId);
+
+create table thresholdsettings
+(
+    thresholdId      int auto_increment
+        primary key,
+    accountId        int                                 not null,
+    stockSymbol      varchar(255)                        not null,
+    changePercentage float                               not null,
+    notifyDateTime   timestamp default CURRENT_TIMESTAMP null,
+    constraint unique_thresholdSettings_stock
+        unique (accountId, stockSymbol),
+    constraint thresholdsettings_ibfk_1
+        foreign key (accountId) references account (accountId)
+);
+
+create table watchlist
+(
+    watchItemId int auto_increment
+        primary key,
+    accountId   int                                 not null,
+    stockSymbol text                                not null,
+    addedDate   timestamp default CURRENT_TIMESTAMP null,
+    constraint watchlist_pk
+        unique (accountId),
+    constraint watchlist_ibfk_1
+        foreign key (accountId) references account (accountId)
+);
 
 
--- LEFT JOIN 部分
-SELECT
-    ts.accountId,
-    ts.thresholdId,
-    ts.stockSymbol,
-    ts.changePercentage
-FROM
-    thresholdSettings ts
-LEFT JOIN
-    account a ON ts.accountId = a.accountId
-WHERE
-    a.profile = 'premium';
+SET @accountId = 1;
 
-alter table account
-    add card_number VARCHAR(255) null;
 
-alter table account
-    add nextPaymentDate DATETIME null;
+START TRANSACTION;
+
+
+DELETE FROM comment WHERE accountId = @accountId;
+DELETE FROM followlist WHERE accountId = @accountId;
+DELETE FROM notification WHERE accountId = @accountId;
+DELETE FROM predictiondata WHERE accountId = @accountId;
+DELETE FROM preferences WHERE accountId = @accountId;
+DELETE FROM recommendationlist WHERE accountId = @accountId;
+DELETE FROM review WHERE accountId = @accountId;
+DELETE FROM searchhistory WHERE accountId = @accountId;
+DELETE FROM thresholdsettings WHERE accountId = @accountId;
+DELETE FROM watchlist WHERE accountId = @accountId;
+DELETE FROM emailverification WHERE email IN (SELECT email FROM account WHERE accountId = @accountId);
+DELETE FROM account WHERE accountId = @accountId;
+
+COMMIT;
+

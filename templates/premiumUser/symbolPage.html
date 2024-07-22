@@ -887,14 +887,28 @@
                 axios.post(`/insert_searchHistory/${this.stockInfo.symbol}`)
         },
         methods: {
-            async fetchRecommSymbol(symbol){
-                this.loadingRecommSymbol = true;
-                axios.get(`/getSimilarSymbol/${symbol}`)
-                .then(response => {
-                    this.recommendationSymbols = response.data;
-                    this.loadingRecommSymbol = false;
-                })
-            },
+    async fetchRecommSymbol(symbol) {
+        this.loadingRecommSymbol = true;
+        this.recommendationSymbols = [];
+
+        try {
+            const response = await axios.get(`/getSimilarSymbol/${symbol}`);
+            const symbols = response.data;
+
+            for (const sym of symbols) {
+                try {
+                    const stockResponse = await axios.get(`/stock_info_minimum/${sym}`);
+                    this.recommendationSymbols.push(stockResponse.data);
+                     this.loadingRecommSymbol = false;
+                } catch (error) {
+                    console.error(`Error fetching data for symbol ${sym}:`, error);
+                    continue;
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching recommended symbols:', error);
+        }
+    },
                         navigateToStock(symbol) {
               window.location.href = `/symbol/${symbol}`;
             },

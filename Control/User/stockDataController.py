@@ -53,17 +53,12 @@ class StockDataController:
             responseNew = requests.get(url).json()
             result = []
             for Symbol in responseNew.get("data"):
-                try:
-                    if Symbol["key"] != symbol:
-                        symbol_data = self.get_stock_info_minimum(Symbol["key"])
-                        result.append(symbol_data)
-                    else:
-                        continue
-                except Exception:
-                    continue
+                if Symbol["key"] != symbol:
+                    result.append(Symbol["key"])
             return result
         else:
             return []
+
     def search_stock(self, content):
         api_key = '1TI3ZQ9MXCZ08O3M'
         url = f"https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords={content}&apikey={api_key}"

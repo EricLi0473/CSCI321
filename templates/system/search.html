@@ -127,7 +127,7 @@
             </div>
             <h1 class="text-black text-2xl font-bold mb-4">[[ title ]]</h1>
             <div v-if="showStock">
-  <div class="join mt-8 md-4">
+  <div class="join mt-8 mb-4">
     <button class="btn join-item" @click="sortStockList('price')">Filter by Price</button>
     <button class="btn join-item" @click="sortStockList('absolute_change')">Filter by Change</button>
     <button class="btn join-item" @click="sortStockList('volume')">Filter by Volume</button>
@@ -137,11 +137,11 @@
                     <!-- head -->
                     <thead>
                       <tr>
-                        <th class="text-black">#</th>
+                        <th class="text-black text-center">#</th>
                         <th class="text-black text-xl text-center">Symbol</th>
-                        <th class="text-black text-xl text-center">Full Name</th>
-                        <th class="text-black text-xl text-center">Latest Price</th>
-                        <th class="text-black text-xl text-center">Chg</th>
+                        <th class="text-black text-xl ">Full Name</th>
+                        <th class="text-black text-xl ">Latest Price</th>
+                        <th class="text-black text-xl ">Chg</th>
                         <th class="text-black text-xl ">%Chg</th>
                         <th class="text-black text-xl ">Volume</th>
                         <th class="text-black text-xl "></th>
