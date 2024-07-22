@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>payment</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="h-screen" id="app">
+      <section class="bg-white">
+        <div class="lg:grid lg:min-h-screen lg:grid-cols-12">
+          <section
+            class="relative flex h-32 items-end bg-gray-900 lg:col-span-5 lg:h-full xl:col-span-6"
+          >
+            <img
+              alt=""
+              src="../../static/resource/bck_sky.jpg"
+              class="absolute inset-0 h-full w-full object-cover opacity-80"
+            />
+
+            <div class="hidden lg:relative lg:block lg:p-12">
+              <a class="block text-white" href="#">
+                <span class="sr-only">Home</span>
+                <img
+                  src="../../static/resource/LOGOS/WhiteLogo.png"
+                  class="h-8 sm:h-10"
+                />
+              </a>
+
+              <h2
+                class="mt-6 text-2xl font-bold text-white sm:text-3xl md:text-4xl"
+              >
+                Welcome to StockForecast4.me
+              </h2>
+
+              <p class="mt-4 leading-relaxed text-white/90">
+                Make smarter investment decisions with data-driven forecasts.
+              </p>
+            </div>
+          </section>
+
+          <main
+            class="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6"
+          >
+            <div class="max-w-xl lg:max-w-3xl">
+              <div class="relative -mt-16 block lg:hidden">
+                <a
+                  class="inline-flex size-16 items-center justify-center rounded-full bg-white text-blue-600 sm:size-20"
+                  href="#"
+                >
+                  <span class="sr-only">Home</span>
+
+                  <img
+                    src="../../static/resource/LOGOS/WhiteLogo.png"
+                    class="h-8 sm:h-10"
+                  />
+                </a>
+
+                <h1
+                  class="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl"
+                >
+                  Welcome to StockForecast4.me
+                </h1>
+
+                <p class="mt-4 leading-relaxed text-gray-500">
+                  Make smarter investment decisions with data-driven forecasts.
+                </p>
+              </div>
+
+<form @submit.prevent="signUp" class="mt-8 grid grid-cols-6 gap-6">
+  <div class="col-span-6 sm:col-span-3">
+    <label for="FirstName" class="block text-sm font-medium text-gray-700">
+      First Name
+    </label>
+    <input
+      type="text"
+      id="FirstName"
+      name="first_name"
+      class="mt-1 w-full rounded-sm border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.firstName"
+    />
+  </div>
+
+  <div class="col-span-6 sm:col-span-3">
+    <label for="LastName" class="block text-sm font-medium text-gray-700">
+      Last Name
+    </label>
+    <input
+      type="text"
+      id="LastName"
+      name="last_name"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="account.lastName"
+    />
+  </div>
+
+  <div class="col-span-5">
+    <label for="Email" class="block text-sm font-medium text-gray-700">
+      Card number
+    </label>
+    <input
+      type="cardNumber"
+      id="cardNumber"
+      name="email"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+      v-model="card_number"
+    />
+  </div>
+
+  <div class="col-span-1">
+    <label for="Email" class="block text-sm font-medium text-gray-700">
+      CVV
+    </label>
+    <input
+      type="password"
+      id = "cvv"
+      class="mt-1 w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 shadow-md h-8"
+    />
+  </div>
+
+    <div class="col-span-6">
+        <img src="https://mythslegendscollection.com/wp-content/uploads/2020/04/visa-mastercard-american-express-png-6.png" class="h-12">
+    </div>
+
+  <div class="col-span-3 sm:col-span-3">
+    <label for="Sex" class="block text-sm font-medium text-gray-700">
+      Month
+    </label>
+    <label>
+      <select
+        class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+      >
+        <option value="">Month</option>
+        <option value="male">1</option>
+        <option value="female">2</option>
+        <option value="other">3</option>
+        <option value="other">4</option>
+        <option value="other">5</option>
+        <option value="other">6</option>
+        <option value="other">7</option>
+        <option value="other">8</option>
+        <option value="other">9</option>
+        <option value="other">10</option>
+        <option value="other">11</option>
+        <option value="other">12</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="col-span-3 sm:col-span-3">
+    <label for="Sex" class="block text-sm font-medium text-gray-700">
+      Year
+    </label>
+    <label>
+      <select
+        name="Sex"
+        id="Sex"
+        class="mt-1.5 w-full rounded-lg border-gray-300 text-gray-700 sm:text-sm h-8"
+        v-model="account.sex"
+      >
+        <option value="">Year</option>
+        <option value="male">2024</option>
+        <option value="female">2025</option>
+        <option value="other">2026</option>
+        <option value="other">2027</option>
+        <option value="other">2028</option>
+        <option value="other">2029</option>
+      </select>
+    </label>
+  </div>
+
+  <div class="col-span-6 sm:flex sm:items-center sm:gap-4">
+    <button
+      class="inline-block shrink-0 rounded-md border border-blue-600 bg-blue-600 px-12 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500"
+      type="submit"
+    >
+      Done
+    </button>
+  </div>
+</form>
+              <dialog id="exception" class="modal modal-bottom sm:modal-middle">
+    <div class="modal-box bg-red-400">
+      <h3 class="font-bold text-lg">Failed</h3>
+      <p class="py-4">[[exception]]</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn bg-red-200">OK</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+            </div>
+          </main>
+        </div>
+      </section>
+    </div>
+<script>
+            new Vue({
+            el: '#app',
+            delimiters: ['[[', ']]'],
+            data: {
+                card_number:'',
+                account:JSON.parse('{{ user|tojson }}')
+            },
+            computed: {
+
+            },
+            mounted() {
+        document.getElementById('cardNumber').addEventListener('input', function (e) {
+    // 只允许输入数字
+    this.value = this.value.replace(/[^0-9]/g, '');
+
+});
+        document.getElementById('cvv').addEventListener('input', function (e) {
+    let value = this.value;
+    // 只保留数字
+    value = value.replace(/\D/g, '');
+    // 限制最多三个数字
+    if (value.length > 3) {
+        value = value.slice(0, 3);
+    }
+    this.value = value;
+});
+            },
+            methods: {
+                  upgradeAccount(){
+                      this.account.profile = 'premium';
+                      this.account.card_number = this.card_number;
+                      this.account.nextPaymentDate = null;
+                      axios.post('/upgrade_to_premium', {account:this.account})
+                        .then(response => {
+                             window.location.href = '/country_Setting'
+                        })
+                  },
+
+            }
+        });
+</script>
+</body>
+</html>

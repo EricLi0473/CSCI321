@@ -175,7 +175,7 @@
                                 <div>
                                     <div class=" mt-4">
                        <span class="text-4xl">Account Setting</span></div>
-                      <div class="join mt-4"> <span class="text-md">Private Account</span>
+                      <div class="join mt-4"> <span class="text-md ml-3">Private Account</span>
                           <div class="tooltip" data-tip="other user can not see your account">
                           <label class="ml-4" >
                           <input type="checkbox" class="toggle" v-model="account.isPrivateAccount" @change="updateAccountStatus">
@@ -183,6 +183,54 @@
                       </div>
                       </div>
                   </div>
+
+            <div class="mb-8 mt-12" v-if="account.profile === 'premium'">
+                  <span class="text-4xl">Payment detail</span>
+              </div>
+              <div class="grid grid-cols-4 gap-4">
+
+                  <div class="grid grid-cols-1" v-if="account.profile === 'premium'">
+                  <div class="h-fit rounded-lg ">
+                      <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th class="text-black text-xl">CardNumber</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- row 1 -->
+                      <tr class="hover:bg-gray-200 cursor-pointer">
+                        <td class="text-black text-xl">*****[[ account.card_number ]]</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  </div>
+
+
+                  <div class="h-fit rounded-lg ">
+                              <table class="table">
+                    <!-- head -->
+                    <thead>
+                      <tr>
+                        <th class="text-black text-xl">Next time Fee deduction</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- row 1 -->
+                      <tr class="hover:bg-gray-200 cursor-pointer">
+                        <td class="text-black text-xl">[[ account.nextPaymentDate ]]</td>
+                      </tr>
+                    </tbody>
+                  </table>
+  </div>
+              </div>
+              </div>
+
+
+
+
+{#       free user       #}
               <div class="card bg-base-100 w-96 shadow-md mt-4 z-0 mt-40" v-if="account.profile === 'free'">
   <div class="card-body">
     <h2 class="card-title">Upgrade To premium!</h2>

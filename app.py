@@ -768,6 +768,11 @@ def api():
         return render_template('/premiumUser/apiPage.html',user=session.get('user'))
     else:
         return redirect(url_for('login'))
+
+@app.route('/payment',methods=['GET','POST'])
+def payment():
+    if session.get('user'):
+        return render_template('/User/payment.html',user=session.get('user'))
 @app.route('/api/get',methods=['GET'])
 def apiGetPrediction():
     try:
@@ -880,7 +885,6 @@ def start_daily_task_scheduler():
     scheduler = BackgroundScheduler()
     scheduler.add_job(daily_task, 'cron', hour=5, minute=00)
     scheduler.start()
-
 
 if __name__ == '__main__':
     # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
