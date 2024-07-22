@@ -830,8 +830,24 @@ def apiRequest():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+
+ip_404_counter = {}
+blacklist = set()
+THRESHOLD = 10
+
 @app.errorhandler(404)
 def page_not_found(e):
+    remote_addr = get_remote_address()
+
+    if remote_addr in blacklist:
+        return "You are blacklisted.", 403
+
+    ip_404_counter[remote_addr] = ip_404_counter.get(remote_addr, 0) + 1
+
+    if ip_404_counter[remote_addr] > THRESHOLD:
+        blacklist.add(remote_addr)
+        return "You are blacklisted.", 403
+
     return render_template('/system/404.html'), 404
 
 @app.errorhandler(429)
