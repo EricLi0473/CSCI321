@@ -308,21 +308,23 @@
                 if (sessionStorage.getItem('profile')) {
                     this.account.profile = sessionStorage.getItem('profile');
                 }
-                console.log(sessionStorage.getItem('profile'));
-          console.log(sessionStorage.getItem('email'))
+                if (sessionStorage.getItem('card_number')){
+                  this.account.card_number = sessionStorage.getItem('card_number');
+                }else {
+                  this.account.card_number = null;
+                }
+                console.log(sessionStorage.getItem('card_number'));
         },
         methods: {
           signUp() {
-            // 检查this.account是否包含13个item且每个item的value不为空
             const accountItems = Object.entries(this.account);
-            const has13Items = accountItems.length === 14;
-            const allValuesNotEmpty = accountItems.every(([key, value]) => value !== null && value !== undefined && value !== '');
+            const has13Items = accountItems.length === 15;
+            console.log(accountItems.length)
+            const allValuesNotEmpty = accountItems.every(([key, value]) => value !== '' && value !== undefined);
 
-            // 检查密码和确认密码是否一致
             const passwordsMatch = this.account.password === this.account.confirmPassword;
 
             if (!has13Items || !allValuesNotEmpty) {
-              console.log("Account dictionary must contain 13 items and none of the values should be empty.");
               this.exception = "All fields are required！"
               document.getElementById('exception').showModal();
             } else if (!passwordsMatch) {

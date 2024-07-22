@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -773,6 +773,13 @@ def api():
 def payment():
     if session.get('user'):
         return render_template('/User/payment.html',user=session.get('user'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/signUpPayment',methods=['GET','POST'])
+def signUpPayment():
+    return render_template('/User/signUpPayment.html')
+
 @app.route('/api/get',methods=['GET'])
 def apiGetPrediction():
     try:
@@ -815,8 +822,9 @@ def apiRequest():
         def send_request():
             response = requests.get(url)
 
-        thread = threading.Thread(target=send_request)
-        thread.start()
+        prediction = threading.Thread(target=send_request)
+        prediction.daemon = True
+        prediction.start()
 
         return jsonify({"success":"You have successfully submitted a request. Login your account to get result"})
     except Exception as e:
@@ -887,18 +895,18 @@ def start_daily_task_scheduler():
     scheduler.start()
 
 if __name__ == '__main__':
-    # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
-    # threshold_scheduler_thread.daemon = True
-    # threshold_scheduler_thread.start()
-    #
-    # daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
-    # daily_task_scheduler_thread.daemon = True
-    # daily_task_scheduler_thread.start()
+    threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
+    threshold_scheduler_thread.daemon = True
+    threshold_scheduler_thread.start()
+
+    daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
+    daily_task_scheduler_thread.daemon = True
+    daily_task_scheduler_thread.start()
     #
     cache_whenStartUP = threading.Thread(target=cache_when_startUp)
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=True)
+        app.run(host='0.0.0.0', port=80, debug=False)
     finally:
         pass

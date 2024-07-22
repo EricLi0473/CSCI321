@@ -183,7 +183,7 @@
       <li><span class="font-bold">❚ Required:</span> <span class="underline decoration-pink-500 font-bold text-pink-700" >key</span><br>Your api key, in this case, <span class="underline decoration-pink-500 font-bold text-pink-700" >key=[[user.apikey]]</span></li>
       <li><span class="font-bold">❚ Required:</span> <span class="underline decoration-pink-500 font-bold text-pink-700" >symbol</span><br>ticker symbol in upper case, e.g., <span class="underline decoration-pink-500 font-bold text-pink-700" >symbol=AAPL</span></li>
       <li><span class="font-bold">❚ Required:</span> <span class="underline decoration-pink-500 font-bold text-pink-700" >days</span><br>time must be in 7,14 or 30 e.g., <span class="underline decoration-pink-500 font-bold text-pink-700" >days=14</span></li>
-      <li><span class="font-bold">❚ Required:</span> <span class="underline decoration-pink-500 font-bold text-pink-700" >model</span><br>must be in fast, balance, accuracy e.g., <span class="underline decoration-pink-500 font-bold text-pink-700" >model=balance</span></li>
+      <li><span class="font-bold">❚ Required:</span> <span class="underline decoration-pink-500 font-bold text-pink-700" >model</span><br>must be in fast, balance, accuracy e.g., <span class="underline decoration-pink-500 font-bold text-pink-700" >model=fast</span></li>
 
     </ul>
         <span class="text-2xl">Examples:</span>
@@ -192,7 +192,7 @@
   <pre data-prefix="1"><code><span class="text-sky-600">import</span> requests</code></pre>
   <pre data-prefix="2"><code></code></pre>
   <pre data-prefix="3"><code class="text-gray-500"># has already filled with your apikey</code></pre>
-   <pre data-prefix="4"><code>url = "https://stockforecast4.me/api/request?key=[[user.apikey]]&symbol=aapl&days=14&model=balance"</code></pre>
+   <pre data-prefix="4"><code>url = "https://stockforecast4.me/api/request?key=[[ user.apikey ]]&symbol=aapl&days=14&model=fast"</code></pre>
      <pre data-prefix="5"><code>r = requests.get(url)</code></pre>
 <pre data-prefix="6"><code>data = r.json()</code></pre>
   <pre data-prefix="7"><code>print(data)</code></pre>
@@ -200,7 +200,7 @@
     <div class="mockup-code w-4/5 mb-16">
   <pre data-prefix="#" class="bg-warning text-warning-content"><code>In https</code></pre>
       <pre data-prefix=""><code>click below to see the result</code></pre>
-      <pre data-prefix=""><code><a class="link link-hover" :href="`https://stockforecast4.me/api/request?key=${user.apikey}&symbol=aapl&days=14&model=balance`" target="_blank">https://stockforecast4.me/api/request?key=$[[user.apikey]]&symbol=aapl&days=14&model=balance</a></code></pre>
+      <pre data-prefix=""><code><a class="link link-hover" :href="`https://stockforecast4.me/api/request?key=${user.apikey}&symbol=aapl&days=14&model=fast`" target="_blank">https://stockforecast4.me/api/request?key=[[user.apikey]]&symbol=aapl&days=14&model=fast</a></code></pre>
   </div>
 
 </div>

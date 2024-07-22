@@ -219,7 +219,7 @@
                     <tbody>
                       <!-- row 1 -->
                       <tr class="hover:bg-gray-200 cursor-pointer">
-                        <td class="text-black text-xl">[[ account.nextPaymentDate ]]</td>
+                        <td class="text-black text-xl">[[ formatDate(account.nextPaymentDate) ]]</td>
                       </tr>
                     </tbody>
                   </table>
@@ -342,12 +342,14 @@
                 console.log(this.account)
           },
               methods: {
+                          formatDate(dateString) {
+            let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
+            let date = new Date(dateString);
+            return date.toLocaleDateString('en-SG', options);
+        },
                   upgradeAccount(){
                       this.account.profile = 'premium'
-                      axios.post('/upgrade_to_premium', {account:this.account})
-                        .then(response => {
-                             window.location.href = '/country_Setting'
-                        })
+                      window.location.href = '/payment'
                   },
 
                                   doSearch(){

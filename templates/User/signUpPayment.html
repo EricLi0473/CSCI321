@@ -198,7 +198,7 @@
       <p class="py-4">[[information]]</p>
       <div class="modal-action">
         <form method="dialog">
-          <button class="btn" @click="guideToPreference">OK</button>
+          <button class="btn" @click="guideToSignUp">OK</button>
         </form>
       </div>
     </div>
@@ -215,7 +215,6 @@
             data: {
               information:'',
                 card_number:'',
-                account:JSON.parse('{{ user|tojson }}'),
               fName:'',
               lName:'',
               cvv:'',
@@ -242,8 +241,8 @@
 });
             },
             methods: {
-              guideToPreference(){
-                window.location.href = '/country_Setting'
+              guideToSignUp(){
+                window.location.href = '/signup'
               },
                   upgradeAccount(){
                     if (this.card_number === '' || this.fName === '' || this.cvv === ''){
@@ -251,14 +250,9 @@
                       document.getElementById('exception').showModal();
                       return;
                     }
-                      this.account.profile = 'premium';
-                      this.account.card_number = this.card_number;
-                      this.account.nextPaymentDate = null;
-                      axios.post('/upgrade_to_premium', {account:this.account})
-                        .then(response => {
-                                                  this.information = "You have completed the payment";
+                      sessionStorage.setItem('card_number', this.card_number);
+                    this.information = "You have completed the payment";
                       document.getElementById('information').showModal();
-                        })
                   },
 
             }

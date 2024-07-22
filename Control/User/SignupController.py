@@ -12,7 +12,7 @@ class SignupController:
         api_key = ''.join(random.choices(string.ascii_letters, k=8))
         if card_number is not None:
             card_number = card_number[-4:]
-            nextPaymentDate = (datetime.today() + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')
+        nextPaymentDate = (datetime.today() + relativedelta(months=1)).strftime('%Y-%m-%d %H:%M:%S')
         return Account().signUp(f"{lastName}"+" "+f"{firstName}",hashlib.md5(password.encode()).hexdigest(),email,profile,age,sex,occupation,incomeLevel,netWorth,investmentExperience,riskTolerance,investmentGoals,api_key,card_number,nextPaymentDate)
 
 
