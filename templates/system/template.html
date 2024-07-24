@@ -629,19 +629,34 @@
         delimiters: ['[[', ']]'],
         data: {
             stat:{},
-          symbolData:JSON.parse('{{symbolData|tojson}}'),
+          symbolList:["AAPL","BILI","MSFT"],
+            symbolData:[],
           predictionData:JSON.parse('{{predictionData|tojson}}'),
-          stockInfo:JSON.parse('{{ stockInfo|tojson }}'),
+          stockInfo:{},
             reviews :JSON.parse('{{review|tojson}}'),
-            symbolData1:JSON.parse('{{symbolData1|tojson}}'),
-            symbolData2:JSON.parse('{{symbolData2|tojson}}'),
             email:''
         },
         mounted(){
-            this.renderStockData("AAPL"); // 调用renderStockData方法
+            this.updateStockData();
             this.getSystemStats();
         },
         methods: {
+                async updateStockData() {
+      for (let symbol of this.symbolList) {
+        await this.fetchStockData(symbol);
+      }
+      const stockInfo = await axios.get(`/stock_info_full/AAPL`);
+      this.stockInfo = stockInfo.data;
+       this.renderStockData("AAPL");
+    },
+    async fetchStockData(symbol) {
+      try {
+        const response = await axios.get(`/update_stock_data/${symbol}/3mo`);
+        this.symbolData.push(response.data);
+      } catch (error) {
+        console.error(`Failed to fetch data for ${symbol}:`, error);
+      }
+    },
             getSystemStats(){
                 axios.get('/getSystemStats')
                     .then(response => {
@@ -678,9 +693,9 @@
                     this.chart = klinecharts.init('chart');
                     this.chart.createIndicator('MA', false, { id: 'candle_pane' });
                 }
-            if(symbol === 'AAPL'){this.chart.applyNewData(this.symbolData);}
-            else if (symbol === 'BILI'){this.chart.applyNewData(this.symbolData1);}
-            else if (symbol === 'MSFT'){this.chart.applyNewData(this.symbolData2);}
+            if(symbol === 'AAPL'){this.chart.applyNewData(this.symbolData[0]);}
+            else if (symbol === 'BILI'){this.chart.applyNewData(this.symbolData[1]);}
+            else if (symbol === 'MSFT'){this.chart.applyNewData(this.symbolData[2]);}
 
             },
         }});
