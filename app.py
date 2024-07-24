@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from machineLearningModel.prophet_model import *
-from Control.User.storePredictionResultController import *
-from machineLearningModel.get_symbol_data import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
+# from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -903,6 +903,7 @@ def start_daily_task_scheduler():
     scheduler.start()
 
 if __name__ == '__main__':
+
     threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
     threshold_scheduler_thread.daemon = True
     threshold_scheduler_thread.start()
