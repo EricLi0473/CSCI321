@@ -591,7 +591,7 @@ def officialWeb():
     global mainPage_stockData_cache
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
     review = GetAllHeadLineReviews().get_all_headline_reviews()
-    return render_template("system/template.html",symbolData1=mainPage_stockData_cache['stockData1'],symbolData2=mainPage_stockData_cache['stockData2'],stockInfo=mainPage_stockData_cache['stockInfo'],predictionData=predictionData,symbolData=mainPage_stockData_cache['stockData'],review=review)
+    return render_template("system/template.html",predictionData=predictionData,review=review)
 
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
@@ -858,17 +858,9 @@ def page_not_found(e):
 #
 # Define cache
 notification_cache = {}
-mainPage_stockData_cache = {}
 free_user_stockData_cache = []
 
 def cache_when_startUp():
-    global mainPage_stockData_cache
-    mainPage_stockData_cache = {
-        'stockData': StockDataController().get_update_stock_data("AAPL", "3mo"),
-        'stockData1': StockDataController().get_update_stock_data("BILI", "3mo"),
-        'stockData2': StockDataController().get_update_stock_data("MSFT", "3mo"),
-        'stockInfo': StockDataController().get_stock_info_full("AAPL")
-    }
     global free_user_stockData_cache
     free_user_stockData_cache = StockDataController().get_common_symbol_data()
 
@@ -918,11 +910,11 @@ if __name__ == '__main__':
     daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
     daily_task_scheduler_thread.daemon = True
     daily_task_scheduler_thread.start()
-    #
+
     cache_whenStartUP = threading.Thread(target=cache_when_startUp)
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=False)
+        app.run(host='0.0.0.0', port=80, debug=False,threaded=True)
     finally:
         pass
