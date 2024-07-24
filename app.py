@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -460,11 +460,9 @@ def stock_info_minimum(symbol):
 
 @app.route('/update_stock_data/<string:symbol>/<string:period>', methods=['GET'])
 def update_stock_data(symbol, period):
-    if session.get('user'):
-        result = StockDataController().get_update_stock_data(symbol, period)
-        return jsonify(result)
-    else:
-        return redirect(url_for('login'))
+    result = StockDataController().get_update_stock_data(symbol, period)
+    return jsonify(result)
+
 
 @app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
 def stock_data_medium(symbol):
