@@ -335,27 +335,23 @@ def delete_comment_by_id(commentId):
 @app.route('/symbol/<string:symbol>',methods=['GET','POST'])
 def symbol(symbol):
     if session.get('user'):
-        try:
-            if session.get('user')['profile'] == 'premium':
-                user = session.get('user')
-                stockInfo = StockDataController().get_stock_info_full(symbol)
-                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
-                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-                return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
-            elif session.get('user')['profile'] == 'free':
-                user = session.get('user')
-                stockInfo = StockDataController().get_stock_info_full(symbol)
-                predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
-                threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
-                    session.get('user')['accountId'], symbol)
-                watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
-                return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
-                                       predictionresult=predictionresult, threshold=threshold, watchList=watchList,
-                                       user=user)
-        except Exception as e:
-            abort(404)
-
+        if session.get('user')['profile'] == 'premium':
+            user = session.get('user')
+            stockInfo = StockDataController().get_stock_info_full(symbol)
+            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(session.get('user')['accountId'],symbol)
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+            return render_template('/PremiumUser/symbolPage.html', stockInfo=stockInfo,predictionresult=predictionresult,threshold=threshold,watchList=watchList,user=user)
+        elif session.get('user')['profile'] == 'free':
+            user = session.get('user')
+            stockInfo = StockDataController().get_stock_info_full(symbol)
+            predictionresult = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+            threshold = Get_threshold_by_symbol_and_id().get_threshold_by_symbol_and_id(
+                session.get('user')['accountId'], symbol)
+            watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session.get('user')['accountId'])
+            return render_template('/individualFreeUser/freeUserSymbolPage.html', stockInfo=stockInfo,
+                                   predictionresult=predictionresult, threshold=threshold, watchList=watchList,
+                                   user=user)
     else:
         return redirect(url_for('login'))
 @app.route('/request_for_prediction/<string:symbol>/<string:days>/<string:model>/<string:accountId>', methods=['GET', 'POST'])
