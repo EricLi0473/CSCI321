@@ -604,6 +604,12 @@
     </div>
   </div>
 </section>
+      <!-- To The Top Button -->
+  <button id="toTopButton" class="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none hidden">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+    </svg>
+  </button>
 <!-- Sign up End -->
 <!--{# foot area start #}-->
 <footer class="bg-gray-100 ">
@@ -724,6 +730,31 @@
 
   keenSliderPrevious.addEventListener('click', () => keenSlider.prev())
   keenSliderNext.addEventListener('click', () => keenSlider.next())
+
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+              // Scroll to the top when the button is clicked
+        document.getElementById('toTopButton').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Show or hide the button based on scroll position
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 200) {
+                document.getElementById('toTopButton').classList.remove('hidden');
+            } else {
+                document.getElementById('toTopButton').classList.add('hidden');
+            }
+        });
 </script>
 </body>
 </html>

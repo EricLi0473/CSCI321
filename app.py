@@ -59,11 +59,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-# from machineLearningModel.GRU_Model import *
-# from machineLearningModel.LSTM_Model import *
-# from machineLearningModel.prophet_model import *
-# from Control.User.storePredictionResultController import *
-# from machineLearningModel.get_symbol_data import *
+from machineLearningModel.GRU_Model import *
+from machineLearningModel.LSTM_Model import *
+from machineLearningModel.prophet_model import *
+from Control.User.storePredictionResultController import *
+from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -462,6 +462,7 @@ def stock_info_minimum(symbol):
 def update_stock_data(symbol, period):
     result = StockDataController().get_update_stock_data(symbol, period)
     return jsonify(result)
+
 
 @app.route('/stock_data_medium/<string:symbol>',methods=['GET'])
 def stock_data_medium(symbol):
@@ -900,16 +901,17 @@ def start_daily_task_scheduler():
     scheduler.start()
 
 if __name__ == '__main__':
-    # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
-    # threshold_scheduler_thread.daemon = True
-    # threshold_scheduler_thread.start()
-    #
-    # daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
-    # daily_task_scheduler_thread.daemon = True
-    # daily_task_scheduler_thread.start()
-    #
-    # cache_whenStartUP = threading.Thread(target=cache_when_startUp)
-    # cache_whenStartUP.start()
+
+    threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
+    threshold_scheduler_thread.daemon = True
+    threshold_scheduler_thread.start()
+
+    daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
+    daily_task_scheduler_thread.daemon = True
+    daily_task_scheduler_thread.start()
+
+    cache_whenStartUP = threading.Thread(target=cache_when_startUp)
+    cache_whenStartUP.start()
 
     try:
         app.run(host='0.0.0.0', port=80, debug=False,threaded=True)
