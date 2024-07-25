@@ -376,7 +376,7 @@ class StockDataController:
         data_dict['company'] = company
 
 
-        data_dict['companyExecutives'] = info['companyOfficers']
+        data_dict['companyExecutives'] = info.get('companyOfficers',[])
         return data_dict
 
 if __name__ == '__main__':

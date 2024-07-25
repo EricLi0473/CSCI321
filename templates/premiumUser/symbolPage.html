@@ -402,7 +402,7 @@
 </div>
   </div>
 <!--            Company Executives-->
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-2" v-if="stockInfo.companyExecutives.length !== 0">
                 <span class="text-xl">Company Executives</span></br>
                             <div class="flex h-fit my-2 p-3 bg-white rounded-lg shadow-sm flex items-center justify-between" v-for="(info,index) in stockInfo.companyExecutives" :key="info.name">
                     <span>[[info.title]]</span>
