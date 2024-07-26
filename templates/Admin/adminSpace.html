@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+<link rel="icon" sizes="32x32" href="../../static/resource/LOGOS/favicon.ico">
     <title>AdminSapce</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -206,7 +207,7 @@
           </div>
                   <div class="flex flex-row gap-4 mt-8">
                   <button class="btn btn-outline btn-info" @click="toggleInfoEdit()">Edit</button>
-                  <button class="btn btn-outline btn-warning" @click="updateUser">Confirm</button>
+                  <button class="btn btn-outline btn-secondary" @click="updateUser" v-if="isEditingInfo === 1">Confirm</button>
                       <button class="btn btn-outline btn-warning" @click="togglePasswordModal">Change Password</button>
                   </div>
               </div>
