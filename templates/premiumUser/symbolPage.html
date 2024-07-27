@@ -185,11 +185,11 @@
   </div>
 
 
-              <button :class="['btn', { 'bg-red-400': is_inside_watchList === 1 }]" @click="toggleWatchList">watchList
+              <button :class="['btn', { 'bg-red-300': is_inside_watchList === 1 }]" @click="toggleWatchList">watchList
   <svg
     xmlns="http://www.w3.org/2000/svg"
-    class="h-6 w-6"
-    fill="none"
+    class="h-6 w-6 text-red-500"
+    :fill="is_inside_watchList === 1 ? 'currentColor' : 'none'"
     viewBox="0 0 24 24"
     stroke="currentColor">
     <path

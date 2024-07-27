@@ -54,6 +54,7 @@ from Control.User.reset_mlView import *
 from Control.User.detectDuplicateEmail import *
 from Control.Admin.get_all_precessing_predictionData import *
 from Control.User.get_AllThresholds_by_account import *
+from Control.User.sendEmailController import *
 import hashlib
 from flask import Flask, redirect
 import yfinance as yf
@@ -403,7 +404,10 @@ def request_for_prediction(symbol, days, model,accountId):
     # 3. Store a notification
     #def set_notification(self, accountId, notification, notificationType, referenceId, symbol):
     NotificationController().set_notification(accountId, f"Prediction for {symbol} is completed.", 'Prediction', predictionId, symbol)
-
+    # email
+    account = GetPreferenceByAccountId().get_preference_by_accountId(accountId)
+    if account['receiveNotification'] == 1:
+        sendEmailController().send_Notification(account['email'],f"Prediction for {symbol} is completed.")
     return jsonify({'success': True, 'prediction_result': prediction_result})
 
 
@@ -665,6 +669,13 @@ def configure_personal_setting():
     else:
         return redirect(url_for('login'))
 
+@app.route('/update_ReceiveNotification/<string:receiveNotification>',methods=['GET','POST'])
+def update_ReceiveNotification(receiveNotification):
+    if session.get('user'):
+        UpdatePreferenceByAccountId().update_ReceiveNotification_by_accountId(session['user']['accountId'],receiveNotification)
+        return jsonify({'success': True})
+    else:
+        return redirect(url_for('login'))
 @app.route('/pricing',methods=['GET','POST'])
 def pricing():
     return render_template("/system/pricing.html")
@@ -869,13 +880,18 @@ def threshold_notification():
                 # Checking for recent notifications
                 notificationWord = f"Hi, Your followed {user['stockSymbol']} that exceeds your threshold."
                 NotificationController().set_notification(user['accountId'], notificationWord, "threshold", user['thresholdId'],user['stockSymbol'])
+                # email
+                if user['receiveNotification']:
+                    sendEmailController().send_Notification(user['email'],notificationWord)
                 notification_cache[cache_key] = current_time
                 for userFollow in GetAccountListByFollowedId().get_accountList_by_followedId(user['accountId']):
                     if userFollow['notifyMe'] == 1:
                         notificationWord = f"There have been updates to stock {user['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
                         hashed_symbol = int(hashlib.md5(user['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
                         NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,user['stockSymbol'])
-
+                    #email
+                        if user['receiveNotification']:
+                            sendEmailController().send_Notification(user['email'],notificationWord)
 def daily_task():
     # update ml prediction every day
     cache_when_startUp()

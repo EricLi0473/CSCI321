@@ -34,7 +34,7 @@ class Preference:
             self.mydb.close()
 
     def get_preference_by_accountId(self, accountId):
-        sql = "SELECT * FROM preferences WHERE accountId = %s"
+        sql = "SELECT * FROM preferences LEFT JOIN account ON preferences.accountId = account.accountId WHERE preferences.accountId = %s "
         val = (accountId,)
         return self.fetchOne(sql, val)
 
@@ -43,5 +43,11 @@ class Preference:
         val = (accountId, preferenceIndustry, preferenceCountry)
         self.commit(sql, val)
 
+    def update_ReceiveNotification_by_accountId(self, accountId, receiveNotification):
+        sql = "UPDATE preferences SET receiveNotification = %s WHERE accountId = %s"
+        val = (receiveNotification,accountId)
+        self.commit(sql, val)
+        return receiveNotification
+
 if __name__ == "__main__":
-    print(Preference().set_preference_by_accountId("1","Energy","in"))
+    print(Preference().get_preference_by_accountId("2"))

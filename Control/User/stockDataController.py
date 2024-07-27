@@ -104,7 +104,8 @@ class StockDataController:
                     '.FRK': '.F',
                     '.AMS': '.AS',
                     '.BSE': '.BO',
-                    '.SHZ': '.SZ'
+                    '.SHZ': '.SZ',
+                    '.L' : '.IL'
                 }
 
                 # change symbol
