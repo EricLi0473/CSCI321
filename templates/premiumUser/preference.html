@@ -175,14 +175,24 @@
 </div>
                                 <div>
                                     <div class=" mt-4">
-                       <span class="text-4xl">Account Setting</span></div>
-                      <div class="join mt-4"> <span class="text-md ml-3">Private Account</span>
+                       <span class="text-4xl">Account & Notification Setting</span></div>
+                                    <div class="grid grid-cols-2 gap-4 w-fit">
+                      <div class="flex items-start mt-8 w-fit"> <span class="text-md ml-3">Private Account</span>
                           <div class="tooltip" data-tip="other user can not see your account">
                           <label class="ml-4" >
                           <input type="checkbox" class="toggle" v-model="account.isPrivateAccount" @change="updateAccountStatus">
                       </label>
                       </div>
                       </div>
+                                        <div class="flex items-start mt-8 w-fit"> <span class="text-md ml-3">Email me when <b>Hit threshold & Prediction ready</b></span>
+                          <div class="tooltip" data-tip="other user can not see your account">
+                          <label class="ml-4" >
+                          <input type="checkbox" class="toggle" v-model="preference.receiveNotification" @change="updateReceiveNotification">
+                      </label>
+                      </div>
+                      </div>
+
+                                    </div>
                   </div>
 
             <div class="mb-8 mt-12" v-if="account.profile === 'premium'">
@@ -343,6 +353,11 @@
                 console.log(this.account)
           },
               methods: {
+                  updateReceiveNotification(){
+                      console.log(this.preference.receiveNotification)
+                      axios.post(`/update_ReceiveNotification/${this.preference.receiveNotification}`);
+
+                  },
                           formatDate(dateString) {
             let options = { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' };
             let date = new Date(dateString);

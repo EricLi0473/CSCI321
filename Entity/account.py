@@ -172,11 +172,15 @@ class Account:
     ts.accountId,
     ts.thresholdId,
     ts.stockSymbol,
-    ts.changePercentage
+    ts.changePercentage,
+    a.email,
+    p.receiveNotification
 FROM
     thresholdSettings ts
 LEFT JOIN
     account a ON ts.accountId = a.accountId
+LEFT JOIN
+    preferences p ON ts.accountId = p.accountId
 WHERE
     a.profile = 'premium'
         '''

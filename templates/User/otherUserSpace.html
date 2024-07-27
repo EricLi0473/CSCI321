@@ -133,12 +133,16 @@
                     <label class="block">
                         <span class="block text-sm mb-2 text-slate-500">[[myAccount.bio]]</span>
                     </label>
-                    <div class="join my-2 mt-4">
+                    <div class="flex flex-row items-center my-2 mt-4">
+                    <div class="join">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
   <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">WatchList</button>
   <button class="btn join-item" @click="showDiv('thresholdList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">Threshold</button>
 
-                                                <button
+
+</div>
+                    <div>
+                                                                        <button
                             class="btn btn-outline btn-md w-40 ml-4"
                             @click.stop="toggleFriendFollow(myAccount.accountId)"
                           >
@@ -158,7 +162,8 @@
                             </svg>
                             <span class="text-red-500">[[ accountFavoList.includes(myAccount.accountId) ? 'Followed' : 'Follow' ]]</span>
                           </button>
-</div>
+                    </div>
+                </div>
                     <div class="divider"></div>
 <!--                    -->
 <div id="accountInfo" v-if="activeDiv === 'accountInfo'">
@@ -208,7 +213,18 @@
   <option value="other">Other</option>
 </select>
               </div>
-
+                              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">Investment Experience</dt>
+                <dd class="text-gray-700 sm:col-span-2">[[myAccount.investmentExperience]]</dd>
+              </div>
+                              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">risk Tolerance</dt>
+                <dd class="text-gray-700 sm:col-span-2">[[myAccount.riskTolerance]]</dd>
+              </div>
+                                              <div class="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt class="font-medium text-gray-900">investmentGoals</dt>
+                <dd class="text-gray-700 sm:col-span-2">[[myAccount.investmentGoals]]</dd>
+              </div>
             </dl>
           </div>
               </div>
