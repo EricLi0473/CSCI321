@@ -15,17 +15,13 @@ class StockDataController:
         return cls._instance
     def __init__(self):
         pass
-    @cached(cache=cache)
+
     def get_common_symbol_data(self):
         url = f"https://api.marketaux.com/v1/entity/stats/aggregation?api_token=ILqmhd82JOP8Feo9YFwxoFca82e8mzasKWG4jYKe&countries=us"
         response = requests.get(url)
         list = []
-        count = 0
         for symbol in response.json().get('data'):
             try:
-                count +=1
-                if count > 10:
-                    break
                 list.append(self.get_stock_info_medium(symbol['key']))
             except Exception:
                 continue

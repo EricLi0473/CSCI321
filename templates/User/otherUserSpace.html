@@ -136,7 +136,7 @@
                     <div class="flex flex-row items-center my-2 mt-4">
                     <div class="join">
   <button class="btn join-item" @click="showDiv('accountInfo')">Personal Information</button>
-  <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">WatchList</button>
+  <button class="btn join-item" @click="showDiv('watchList')" v-if="myAccount.profile === 'premium' && Account.profile !== 'admin'">WatchList</button>
   <button class="btn join-item" @click="showDiv('thresholdList')" v-if="myAccount.profile === 'premium' && Account.profile === 'premium'">Threshold</button>
 
 

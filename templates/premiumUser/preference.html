@@ -175,7 +175,7 @@
 </div>
                                 <div>
                                     <div class=" mt-4">
-                       <span class="text-4xl">Account & Notification Setting</span></div>
+                                        <span class="text-4xl">Account <span v-if="account.profile === 'premium'">& Notification</span> Setting</span></div>
                                     <div class="grid grid-cols-2 gap-4 w-fit">
                       <div class="flex items-start mt-8 w-fit"> <span class="text-md ml-3">Private Account</span>
                           <div class="tooltip" data-tip="other user can not see your account">
@@ -184,7 +184,7 @@
                       </label>
                       </div>
                       </div>
-                                        <div class="flex items-start mt-8 w-fit"> <span class="text-md ml-3">Email me when <b>Hit threshold & Prediction ready</b></span>
+                                        <div v-if="account.profile === 'premium'" class="flex items-start mt-8 w-fit"> <span class="text-md ml-3">Email me when <b>Hit threshold & Prediction ready</b></span>
                           <div class="tooltip" data-tip="other user can not see your account">
                           <label class="ml-4" >
                           <input type="checkbox" class="toggle" v-model="preference.receiveNotification" @change="updateReceiveNotification">

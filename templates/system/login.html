@@ -102,7 +102,7 @@
                       <div class="form-control">
   <label class="label cursor-pointer">
     <span class="label-text text-sm text-gray-500">Remember me</span>
-    <input type="checkbox"  v-model="isChecked" @change="toggleCheck" class="checkbox ml-2" />
+    <input type="checkbox"  v-model="isChecked" class="checkbox ml-2" />
   </label>
 </div>
       </div>
@@ -169,7 +169,7 @@
       captchaUrl: '/generate_captcha',
       captcha:'',
       account:{},
-      isChecked:false
+      isChecked:false,
     },
     mounted() {
       this.failedAttempts = sessionStorage.getItem('failedAttempts') || 0;
@@ -179,11 +179,8 @@
       }
     },
     methods: {
-              toggleCheck() {
-          this.isChecked = !this.isChecked;
-        },
       verifyCaptcha(){
-        axios.post('/verify_captcha', {captcha:this.captcha,account:this.account,rememberMe:this.isChecked})
+        axios.post('/verify_captcha', {captcha:this.captcha,account:this.account,rememberMe:this.displayIsCheck})
                 .then(response => {
                   if (response.data.success){
                       window.location.href = '/redirectToUserPage';

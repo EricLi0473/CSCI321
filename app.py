@@ -792,6 +792,8 @@ def apiGetPrediction():
         symbol = request.args.get('symbol')
         VerifyApiKeyController().verifyApiKey(key)
         result  = GetPredictionDataBySymbol().get_predictionData_by_symbol(symbol)
+        result.pop("predictionId", None)
+        result.pop("accountId", None)
         if not result:
             raise Exception("This symbol do not have prediction data this time")
         return jsonify({'prediction': result})
