@@ -10,6 +10,18 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.2/dist/full.min.css" rel="stylesheet" type="text/css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.css"
+    />
+    <style>
+
+
+        .keen-slider__slide {
+  width: 280px;
+  min-width: 280px;
+}
+    </style>
 </head>
 <body>
     <div id="app" class="flex h-screen">
@@ -137,7 +149,39 @@
                         </div>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4 mt-16">
+                <div class="grid grid-cols-2 gap-4 mt-2">
+      <div id="my-keen-slider" class="keen-slider col-span-2 flex flex-row">
+        <div
+          v-for="(stock, index) in commonSymbol"
+          :key="index"
+            :class="['keen-slider__slide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-lg',  'hover:shadow-md', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"        >
+          <div>
+            <div class="flex gap-4 w-fit">
+              <a
+                :href="'/symbol/' + stock.symbol"
+                target="_blank"
+                class="text-blue-500 hover:underline text-sm"
+                >[[stock.longName]]
+              </a>
+            </div>
+            <p class="text-lg text-gray-800 mb-1">[[stock.price]]</p>
+            <p
+              :class="{
+                'text-green-500': stock.relative_change >= 0,
+                'text-red-500': stock.relative_change < 0,
+              }"
+              class="text-sm font-semibold"
+            >
+              [[stock.relative_change + '%']] ([[stock.absolute_change]])
+            </p>
+          </div>
+          <canvas
+            :id="'recommandChart' + index"
+            style="width: 250px; height: 50px"
+            class="rounded-xl"
+          ></canvas>
+        </div>
+      </div>
 
                     <div>
 
@@ -287,7 +331,8 @@
                 isLoadingNews:1,
                 isLoadingSymbol:1,
                 hasNoNotification:0,
-                greeting:''
+                greeting:'',
+                commonSymbol: JSON.parse('{{commonSymbol|tojson}}')
             },
             computed: {
             },
@@ -296,7 +341,7 @@
                 this.getNotifications();
                 this.getRecommendationSymbols();
                 this.getRecommendationNews();
-
+                this.renderGraph();
             },
             methods: {
                                                 updateGreeting() {
@@ -389,6 +434,90 @@
                 onImageError(event) {
                     event.target.src = '../../static/resource/altNewsIMG.jpg';
                 },
+                                                  renderGraph() {
+                    this.commonSymbol.forEach((stock, index) => {
+
+                        const data = stock.data;
+                        const labels = data.map(item => new Date(item.timestamp).toLocaleDateString());
+                        const closePrices = data.map(item => item.close);
+                        // 计算平均价格
+                        const averagePrice = closePrices.reduce((a, b) => a + b, 0) / closePrices.length;
+                        const averagePrices = new Array(closePrices.length).fill(averagePrice);
+
+                        this.$nextTick(() => {
+                            // 获取 Canvas 上下文
+                            const canvasId = 'recommandChart' + index;
+                            const ctx = document.getElementById(canvasId).getContext('2d');
+
+                            // 创建渐变
+                            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+                            if (stock.upsAndDowns === 0) {
+                                gradient.addColorStop(0, 'rgba(255, 99, 132, 0.6)'); // 红色渐变
+                                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                            } else {
+                                gradient.addColorStop(0, 'rgba(75, 192, 192, 0.6)'); // 绿色渐变
+                                gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                            }
+
+                            // 绘制图表
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: labels,
+                                    datasets: [
+                                        {
+                                            label: '', // 隐藏标签
+                                            data: closePrices,
+                                            borderColor: stock.upsAndDowns === 0 ? 'rgba(255, 99, 132, 1)' : 'rgba(75, 192, 192, 1)',
+                                            borderWidth: 2,
+                                            fill: true,
+                                            backgroundColor: gradient // 设置渐变填充
+                                        },
+                                        {
+                                            label: '', // 隐藏标签
+                                            data: averagePrices,
+                                            borderColor: 'rgba(128, 128, 128, 1)', // 灰色平均线
+                                            borderWidth: 2,
+                                            fill: false,
+                                            borderDash: [10, 5] // 设置虚线样式
+                                        }
+                                    ]
+                                },
+                                options: {
+                                    responsive: false,
+                                    scales: {
+                                        x: {
+                                            display: false
+                                        },
+                                        y: {
+                                            display: false
+                                        }
+                                    },
+                                    plugins: {
+                                        legend: {
+                                            display: false // 隐藏图例
+                                        }
+                                    },
+                                    elements: {
+                                        point: {
+                                            radius: 0
+                                        }
+                                    },
+                                    layout: {
+                                        padding: {
+                                            left: 0,
+                                            right: 0,
+                                            top: 0,
+                                            bottom: 0
+                                        }
+                                    }
+                                }
+                            });
+
+                            // console.log('Chart initialized for:', stock.symbol);
+                        });
+                    });
+                },
                 render_graph() {
                     this.recommendationSymbols.forEach((stock, index) => {
                         const data = stock.data;
@@ -474,6 +603,31 @@
                 }
             }
         });
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/keen-slider@6.8.5/keen-slider.min.js"></script>
+    <script>
+      var animation = { duration: 30000, easing: (t) => t }
+
+      var slider = new KeenSlider("#my-keen-slider", {
+        loop: true,
+        renderMode: "performance",
+        drag: true,
+                        slides: {
+                perView: 'auto', // 一次显示3个滑块
+                spacing: 16 // 滑块之间的间距
+              },
+        created(s) {
+          s.moveToIdx(10, true, animation)
+        },
+        updated(s) {
+          s.moveToIdx(s.track.details.abs + 10, true, animation)
+        },
+        animationEnded(s) {
+          s.moveToIdx(s.track.details.abs + 10, true, animation)
+        },
+      })
 
 
     </script>

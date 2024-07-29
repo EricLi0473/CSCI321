@@ -60,11 +60,11 @@ from flask import Flask, redirect
 import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
-from machineLearningModel.GRU_Model import *
-from machineLearningModel.LSTM_Model import *
-from machineLearningModel.prophet_model import *
-from Control.User.storePredictionResultController import *
-from machineLearningModel.get_symbol_data import *
+# from machineLearningModel.GRU_Model import *
+# from machineLearningModel.LSTM_Model import *
+# from machineLearningModel.prophet_model import *
+# from Control.User.storePredictionResultController import *
+# from machineLearningModel.get_symbol_data import *
 import threading
 import time
 from captcha.image import ImageCaptcha
@@ -252,7 +252,8 @@ def mainPage():
     if session.get('user'):
         if session.get('user')['profile'] == 'premium':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
-            return render_template('/premiumUser/mainPage.html',user=session['user'],watchList=watchList)
+            global free_user_stockData_cache
+            return render_template('/premiumUser/mainPage.html',user=session['user'],watchList=watchList,commonSymbol = free_user_stockData_cache)
         elif session.get('user')['profile'] == 'free':
             watchList = GetWatchlistByAccountID().get_watchlist_by_accountID(session['user']['accountId'])
             return render_template('/individualFreeUser/mainPage.html', user=session['user'], watchList=watchList)
@@ -589,7 +590,8 @@ def officialWeb():
     global mainPage_stockData_cache
     predictionData = GetPredictionDataBySymbol().get_predictionData_by_symbol("AAPL")
     review = GetAllHeadLineReviews().get_all_headline_reviews()
-    return render_template("system/template.html",predictionData=predictionData,review=review)
+    global free_user_stockData_cache
+    return render_template("system/template.html",predictionData=predictionData,review=review,commonSymbol=free_user_stockData_cache)
 
 @app.route('/getSystemStats',methods=['GET'])
 def getSystemStats():
@@ -916,18 +918,18 @@ def start_daily_task_scheduler():
 
 if __name__ == '__main__':
 
-    threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
-    threshold_scheduler_thread.daemon = True
-    threshold_scheduler_thread.start()
-
-    daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
-    daily_task_scheduler_thread.daemon = True
-    daily_task_scheduler_thread.start()
-
+    # threshold_scheduler_thread = threading.Thread(target=start_threshold_notification_scheduler)
+    # threshold_scheduler_thread.daemon = True
+    # threshold_scheduler_thread.start()
+    #
+    # daily_task_scheduler_thread = threading.Thread(target=start_daily_task_scheduler)
+    # daily_task_scheduler_thread.daemon = True
+    # daily_task_scheduler_thread.start()
+    #
     cache_whenStartUP = threading.Thread(target=cache_when_startUp)
     cache_whenStartUP.start()
 
     try:
-        app.run(host='0.0.0.0', port=80, debug=False,threaded=True)
+        app.run(host='0.0.0.0', port=80, debug=True,threaded=True)
     finally:
         pass
