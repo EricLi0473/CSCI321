@@ -190,7 +190,7 @@ create table watchlist
 );
 
 
-SET @accountId = 1;
+SET @accountId = 24;
 
 
 START TRANSACTION;

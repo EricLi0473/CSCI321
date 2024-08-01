@@ -363,7 +363,7 @@
     v-model="model"
     disabled
   >
-    <option value="GRU" selected >AVG</option>
+    <option value="Prophet" selected >AVG</option>
 
   </select>
 </div>
@@ -749,7 +749,7 @@
         delimiters: ['[[', ']]'],
         data: {
             isButtonDisabled: false,
-          model:"GRU",
+          model:"Prophet",
           days:"14",
             user:JSON.parse('{{user|tojson}}'),
             percentage: JSON.parse('{{ threshold|tojson}}'),
