@@ -142,10 +142,10 @@
     </thead>
     <tbody v-for="(follower,index) in followList" :key="follower.followId">
       <!-- row 1 -->
-          <tr class="hover:bg-gray-200 cursor-pointer" @click="gotoSpace(follower.accountAccountId)">
+          <tr class="hover:bg-gray-200 cursor-pointer" >
               <td class="ml-4 h-fit w-fit text-2xl">[[index+1]]</td>
-          <td><div class="ml-4 h-fit w-fit text-2xl">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
-        <td  v-if="user.profile === 'premium' && follower.profile === 'premium'"><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
+          <td><div class="ml-4 h-fit w-fit text-2xl" @click="gotoSpace(follower.accountAccountId)">[[follower.userName]]</div><p class=" textarea resize-none h-fit" readonly placeholder="Bio">[[follower.bio]]</p></td>
+        <td  v-if="user.profile === 'premium' && follower.profile === 'premium'"><input type="checkbox" class="toggle" v-model="follower.notifyMe" @change.stop="toggleNotification(follower.accountAccountId, follower.notifyMe)" /></td>
               <td  v-if="user.profile === 'premium' && follower.profile !== 'premium'">This is a private account</td>
               <td><button class="btn btn-outline btn-sm" @click.stop="confirmUnfollow(follower.accountAccountId, index)">UnFollow</button></td>
       </tr>

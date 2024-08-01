@@ -141,7 +141,7 @@
 
 
 </div>
-                    <div>
+                    <div v-if="Account.profile !== 'admin'">
                                                                         <button
                             class="btn btn-outline btn-md w-40 ml-4"
                             @click.stop="toggleFriendFollow(myAccount.accountId)"
