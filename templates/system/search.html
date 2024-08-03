@@ -143,7 +143,7 @@
                         <th class="text-black text-xl ">Full Name</th>
                         <th class="text-black text-xl ">Latest Price</th>
                         <th class="text-black text-xl ">Chg</th>
-                        <th class="text-black text-xl ">%Chg</th>
+                        <th class="text-black text-xl ">% Chg.</th>
                         <th class="text-black text-xl ">Volume</th>
                         <th class="text-black text-xl "></th>
                       </tr>
@@ -154,9 +154,9 @@
                         <th class="text-black text-xl text-center">[[ index + 1 ]]</th>
                         <td class="text-black text-xl text-center">[[ stock.symbol ]]</td>
                         <td class="text-black text-xl truncate max-w-xs">[[ stock.longName ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.price ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.absolute_change ]]</td>
-                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl">[[ stock.relative_change ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl font-semibold">[[ stock.price ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl font-semibold">[[ stock.absolute_change ]]</td>
+                        <td :class="{'text-green-500': stock.relative_change > 0, 'text-red-500': stock.relative_change < 0}" class="text-xl font-semibold">[[ stock.relative_change ]]</td>
                         <td class="text-black text-xl">[[ stock.volume ]]</td>
                         <td class="text-xl" v-if="user.profile === 'premium'">
                           <button
