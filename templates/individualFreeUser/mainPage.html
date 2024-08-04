@@ -106,12 +106,12 @@
 </div>
                     </div>
                     <div v-for="notification in notifications" :key="notification.notificationId" class="mb-4" @click="navigateToSymbol(notification.symbol)">
-                        <div class="bg-green-100 p-2 rounded-md flex items-center justify-between">
-                            <div>
+                        <div class="bg-green-100 p-2 rounded-xl flex items-center justify-between">
+                            <div class="ml-1">
                                 <p class="text-green-700 font-bold">[[notification.notificationType]] </p>
                                 <p>[[ notification.notification]]</p>
                             </div>
-                            <button class="btn btn-accent btn-sm" @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)">Delete</button>
+                            <button class="btn btn-accent btn-sm mr-2" @click.stop="removeNotification(notification.notificationId, notification.notificationType, notification.referenceId)">Delete</button>
                         </div>
                     </div>
                 </div>
@@ -121,7 +121,7 @@
 
                         <h2 class="text-lg font-bold mb-4">News</h2>
 <!--                       news start -->
-                            <article class="flex bg-white transition hover:shadow-xl mb-8 rounded-lg shadow-md" v-for="news in recommendationNews" :key="news.id">
+                            <article class="flex bg-white transition hover:shadow-xl mb-8 rounded-xl shadow-md" v-for="news in recommendationNews" :key="news.id">
                               <div class="rotate-180 p-2 [writing-mode:_vertical-lr]">
                                 <time
                                   :datetime="news.published_at.split(', ')[1]"
@@ -159,7 +159,7 @@
                                   <a
                                     :href="news.url"
                                     target="_blank"
-                                    class="block bg-yellow-300 px-5 py-3 text-center text-xs font-bold uppercase text-gray-900 transition hover:bg-yellow-400"
+                                    class="rounded-br-xl block bg-yellow-300 px-5 py-3 text-center text-xs font-bold uppercase text-gray-900 transition hover:bg-yellow-400"
                                   >
                                     Read Blog
                                   </a>
@@ -183,7 +183,7 @@
                         <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
                         <div class="skeleton h-4 w-full" v-if="isLoadingSymbol === 1"></div>
                     </div>
-                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-lg flex-grow shadow-md hover:shadow-xl transition-shadow duration-300" @click="navigateToSymbol(stock.symbol)"  target="_blank">
+                            <div v-for="(stock, index) in recommendationSymbols" :key="index" class = "mb-4 bg-white p-4 rounded-xl flex-grow shadow-md hover:shadow-xl transition-shadow duration-300" @click="navigateToSymbol(stock.symbol)"  target="_blank">
                                 <div>
                                     <div class="join">
                                         <a class="text-blue-500 hover:underline">[[stock.longName]]</a>

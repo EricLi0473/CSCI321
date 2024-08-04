@@ -121,7 +121,7 @@
                 <div
           v-for="(stock, index) in commonSymbol"
           :key="index"
-            :class="[{ 'shadow-lg  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-lg shadow-rose-500/50': stock.relative_change < 0 },'keen-slider__slide','recommStockSlide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-lg',  stock.relative_change >= 0 ? 'hover:shadow-md hover:shadow-cyan-500/50' : 'hover:shadow-md hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"
+            :class="[{ 'shadow-lg  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-lg shadow-rose-500/50': stock.relative_change < 0 },'keen-slider__slide','recommStockSlide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-xl',  stock.relative_change >= 0 ? 'hover:shadow-md hover:shadow-cyan-500/50' : 'hover:shadow-md hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"
                 >
           <div>
             <div class="flex gap-4 w-fit">
