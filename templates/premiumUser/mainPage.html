@@ -150,11 +150,11 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-      <div id="my-keen-slider" class="keen-slider col-span-2 flex flex-row h-fit">
+      <div id="my-keen-slider" class="mt-4 keen-slider col-span-2 flex flex-row h-fit">
         <div
           v-for="(stock, index) in commonSymbol"
           :key="index"
-            :class="[{ 'shadow-lg  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-lg shadow-rose-500/50': stock.relative_change < 0 },'mt-2','mb-6','keen-slider__slide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-xl', stock.relative_change >= 0 ? 'hover:shadow-xl hover:shadow-cyan-500/50' : 'hover:shadow-xl hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"        >
+            :class="[{ 'shadow-md  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-md shadow-rose-500/50': stock.relative_change < 0 },'mb-6','keen-slider__slide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-xl', stock.relative_change >= 0 ? 'hover:shadow-lg hover:shadow-cyan-500/50' : 'hover:shadow-lg hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"        >
           <div>
             <div class="flex gap-4 w-fit">
               <a

@@ -842,7 +842,7 @@ def apiRequest():
 
 ip_404_counter = {}
 blacklist = set()
-THRESHOLD = 10
+THRESHOLD = 2
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -883,7 +883,7 @@ def threshold_notification():
             if abs(symbol["relative_change"]) > user['changePercentage']:
                 # Checking for recent notifications
                 notificationWord = f"Hi, Your followed {user['stockSymbol']} that exceeds your threshold."
-                NotificationController().set_notification(user['accountId'], notificationWord, "threshold", user['thresholdId'],user['stockSymbol'])
+                NotificationController().set_notification(user['accountId'], notificationWord, "Threshold", user['thresholdId'],user['stockSymbol'])
                 # email
                 if user['receiveNotification']:
                     sendEmailController().send_Notification(user['email'],notificationWord)
@@ -892,7 +892,7 @@ def threshold_notification():
                     if userFollow['notifyMe'] == 1:
                         notificationWord = f"There have been updates to stock {user['stockSymbol']} for user {userFollow['userName']} you follow! Please check"
                         hashed_symbol = int(hashlib.md5(user['stockSymbol'].encode()).hexdigest(),16)%(2**31-1)
-                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"friend_threshold",hashed_symbol,user['stockSymbol'])
+                        NotificationController().set_notification(userFollow['followListAccountId'],notificationWord,"Friend Threshold",hashed_symbol,user['stockSymbol'])
                     #email
                         if user['receiveNotification']:
                             sendEmailController().send_Notification(user['email'],notificationWord)
