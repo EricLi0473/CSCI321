@@ -154,7 +154,7 @@
         <div
           v-for="(stock, index) in commonSymbol"
           :key="index"
-            :class="[{ 'shadow-lg  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-lg shadow-rose-500/50': stock.relative_change < 0 },'mt-2','mb-6','keen-slider__slide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-xl', stock.relative_change >= 0 ? 'hover:shadow-md hover:shadow-cyan-500/50' : 'hover:shadow-md hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"        >
+            :class="[{ 'shadow-lg  shadow-cyan-500/50': stock.relative_change >= 0 },{ 'shadow-lg shadow-rose-500/50': stock.relative_change < 0 },'mt-2','mb-6','keen-slider__slide', 'number-slide' + (index + 1), 'custom-slide', 'bg-white', 'p-4', 'rounded-xl', stock.relative_change >= 0 ? 'hover:shadow-xl hover:shadow-cyan-500/50' : 'hover:shadow-xl hover:shadow-rose-500/50', 'transition-shadow', 'duration-300', 'w-fit', 'h-fit']"        >
           <div>
             <div class="flex gap-4 w-fit">
               <a
@@ -178,7 +178,7 @@
           <canvas
             :id="'recommandChart' + index"
             style="width: 250px; height: 50px"
-            class="rounded-xl"
+            class="rounded-b-xl"
           ></canvas>
         </div>
       </div>
@@ -274,7 +274,7 @@
                                         <p class="text-lg text-gray-700 mb-1">Price: [[stock.price]]</p>
                                         <p :class="{'text-green-500': stock.relative_change >= 0, 'text-red-500': stock.relative_change < 0}" class="text-md font-semibold">Change: [[stock.relative_change + "%"]] ([[stock.absolute_change]])</p>
                                 </div>
-                                <canvas :id="'myChart' + index" height="80px" class="rounded-xl"></canvas>
+                                <canvas :id="'myChart' + index" height="80px" class="rounded-b-xl"></canvas>
                             </div>
                     </div>
                 </div>
